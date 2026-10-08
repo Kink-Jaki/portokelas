@@ -1,0 +1,26 @@
+node_modules/
+dist/
+build/
+.DS_Store
+Thumbs.db
+
+# env
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+bun-error.log*
+
+# uploads (storage lokal backend)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
