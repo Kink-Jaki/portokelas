@@ -11,6 +11,7 @@ import {
   getProjectAuthor,
   getPublicProject,
   listTeachers,
+  resolveSpotifyEmbed,
 } from '../services/index.js';
 import { memberQuerySchema } from '../validators/user.js';
 
@@ -37,7 +38,8 @@ export const publicRoutes = new Hono()
     if (!member) {
       throw AppError.notFound('Portofolio anggota tidak ditemukan atau belum disetujui.');
     }
-    return c.json(ok({ member }));
+    const spotify = member.spotifyUrl ? await resolveSpotifyEmbed(member.spotifyUrl) : null;
+    return c.json(ok({ member: spotify ? { ...member, spotify } : member }));
   })
   .get('/members/:slug/projects', async (c) => {
     const slug = c.req.param('slug');

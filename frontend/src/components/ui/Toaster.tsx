@@ -1,14 +1,10 @@
 import { Toaster as SonnerToaster } from 'sonner';
 
-import { useTheme } from '@/providers/ThemeProvider';
-
-/** Toaster global dari sonner, mengikuti tema aktif aplikasi. */
+/** Toaster global dari sonner. */
 export function AppToaster() {
-  const { theme } = useTheme();
-
   return (
     <SonnerToaster
-      theme={theme}
+      theme="light"
       position="bottom-right"
       richColors
       closeButton

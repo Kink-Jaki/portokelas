@@ -22,16 +22,7 @@
     />
 
     <script>
-      // Terapkan tema sebelum render agar tidak ada flash putih/gelap.
-      (function () {
-        try {
-          var stored = localStorage.getItem('pk-theme');
-          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          var theme = stored === 'light' || stored === 'dark' ? stored : prefersDark ? 'dark' : 'light';
-          if (theme === 'dark') document.documentElement.classList.add('dark');
-          document.documentElement.style.colorScheme = theme;
-        } catch (e) {}
-      })();
+      document.documentElement.style.colorScheme = 'light';
     </script>
   </head>
   <body>

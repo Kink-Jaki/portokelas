@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Textarea } from '@/components/ui/Field';
-import { StatusBadge, RoleBadge } from '@/components/ui/Badge';
+import { StatusBadge, RoleBadge, DevBadge } from '@/components/ui/Badge';
 import { Avatar } from '@/components/ui/Avatar';
-import { useUpdateUserRole, useUpdateUserStatus } from '@/hooks/useApi';
+import { useUpdateUserStatus } from '@/hooks/useApi';
 import { formatDateTime } from '@/lib/utils';
-import { useAuth } from '@/providers/AuthProvider';
 import type { MemberProfile, UserStatus } from '@/types/api';
+import { AdminUserDialog } from './AdminUserDialog';
 
 type ReasonDialogState = {
   open: boolean;
@@ -18,8 +18,6 @@ type ReasonDialogState = {
 
 export function UserRow({ user }: { user: MemberProfile }) {
   const updateStatus = useUpdateUserStatus();
-  const updateRole = useUpdateUserRole();
-  const { user: currentUser } = useAuth();
   const [reasonDialog, setReasonDialog] = useState<ReasonDialogState>({
     open: false,
     user: null,
@@ -27,6 +25,7 @@ export function UserRow({ user }: { user: MemberProfile }) {
   });
   const [reason, setReason] = useState('');
   const [reasonError, setReasonError] = useState<string | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
     if (!reasonDialog.open) {
@@ -57,7 +56,10 @@ export function UserRow({ user }: { user: MemberProfile }) {
           <div className="flex items-start gap-3">
             <Avatar name={user.name} src={user.avatarUrl} size="sm" muted />
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium">{user.name}</p>
+              <p className="flex flex-wrap items-center gap-2 truncate text-sm font-medium">
+                {user.name}
+                {user.role === 'admin' ? <DevBadge /> : null}
+              </p>
               <p className="truncate font-mono text-[0.6875rem] text-muted">{user.email}</p>
             </div>
           </div>
@@ -76,6 +78,10 @@ export function UserRow({ user }: { user: MemberProfile }) {
         </td>
         <td className="px-4 py-4">
           <div className="flex flex-wrap justify-end gap-2">
+            <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
+              Edit
+            </Button>
+
             {user.role === 'member' && user.status !== 'approved' ? (
               <Button
                 size="sm"
@@ -147,6 +153,8 @@ export function UserRow({ user }: { user: MemberProfile }) {
           placeholder="Contoh: Data pendaftar tidak sesuai."
         />
       </Modal>
+
+      <AdminUserDialog open={editOpen} user={user} onClose={() => setEditOpen(false)} />
     </>
   );
 }

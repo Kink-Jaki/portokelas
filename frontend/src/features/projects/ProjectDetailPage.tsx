@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { Avatar } from '@/components/ui/Avatar';
+import { DevBadge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Markdown } from '@/components/ui/Markdown';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -144,7 +145,10 @@ export default function ProjectDetailPage() {
             <Link to={`/m/${author.slug}`} className="group flex items-center gap-3">
               <Avatar name={author.name} src={author.avatarUrl} size="sm" muted />
               <div>
-                <p className="text-sm transition-colors group-hover:underline">{author.name}</p>
+                <p className="flex flex-wrap items-center gap-2 text-sm transition-colors group-hover:underline">
+                  {author.name}
+                  {author.role === 'admin' ? <DevBadge /> : null}
+                </p>
                 <p className="font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">
                   {author.headline ?? 'Anggota kelas'}
                 </p>

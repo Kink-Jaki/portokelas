@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
+import { DevBadge } from '@/components/ui/Badge';
 import { ConfirmDialog } from '@/components/ui/Modal';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ProjectCover, TechStack } from '@/components/domain/shared';
@@ -37,7 +38,13 @@ export function ProjectModerationRow({ project }: { project: AdminProject }) {
                 </a>
               ) : (
                 'Anggota dihapus'
-              )}{' '}
+              )}
+              {project.author?.role === 'admin' ? (
+                <>
+                  {' '}
+                  <DevBadge />
+                </>
+              ) : null}{' '}
               · {formatDate(project.createdAt)}
             </p>
           </div>

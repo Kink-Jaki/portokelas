@@ -4,8 +4,7 @@ export const passwordSchema = z
   .string()
   .min(8, 'Password minimal 8 karakter')
   .max(128, 'Password terlalu panjang')
-  .regex(/[A-Za-z]/, 'Password harus mengandung minimal satu huruf')
-  .regex(/[0-9]/, 'Password harus mengandung minimal satu angka');
+  .regex(/[A-Za-z]/, 'Password harus mengandung minimal satu huruf');
 
 export const registerSchema = z
   .object({
@@ -27,7 +26,7 @@ export const loginSchema = z
       .string()
       .trim()
       .toLowerCase()
-      .email('Format email tidak valid')
+      .min(1, 'NIS atau email wajib diisi')
       .max(160, 'Input terlalu panjang'),
     password: z.string().min(1, 'Password wajib diisi').max(128),
   })

@@ -19,7 +19,10 @@ export const users = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     name: text('name').notNull(),
+    alias: text('alias'),
     email: text('email').notNull(),
+    nim: text('nim'),
+    spotifyUrl: text('spotify_url'),
     passwordHash: text('password_hash').notNull(),
     role: userRole('role').notNull().default('member'),
     status: userStatus('status').notNull().default('pending'),
@@ -38,6 +41,7 @@ export const users = pgTable(
   },
   (table) => [
     uniqueIndex('users_email_unique').on(table.email),
+    uniqueIndex('users_nim_unique').on(table.nim),
     uniqueIndex('users_slug_unique').on(table.slug),
     index('users_status_idx').on(table.status),
     index('users_role_idx').on(table.role),
@@ -147,8 +151,10 @@ export type UserStatus = User['status'];
 export const publicUserColumns = {
   id: users.id,
   name: users.name,
+  alias: users.alias,
   role: users.role,
   slug: users.slug,
+  spotifyUrl: users.spotifyUrl,
   avatarUrl: users.avatarUrl,
   headline: users.headline,
   bio: users.bio,
@@ -165,8 +171,10 @@ export type PublicUser = Pick<
   User,
   | 'id'
   | 'name'
+  | 'alias'
   | 'role'
   | 'slug'
+  | 'spotifyUrl'
   | 'avatarUrl'
   | 'headline'
   | 'bio'
@@ -181,6 +189,7 @@ export type PublicUser = Pick<
 export const memberProfileColumns = {
   ...publicUserColumns,
   email: users.email,
+  nim: users.nim,
   role: users.role,
   status: users.status,
   rejectionReason: users.rejectionReason,
@@ -188,4 +197,4 @@ export const memberProfileColumns = {
 } as const;
 
 export type MemberProfile = PublicUser &
-  Pick<User, 'email' | 'role' | 'status' | 'rejectionReason' | 'updatedAt'>;
+  Pick<User, 'email' | 'nim' | 'role' | 'status' | 'rejectionReason' | 'updatedAt'>;

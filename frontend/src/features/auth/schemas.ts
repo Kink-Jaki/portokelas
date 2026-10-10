@@ -1,38 +1,25 @@
 import { z } from 'zod';
 
-export const passwordSchema = z
-  .string()
-  .min(8, 'Password minimal 8 karakter')
-  .max(128, 'Password terlalu panjang')
-  .regex(/[A-Za-z]/, 'Password harus mengandung minimal satu huruf')
-  .regex(/[0-9]/, 'Password harus mengandung minimal satu angka');
-
 export const loginSchema = z.object({
-  identity: z.string().trim().min(1, 'Email wajib diisi').email('Format email tidak valid'),
+  identity: z.string().trim().min(1, 'NIS atau email wajib diisi'),
   password: z.string().min(1, 'Password wajib diisi'),
 });
 
-export const registerSchema = z
-  .object({
-    name: z
-      .string()
-      .trim()
-      .min(3, 'Nama lengkap minimal 3 karakter')
-      .max(80, 'Nama terlalu panjang'),
-    email: z.string().trim().min(1, 'Email wajib diisi').email('Format email tidak valid'),
-    password: passwordSchema,
-    confirmPassword: z.string().min(1, 'Konfirmasi password wajib diisi'),
-  })
-  .refine((values) => values.password === values.confirmPassword, {
-    path: ['confirmPassword'],
-    message: 'Konfirmasi password tidak sama',
-  });
-
 export type LoginFormValues = z.infer<typeof loginSchema>;
-export type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export const profileSchema = z.object({
   name: z.string().trim().min(3, 'Nama minimal 3 karakter').max(80, 'Nama terlalu panjang'),
+  alias: z.string().trim().max(40, 'Alias maksimal 40 karakter'),
+  spotifyUrl: z
+    .string()
+    .trim()
+    .max(255, 'Tautan terlalu panjang')
+    .refine(
+      (value) =>
+        value.length === 0 ||
+        (/^https:\/\/open\.spotify\.com\//i.test(value) && /\/track\//i.test(value)),
+      'URL harus tautan lagu Spotify (open.spotify.com/track/...)',
+    ),
   headline: z.string().trim().max(120, 'Headline maksimal 120 karakter'),
   bio: z.string().trim().max(1500, 'Bio maksimal 1500 karakter'),
   githubUrl: z.string().trim().url('Tautan tidak valid').or(z.literal('')),

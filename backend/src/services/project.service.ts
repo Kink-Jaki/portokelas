@@ -251,6 +251,7 @@ export async function getProjectAuthor(projectId: string) {
       id: users.id,
       name: users.name,
       slug: users.slug,
+      role: users.role,
       avatarUrl: users.avatarUrl,
       headline: users.headline,
     })

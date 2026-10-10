@@ -21,32 +21,53 @@ export function SocialLinks({
   size?: 'sm' | 'md';
 }) {
   const entries = (Object.keys(socialMeta) as SocialKey[])
-    .map((key) => ({ key, url: profile[socialMeta[key].href] as string | null }))
-    .filter((entry): entry is { key: SocialKey; url: string } => Boolean(entry.url));
+    .map((key) => ({ key, url: profile[socialMeta[key].href] as string | null | undefined }))
+    .filter((entry) => entry.url || entry.key === 'github' || entry.key === 'instagram');
 
   if (entries.length === 0) return null;
 
   return (
     <ul className={cn('flex flex-wrap items-center gap-2', className)}>
-      {entries.map(({ key, url }) => (
-        <li key={key}>
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer nofollow"
-            className={cn(
-              'inline-flex items-center gap-2 rounded-sm border border-line px-3 transition-colors duration-200',
-              'text-muted hover:border-line-strong hover:text-fg',
-              size === 'sm' ? 'h-8 text-xs' : 'h-9 text-[0.8125rem]',
-            )}
-          >
-            {socialMeta[key].label}
-            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" aria-hidden>
-              <path d="M8 16L16 8M9 8h7v7" stroke="currentColor" strokeWidth="1.6" />
-            </svg>
-          </a>
-        </li>
-      ))}
+      {entries.map(({ key, url }) =>
+        url ? (
+          <li key={key}>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              className={cn(
+                'inline-flex items-center gap-2 rounded-sm border border-line px-3 transition-colors duration-200',
+                'text-muted hover:border-line-strong hover:text-fg',
+                size === 'sm' ? 'h-8 text-xs' : 'h-9 text-[0.8125rem]',
+              )}
+            >
+              {socialMeta[key].label}
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" aria-hidden>
+                <path d="M8 16L16 8M9 8h7v7" stroke="currentColor" strokeWidth="1.6" />
+              </svg>
+            </a>
+          </li>
+        ) : (
+          <li key={key}>
+            <button
+              type="button"
+              disabled
+              aria-disabled="true"
+              aria-label={`${socialMeta[key].label} tidak tersedia`}
+              className={cn(
+                'inline-flex cursor-not-allowed items-center gap-2 rounded-sm border border-line px-3',
+                'text-muted opacity-40',
+                size === 'sm' ? 'h-8 text-xs' : 'h-9 text-[0.8125rem]',
+              )}
+            >
+              {socialMeta[key].label}
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" aria-hidden>
+                <path d="M8 16L16 8M9 8h7v7" stroke="currentColor" strokeWidth="1.6" />
+              </svg>
+            </button>
+          </li>
+        ),
+      )}
     </ul>
   );
 }

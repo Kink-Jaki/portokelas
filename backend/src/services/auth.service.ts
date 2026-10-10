@@ -10,6 +10,7 @@ import {
   emailTaken,
   findUserByEmail,
   findUserById,
+  findUserByNim,
   generateUniqueSlug,
 } from './user.service.js';
 
@@ -57,10 +58,13 @@ export async function registerMember(input: RegisterInput): Promise<AuthResult> 
 }
 
 export async function loginMember(input: LoginInput): Promise<AuthResult> {
-  const user = await findUserByEmail(input.identity);
+  const identity = input.identity.trim();
+  const user = /^\d+$/.test(identity)
+    ? await findUserByNim(identity)
+    : await findUserByEmail(identity);
 
   if (!user || !(await verifyPassword(input.password, user.passwordHash))) {
-    throw new AppError(401, 'INVALID_CREDENTIALS', 'Email atau password salah.');
+    throw new AppError(401, 'INVALID_CREDENTIALS', 'NIS/email atau password salah.');
   }
 
   if (user.status === 'rejected') {

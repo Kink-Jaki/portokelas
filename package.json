@@ -23,7 +23,8 @@
     "db:migrate": "bun run --cwd backend db:migrate",
     "db:push": "bun run --cwd backend db:push",
     "db:studio": "bun run --cwd backend db:studio",
-    "seed:admin": "bun run --cwd backend seed:admin"
+    "seed:admin": "bun run --cwd backend seed:admin",
+    "seed:class": "bun run --cwd backend seed:class"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

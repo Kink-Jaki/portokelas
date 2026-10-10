@@ -2,13 +2,14 @@ import { cn } from '@/lib/utils';
 import { userStatusLabel, userRoleLabel } from '@/lib/utils';
 import type { UserStatus } from '@/types/api';
 
-type Tone = 'neutral' | 'outline' | 'danger' | 'success';
+type Tone = 'neutral' | 'outline' | 'danger' | 'success' | 'warning';
 
 const toneClasses: Record<Tone, string> = {
   neutral: 'bg-invert text-invert-fg border-invert',
   outline: 'border-line-strong text-muted',
   danger: 'border-danger text-danger',
   success: 'border-success text-success',
+  warning: 'border-yellow-500 bg-yellow-300 text-yellow-950',
 };
 
 export type BadgeProps = {
@@ -61,5 +62,20 @@ export function StatusBadge({ status }: { status: UserStatus }) {
 export function RoleBadge({ role }: { role: 'member' | 'admin' }) {
   return (
     <Badge tone={role === 'admin' ? 'neutral' : 'outline'}>{userRoleLabel[role] ?? role}</Badge>
+  );
+}
+
+/** Badge "Dev" beroutline kuning untuk anggota berrole admin. */
+export function DevBadge() {
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-1.5 rounded-sm border border-yellow-500 bg-white px-2.5 py-0.5',
+        'font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-yellow-700',
+        'transition-colors duration-200 hover:bg-yellow-500 hover:text-white',
+      )}
+    >
+      Dev
+    </span>
   );
 }

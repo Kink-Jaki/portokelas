@@ -69,8 +69,8 @@ export function AboutSection() {
             <Link to="/members" className={buttonClasses('outline', 'sm')}>
               Lihat anggota
             </Link>
-            <Link to="/register" className={buttonClasses('ghost', 'sm')}>
-              Gabung kelas
+            <Link to="/login" className={buttonClasses('ghost', 'sm')}>
+              Masuk
             </Link>
           </div>
         </Reveal>

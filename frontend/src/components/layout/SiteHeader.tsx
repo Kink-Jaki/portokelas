@@ -2,7 +2,6 @@ import { Link, NavLink } from 'react-router-dom';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { buttonClasses } from '@/components/ui/Button';
-import { ThemeToggle } from './ThemeToggle';
 import { MobileSidebar } from './AppSidebar';
 import { cn } from '@/lib/utils';
 
@@ -32,7 +31,7 @@ export function SiteHeader() {
   const { user, isLoading } = useAuth();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur-md">
+    <header className="section-dark sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur-md">
       <div className="container-page flex h-16 items-center justify-between gap-6">
         <div className="flex items-center gap-3">
           <MobileSidebar />
@@ -56,8 +55,6 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <ThemeToggle />
-
           {isLoading ? (
             <div className="h-10 w-24 animate-pulse rounded-sm bg-subtle" />
           ) : user ? (
@@ -72,8 +69,8 @@ export function SiteHeader() {
               <Link to="/login" className={buttonClasses('ghost', 'sm', 'hidden sm:inline-flex')}>
                 Masuk
               </Link>
-              <Link to="/register" className={buttonClasses('primary', 'sm')}>
-                Daftar
+              <Link to="/login" className={buttonClasses('primary', 'sm')}>
+                Masuk
               </Link>
             </>
           )}
@@ -98,8 +95,8 @@ export function SiteFooter() {
             <Link to="/members" className="transition-colors hover:text-fg">
               Direktori Anggota
             </Link>
-            <Link to="/register" className="transition-colors hover:text-fg">
-              Daftar
+            <Link to="/login" className="transition-colors hover:text-fg">
+              Masuk
             </Link>
           </div>
           <p className="font-mono text-[0.6875rem] uppercase tracking-[0.18em]">

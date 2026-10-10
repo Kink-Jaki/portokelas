@@ -158,12 +158,12 @@ function UserManagement() {
 
 export default function AdminPage() {
   const { user } = useAuth();
-  const [tab, setTab] = useState<Tab>('users');
+  const [tab, setTab] = useState<Tab>('projects');
 
   const tabs: { id: Tab; label: string }[] = [
-    { id: 'users', label: 'Pendaftar' },
     { id: 'projects', label: 'Moderasi project' },
-    { id: 'content', label: 'Konten landing' },
+    { id: 'users', label: 'Anggota' },
+    { id: 'content', label: 'Landing page' },
   ];
 
   return (
@@ -171,11 +171,10 @@ export default function AdminPage() {
       <motion.header variants={fadeUp} initial="hidden" animate="show" className="max-w-2xl">
         <p className="eyebrow">Panel admin</p>
         <h1 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">
-          Verifikasi anggota.
+          Moderasi kelas.
         </h1>
         <p className="mt-4 text-sm leading-relaxed text-muted">
-          Setujui pendaftaran agar portofolio anggota tampil publik, tolak dengan alasan bila perlu,
-          nonaktifkan akun, serta moderasi project yang tidak pantas.
+          Kelola anggota dan rolenya, moderasi project yang tayang, serta kelola konten landing page.
         </p>
       </motion.header>
 

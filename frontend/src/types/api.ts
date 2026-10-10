@@ -4,8 +4,10 @@ export type UserStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
 export type PublicUser = {
   id: string;
   name: string;
+  alias: string | null;
   role: UserRole;
   slug: string;
+  spotifyUrl: string | null;
   avatarUrl: string | null;
   headline: string | null;
   bio: string | null;
@@ -19,6 +21,7 @@ export type PublicUser = {
 
 export type MemberProfile = PublicUser & {
   email: string;
+  nim: string | null;
   role: UserRole;
   status: UserStatus;
   rejectionReason: string | null;
@@ -50,7 +53,7 @@ export type Project = {
 };
 
 export type ProjectWithAuthor = Project & {
-  author: Pick<PublicUser, 'id' | 'name' | 'slug' | 'avatarUrl' | 'headline'> | null;
+  author: Pick<PublicUser, 'id' | 'name' | 'role' | 'slug' | 'avatarUrl' | 'headline'> | null;
 };
 
 export type PaginationMeta = {
@@ -106,12 +109,6 @@ export type ApiResponse<T> = ApiSuccess<T> | ApiFailure;
 
 /* ----------------------------- Input payload ----------------------------- */
 
-export type RegisterPayload = {
-  name: string;
-  email: string;
-  password: string;
-};
-
 export type LoginPayload = {
   identity: string;
   password: string;
@@ -119,6 +116,8 @@ export type LoginPayload = {
 
 export type ProfilePayload = {
   name?: string;
+  alias?: string | null;
+  spotifyUrl?: string | null;
   headline?: string | null;
   bio?: string | null;
   githubUrl?: string | null;
@@ -140,4 +139,17 @@ export type ProjectPayload = {
 
 export type ProjectPatchPayload = Partial<ProjectPayload>;
 
+/** Update profil + role oleh admin (PATCH /admin/users/:id). */
+export type AdminUpdateUserPayload = ProfilePayload & { role?: UserRole };
+
 export type ValidationIssue = { path: string; message: string };
+
+/** Info embed lagu Spotify yang disediakan backend pada halaman member. */
+export type SpotifyEmbed = {
+  embedUrl: string;
+  title: string | null;
+  artistName: string | null;
+  thumbnailUrl: string | null;
+};
+
+export type MemberWithSpotify = PublicUser & { spotify?: SpotifyEmbed | null };

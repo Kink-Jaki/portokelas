@@ -30,6 +30,8 @@ export function ProfilePanel() {
     resolver: zodResolver(profileSchema),
     defaultValues: {
       name: '',
+      alias: '',
+      spotifyUrl: '',
       headline: '',
       bio: '',
       githubUrl: '',
@@ -44,6 +46,8 @@ export function ProfilePanel() {
     if (!user) return;
     reset({
       name: user.name,
+      alias: user.alias ?? '',
+      spotifyUrl: user.spotifyUrl ?? '',
       headline: user.headline ?? '',
       bio: user.bio ?? '',
       githubUrl: user.githubUrl ?? '',
@@ -58,6 +62,8 @@ export function ProfilePanel() {
     try {
       await updateProfile.mutateAsync({
         name: values.name,
+        alias: values.alias || null,
+        spotifyUrl: values.spotifyUrl || null,
         headline: values.headline || null,
         bio: values.bio || null,
         githubUrl: values.githubUrl || null,
@@ -72,6 +78,8 @@ export function ProfilePanel() {
         if (fieldErrors.name) setError('name', { message: fieldErrors.name });
         if (fieldErrors.bio) setError('bio', { message: fieldErrors.bio });
         if (fieldErrors.headline) setError('headline', { message: fieldErrors.headline });
+        if (fieldErrors.spotifyUrl)
+          setError('spotifyUrl', { message: fieldErrors.spotifyUrl });
       }
     }
   });
@@ -136,7 +144,7 @@ export function ProfilePanel() {
           </div>
         </dl>
 
-        {user.slug ? (
+        {user.slug && user.status === 'approved' ? (
           <a
             href={`/m/${user.slug}`}
             target="_blank"
@@ -157,6 +165,22 @@ export function ProfilePanel() {
         </div>
 
         <Input label="Nama lengkap" error={errors.name?.message} {...register('name')} />
+
+        <Input
+          label="Alias"
+          placeholder="Nama panggilan / nama tampilan"
+          hint="Nama yang tampil di landing page. Nama lengkap tampil di bawahnya sebagai subheadline."
+          error={errors.alias?.message}
+          {...register('alias')}
+        />
+
+        <Input
+          label="Spotify"
+          placeholder="https://open.spotify.com/track/..."
+          hint="Tautan lagu Spotify. Pemutar berputar otomatis di halaman portofoliomu, lengkap dengan judul lagu, sampul, dan nama penyanyi."
+          error={errors.spotifyUrl?.message}
+          {...register('spotifyUrl')}
+        />
 
         <Input
           label="Headline"

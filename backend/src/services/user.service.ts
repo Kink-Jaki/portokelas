@@ -45,6 +45,12 @@ export async function findUserByEmail(email: string) {
   return rows[0] ?? null;
 }
 
+export async function findUserByNim(nim: string) {
+  const normalized = nim.trim();
+  const rows = await db.select().from(users).where(eq(users.nim, normalized)).limit(1);
+  return rows[0] ?? null;
+}
+
 export async function emailTaken(email: string): Promise<boolean> {
   const rows = await db
     .select({ id: users.id })
@@ -134,7 +140,7 @@ export async function listUsersForAdmin(query: {
     const searchCondition = or(
       ilike(users.name, pattern),
       ilike(users.email, pattern),
-
+      ilike(users.nim, pattern),
     );
     if (searchCondition) conditions.push(searchCondition);
   }

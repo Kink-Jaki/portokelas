@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 import { Button } from '@/components/ui/Button';
@@ -59,15 +59,12 @@ export default function LoginPage() {
             Selamat datang kembali.
           </h1>
           <p className="mt-5 max-w-md text-sm leading-relaxed text-muted">
-            Masuk untuk mengelola profil dan project Anda. Halaman portofolio publik tersedia untuk
-            siapa saja tanpa login.
+            Masuk memakai NIS untuk mengelola profil dan project Anda. Halaman portofolio publik
+            tersedia untuk siapa saja tanpa login.
           </p>
           <AnimatedRule className="mt-8 max-w-md" />
           <p className="mt-8 text-sm text-muted">
-            Belum punya akun?{' '}
-            <Link to="/register" className="text-fg underline underline-offset-4">
-              Daftar di sini
-            </Link>
+            Pendaftaran akun ditutup. Akun dibagikan oleh pengurus kelas.
           </p>
         </motion.div>
 
@@ -81,8 +78,8 @@ export default function LoginPage() {
           noValidate
         >
           <Input
-            label="Email"
-            placeholder="nama@kampus.ac.id"
+            label="NIS"
+            placeholder="Contoh: 17858"
             autoComplete="username"
             error={errors.identity?.message}
             {...register('identity')}
@@ -101,7 +98,7 @@ export default function LoginPage() {
           </Button>
 
           <p className="text-xs leading-relaxed text-muted">
-            Admin dibuat melalui seed script, bukan pendaftaran. Lihat README untuk kredensial awal.
+            Gunakan NIS yang terdaftar. Hubungi pengurus kelas bila belum memiliki akun.
           </p>
         </motion.form>
       </div>

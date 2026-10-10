@@ -20,6 +20,7 @@ import {
   listUsersForAdmin,
   saveImage,
   setProjectHidden,
+  updateProfile,
   updateTeacher,
   updateUserRole,
   updateUserStatus,
@@ -28,6 +29,7 @@ import {
 import { aboutFormSchema, teacherFormSchema, teacherUpdateFormSchema } from '../validators/content.js';
 import { adminProjectQuerySchema, hideProjectSchema } from '../validators/project.js';
 import {
+  adminUpdateUserSchema,
   adminUserQuerySchema,
   updateUserRoleSchema,
   updateUserStatusSchema,
@@ -141,6 +143,27 @@ export const adminRoutes = new Hono<AppEnv>()
     }
 
     const updated = await updateUserRole(targetId, role);
+    return c.json(ok({ user: updated }));
+  })
+
+  .patch('/users/:id', zJson(adminUpdateUserSchema), async (c) => {
+    const admin = getCurrentUser(c);
+    const targetId = requireParam(c.req.param('id'), 'id');
+    const input = c.req.valid('json');
+
+    if (targetId === admin.id && input.role && input.role !== admin.role) {
+      throw AppError.badRequest('Anda tidak dapat mengubah role akun sendiri.');
+    }
+
+    const patch: Partial<typeof users.$inferInsert> = { ...input };
+    if (input.role === 'admin') {
+      patch.status = 'approved';
+      patch.rejectionReason = null;
+    }
+
+    const updated = await updateProfile(targetId, patch);
+    if (!updated) throw AppError.notFound('Anggota tidak ditemukan');
+
     return c.json(ok({ user: updated }));
   })
 

@@ -3,6 +3,9 @@ import { useEffect, type ReactNode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import { SiteFooter, SiteHeader } from './SiteHeader';
+import { AppSidebar } from './AppSidebar';
+import { useAuth } from '@/providers/AuthProvider';
+import { cn } from '@/lib/utils';
 import { pageVariants } from '@/lib/motion';
 
 /** Kembalikan posisi scroll ke atas saat route berubah (kecuali kembali). */
@@ -31,10 +34,12 @@ export function PageTransition({ children }: { children: ReactNode }) {
 export function RootLayout() {
   const location = useLocation();
   const reduceMotion = useReducedMotion();
+  const { user } = useAuth();
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className={cn('flex min-h-screen flex-col', user && 'lg:pl-64')}>
       <ScrollToTop />
+      {user ? <AppSidebar /> : null}
       <SiteHeader />
       <main className="flex-1">
         <AnimatePresence mode="wait">

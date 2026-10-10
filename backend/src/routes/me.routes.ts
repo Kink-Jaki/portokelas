@@ -43,9 +43,9 @@ function pickFiles(form: FormValues, fields: string[]): File[] {
   return files;
 }
 
-/** Endpoint untuk anggota yang sudah disetujui admin. */
+/** Endpoint profil & project milik sendiri. Profil boleh diedit siapa pun yang sudah login. */
 export const meRoutes = new Hono<AppEnv>()
-  .use('*', requireAuth, requireApproved)
+  .use('*', requireAuth)
 
   .patch('/profile', zJson(updateProfileSchema), async (c) => {
     const user = getCurrentUser(c);
@@ -75,19 +75,19 @@ export const meRoutes = new Hono<AppEnv>()
     return c.json(ok({ user: updated }));
   })
 
-  .get('/projects', async (c) => {
+  .get('/projects', requireApproved, async (c) => {
     const user = getCurrentUser(c);
     const data = await listProjectsByUser(user.id);
     return c.json(ok({ projects: data }));
   })
 
-  .post('/projects', zJson(createProjectSchema), async (c) => {
+  .post('/projects', requireApproved, zJson(createProjectSchema), async (c) => {
     const user = getCurrentUser(c);
     const project = await createProject(user.id, c.req.valid('json'));
     return c.json(ok({ project }), 201);
   })
 
-  .patch('/projects/:id', zJson(updateProjectSchema), async (c) => {
+  .patch('/projects/:id', requireApproved, zJson(updateProjectSchema), async (c) => {
     const user = getCurrentUser(c);
     const projectId = requireParam(c.req.param('id'), 'id');
     const input = c.req.valid('json');
@@ -107,7 +107,7 @@ export const meRoutes = new Hono<AppEnv>()
     return c.json(ok({ project }));
   })
 
-  .delete('/projects/:id', async (c) => {
+  .delete('/projects/:id', requireApproved, async (c) => {
     const user = getCurrentUser(c);
     const projectId = c.req.param('id');
 
@@ -130,7 +130,7 @@ export const meRoutes = new Hono<AppEnv>()
     return c.json(ok({ id: project.id, deleted: true }));
   })
 
-  .post('/projects/:id/images', async (c) => {
+  .post('/projects/:id/images', requireApproved, async (c) => {
     const user = getCurrentUser(c);
     const projectId = c.req.param('id');
 
@@ -150,7 +150,7 @@ export const meRoutes = new Hono<AppEnv>()
     return c.json(ok({ images }), 201);
   })
 
-  .delete('/projects/:projectId/images/:imageId', async (c) => {
+  .delete('/projects/:projectId/images/:imageId', requireApproved, async (c) => {
     const user = getCurrentUser(c);
     const projectId = c.req.param('projectId');
     const imageId = c.req.param('imageId');

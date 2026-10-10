@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 
 import { Avatar } from '@/components/ui/Avatar';
+import { DevBadge } from '@/components/ui/Badge';
 import { AnimatedRule, Reveal, Stagger, StaggerItem } from '@/components/ui/Reveal';
 import { buttonClasses } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -26,7 +27,31 @@ function GitHubIcon() {
   );
 }
 
-function SocialButton({ label, href, icon }: { label: string; href: string; icon: React.ReactNode }) {
+function SocialButton({
+  label,
+  href,
+  icon,
+}: {
+  label: string;
+  href: string | null;
+  icon: React.ReactNode;
+}) {
+  if (!href) {
+    return (
+      <button
+        type="button"
+        disabled
+        aria-disabled="true"
+        aria-label={`${label} tidak tersedia`}
+        onClick={(event) => event.stopPropagation()}
+        className="inline-flex h-8 cursor-not-allowed items-center gap-2 rounded-sm border border-line px-3 text-xs text-muted opacity-40"
+      >
+        {icon}
+        <span>{label}</span>
+      </button>
+    );
+  }
+
   return (
     <a
       href={href}
@@ -44,23 +69,23 @@ function SocialButton({ label, href, icon }: { label: string; href: string; icon
 type SocialLink = {
   key: string;
   label: string;
-  href: string;
+  href: string | null;
   icon: React.ReactElement;
 };
 
-function MemberCard({ member }: { member: PublicUser }) {
+function MemberCard({ member, dark = false }: { member: PublicUser; dark?: boolean }) {
   const navigate = useNavigate();
 
-  const socials = [
+  const socials: SocialLink[] = [
     { key: 'instagram', label: 'Instagram', href: member.instagramUrl, icon: <InstagramIcon /> },
     { key: 'github', label: 'GitHub', href: member.githubUrl, icon: <GitHubIcon /> },
-  ].filter((social): social is SocialLink => Boolean(social.href));
+  ];
 
   return (
     <StaggerItem className="h-full">
       <div
         onClick={() => navigate(`/m/${member.slug}`)}
-        className="group flex h-full cursor-pointer flex-col border border-line bg-bg p-5 transition-all duration-300 hover:-translate-y-1 hover:border-line-strong hover:shadow-[0_18px_40px_-28px_rgba(0,0,0,0.45)] sm:p-6"
+        className={`group flex h-full cursor-pointer flex-col border border-line bg-bg p-5 transition-all duration-300 hover:-translate-y-1 hover:border-line-strong hover:shadow-[0_18px_40px_-28px_rgba(0,0,0,0.45)] sm:p-6 ${dark ? 'card-black' : ''}`}
       >
         <Avatar
           name={member.name}
@@ -74,29 +99,25 @@ function MemberCard({ member }: { member: PublicUser }) {
           <Link
             to={`/m/${member.slug}`}
             onClick={(event) => event.stopPropagation()}
-            className="block"
+            className="flex items-center gap-2"
           >
             <h3 className="truncate font-display text-lg leading-snug transition-colors duration-200 group-hover:text-fg">
               {member.name}
             </h3>
+            {member.role === 'admin' ? <DevBadge /> : null}
           </Link>
         </div>
 
-        {socials.length > 0 ? (
-          <div
-            className="mt-5 flex flex-wrap gap-2"
-            onClick={(event) => event.stopPropagation()}
-          >
-            {socials.map((social) => (
-              <SocialButton
-                key={social.key}
-                label={social.label}
-                href={social.href}
-                icon={social.icon}
-              />
-            ))}
-          </div>
-        ) : null}
+        <div className="mt-5 flex flex-wrap gap-2" onClick={(event) => event.stopPropagation()}>
+          {socials.map((social) => (
+            <SocialButton
+              key={social.key}
+              label={social.label}
+              href={social.href}
+              icon={social.icon}
+            />
+          ))}
+        </div>
       </div>
     </StaggerItem>
   );
@@ -150,7 +171,11 @@ export function StructureSection() {
                 title="Gagal memuat anggota"
                 description={error?.message}
                 action={
-                  <button type="button" onClick={() => void refetch()} className={buttonClasses('outline', 'sm')}>
+                  <button
+                    type="button"
+                    onClick={() => void refetch()}
+                    className={buttonClasses('outline', 'sm')}
+                  >
                     Coba lagi
                   </button>
                 }
@@ -162,17 +187,18 @@ export function StructureSection() {
                 title="Belum ada anggota"
                 description="Daftar anggota akan tampil setelah admin menyetujui pendaftaran pertama."
                 action={
-                  <Link to="/register" className={buttonClasses('primary', 'sm')}>
-                    Daftar sekarang
+                  <Link to="/login" className={buttonClasses('primary', 'sm')}>
+                    Masuk
                   </Link>
                 }
               />
             </div>
           ) : (
             <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {members.map((member) => (
-                <MemberCard key={member.id} member={member} />
-              ))}
+              {members.map((member, index) => {
+                const dark = (Math.floor(index / 4) + (index % 4)) % 2 === 1;
+                return <MemberCard key={member.id} member={member} dark={dark} />;
+              })}
             </Stagger>
           )}
         </div>

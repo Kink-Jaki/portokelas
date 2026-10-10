@@ -1,8 +1,5 @@
 @import 'tailwindcss';
 
-/* Mode gelap berbasis class (.dark di <html>) */
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Playfair Display', ui-serif, Georgia, 'Times New Roman', serif;
@@ -21,20 +18,6 @@
   --invert-fg: #fafafa;
   --danger: #b42318;
   --success: #15803d;
-}
-
-.dark {
-  --bg: #0a0a0a;
-  --bg-subtle: #121212;
-  --bg-elevated: #141414;
-  --fg: #f4f4f4;
-  --fg-muted: #9a9a9a;
-  --line: #262626;
-  --line-strong: #3d3d3d;
-  --invert-bg: #fafafa;
-  --invert-fg: #0a0a0a;
-  --danger: #f08a80;
-  --success: #6ee7a8;
 }
 
 html {
@@ -168,6 +151,25 @@ html {
     --invert-fg: #fafafa;
     --danger: #b42318;
     --success: #15803d;
+    background-color: var(--bg);
+    color: var(--fg);
+  }
+
+  /* Kartu catur: kotak hitam membalik seluruh variabel turunan sehingga
+     utilities seperti bg-bg, text-fg, text-muted, dan border-line
+     otomatis menyesuaikan ke palet gelap. */
+  .card-black {
+    --bg: #0c0c0c;
+    --bg-subtle: #171717;
+    --bg-elevated: #141414;
+    --fg: #f5f5f5;
+    --fg-muted: #9a9a9a;
+    --line: #2b2b2b;
+    --line-strong: #454545;
+    --invert-bg: #fafafa;
+    --invert-fg: #0a0a0a;
+    --danger: #f08a80;
+    --success: #6ee7a8;
     background-color: var(--bg);
     color: var(--fg);
   }

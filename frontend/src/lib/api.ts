@@ -43,21 +43,50 @@ type RequestOptions = {
   signal?: AbortSignal;
 };
 
+type ServerIssueHandler = (status: number) => void;
+
+let serverIssueHandler: ServerIssueHandler | null = null;
+
+/** Dipanggil router untuk menampilkan halaman error saat backend bermasalah. */
+export function setServerIssueHandler(handler: ServerIssueHandler | null) {
+  serverIssueHandler = handler;
+}
+
+function reportServerIssue(status: number) {
+  serverIssueHandler?.(status);
+}
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { method = 'GET', body, signal } = options;
 
   const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
 
-  const response = await fetch(`${API_BASE}/api${path}`, {
-    method,
-    credentials: 'include',
-    headers: {
-      Accept: 'application/json',
-      ...(isFormData || body === undefined ? {} : { 'Content-Type': 'application/json' }),
-    },
-    body: isFormData ? body : body === undefined ? undefined : JSON.stringify(body),
-    signal,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE}/api${path}`, {
+      method,
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json',
+        ...(isFormData || body === undefined ? {} : { 'Content-Type': 'application/json' }),
+      },
+      body: isFormData ? body : body === undefined ? undefined : JSON.stringify(body),
+      signal,
+    });
+  } catch (cause) {
+    if (signal?.aborted) throw cause;
+    // Backend mati / tidak terjangkau.
+    reportServerIssue(503);
+    throw new ApiError(
+      503,
+      'BACKEND_UNAVAILABLE',
+      'Server tidak dapat dijangkau. Coba lagi sebentar.',
+    );
+  }
+
+  if (response.status >= 500) {
+    reportServerIssue(response.status);
+  }
 
   let payload: ApiResponse<T> | null = null;
   try {
@@ -77,6 +106,19 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   }
 
   return payload.data;
+}
+
+/** Cek apakah backend hidup, tanpa memicu halaman error. */
+export async function pingServer(): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_BASE}/api/health`, {
+      headers: { Accept: 'application/json' },
+      credentials: 'include',
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
 }
 
 export const api = {

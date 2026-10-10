@@ -5,6 +5,7 @@ import { api, ApiError, buildQuery } from '@/lib/api';
 import { queryKeys } from '@/lib/query-client';
 import type {
   About,
+  AdminUpdateUserPayload,
   MemberProfile,
   Paginated,
   Project,
@@ -242,6 +243,23 @@ export function useUpdateUserRole() {
       );
     },
     onError: (error) => toastApiError(error, 'Gagal mengubah role anggota.'),
+  });
+}
+
+export function useAdminUpdateUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: AdminUpdateUserPayload }) =>
+      api.patch<{ user: MemberProfile }>(`/admin/users/${id}`, payload),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['admin'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.me });
+      queryClient.invalidateQueries({ queryKey: ['public'] });
+
+      toast.success(`Profil ${data.user.name} diperbarui.`);
+    },
+    onError: (error) => toastApiError(error, 'Gagal memperbarui profil anggota.'),
   });
 }
 

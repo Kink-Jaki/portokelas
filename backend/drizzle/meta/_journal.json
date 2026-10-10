@@ -29,6 +29,27 @@
       "when": 1791339658224,
       "tag": "0003_burly_azazel",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791598102236,
+      "tag": "0004_jazzy_exodus",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791599609660,
+      "tag": "0005_tense_champions",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791600230052,
+      "tag": "0006_jittery_blue_marvel",
+      "breakpoints": true
     }
   ]
 }

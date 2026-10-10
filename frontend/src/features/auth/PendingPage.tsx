@@ -34,8 +34,9 @@ export default function PendingPage() {
 
         <motion.div variants={staggerItem} className="mt-10 space-y-6">
           <p className="max-w-2xl text-base leading-relaxed text-muted">
-            Terima kasih sudah mendaftar. Data Anda sudah masuk ke antrean verifikasi admin. Profil
-            dan project baru tampil di halaman publik setelah akun disetujui.
+            Terima kasih sudah mendaftar. Data Anda sudah masuk ke antrean verifikasi admin. Sambil
+            menunggu, Anda sudah bisa melengkapi profil — hasilnya langsung tampil setelah akun
+            disetujui.
           </p>
 
           <div className="grid gap-px border border-line bg-line sm:grid-cols-2">
@@ -67,16 +68,19 @@ export default function PendingPage() {
           </div>
 
           <div className="flex flex-wrap gap-3 pt-2">
+            <Link to="/profile" className={buttonClasses('primary')}>
+              Edit profil
+            </Link>
+            <Link to="/members" className={buttonClasses('outline')}>
+              Lihat direktori anggota
+            </Link>
             <button
               type="button"
-              className={buttonClasses('outline')}
+              className={buttonClasses('ghost')}
               onClick={() => void logout().then(() => navigate('/', { replace: true }))}
             >
               Keluar
             </button>
-            <Link to="/members" className={buttonClasses('primary')}>
-              Lihat direktori anggota
-            </Link>
           </div>
         </motion.div>
       </motion.div>

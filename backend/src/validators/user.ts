@@ -19,21 +19,47 @@ const urlField = z
   .transform((value) => (value.length === 0 ? null : value))
   .nullable();
 
+const spotifyUrlField = z
+  .string()
+  .trim()
+  .max(255, 'Tautan terlalu panjang')
+  .refine(
+    (value) =>
+      value.length === 0 ||
+      (/^https:\/\/open\.spotify\.com\//i.test(value) && /\/track\//i.test(value)),
+    'URL harus tautan lagu Spotify (open.spotify.com/track/...)',
+  )
+  .transform((value) => (value.length === 0 ? null : value))
+  .nullable();
+
+const profileFields = {
+  name: z.string().trim().min(3, 'Nama minimal 3 karakter').max(80).optional(),
+  alias: nullableText(40, 'Alias').optional(),
+  spotifyUrl: spotifyUrlField.optional(),
+  headline: nullableText(120, 'Headline').optional(),
+  bio: nullableText(1500, 'Bio').optional(),
+  githubUrl: urlField.optional(),
+  linkedinUrl: urlField.optional(),
+  instagramUrl: urlField.optional(),
+  websiteUrl: urlField.optional(),
+  cvUrl: urlField.optional(),
+};
+
 export const updateProfileSchema = z
-  .object({
-    name: z.string().trim().min(3, 'Nama minimal 3 karakter').max(80).optional(),
-    headline: nullableText(120, 'Headline').optional(),
-    bio: nullableText(1500, 'Bio').optional(),
-    githubUrl: urlField.optional(),
-    linkedinUrl: urlField.optional(),
-    instagramUrl: urlField.optional(),
-    websiteUrl: urlField.optional(),
-    cvUrl: urlField.optional(),
-  })
+  .object(profileFields)
   .strict()
   .refine((value) => Object.keys(value).length > 0, 'Tidak ada perubahan yang dikirim');
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
+
+export const roleEnum = z.enum(['member', 'admin']);
+
+export const adminUpdateUserSchema = z
+  .object({ ...profileFields, role: roleEnum.optional() })
+  .strict()
+  .refine((value) => Object.keys(value).length > 0, 'Tidak ada perubahan yang dikirim');
+
+export type AdminUpdateUserInput = z.infer<typeof adminUpdateUserSchema>;
 
 export const paginationSchema = z.object({
   page: z.coerce.number().int().min(1).max(1000).default(1),
@@ -72,8 +98,6 @@ export const updateUserStatusSchema = z
   });
 
 export type UpdateUserStatusInput = z.infer<typeof updateUserStatusSchema>;
-
-export const roleEnum = z.enum(['member', 'admin']);
 
 export const updateUserRoleSchema = z
   .object({

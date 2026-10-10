@@ -2,7 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 
 import { api, buildQuery } from '@/lib/api';
 import { queryKeys } from '@/lib/query-client';
-import type { About, Paginated, Project, PublicStats, PublicUser, Teacher } from '@/types/api';
+import type {
+  About,
+  MemberWithSpotify,
+  Paginated,
+  Project,
+  PublicStats,
+  PublicUser,
+  Teacher,
+} from '@/types/api';
 
 export function usePublicStats() {
   return useQuery({
@@ -40,7 +48,7 @@ export function useMembers(search: string, page: number) {
 export function useMember(slug: string) {
   return useQuery({
     queryKey: queryKeys.member(slug),
-    queryFn: () => api.get<{ member: PublicUser }>(`/members/${slug}`),
+    queryFn: () => api.get<{ member: MemberWithSpotify }>(`/members/${slug}`),
     enabled: Boolean(slug),
   });
 }
@@ -59,7 +67,7 @@ export function useProject(idOrSlug: string) {
     queryFn: () =>
       api.get<{
         project: Project;
-        author: Pick<PublicUser, 'id' | 'name' | 'slug' | 'avatarUrl' | 'headline'> | null;
+        author: Pick<PublicUser, 'id' | 'name' | 'role' | 'slug' | 'avatarUrl' | 'headline'> | null;
       }>(`/projects/${idOrSlug}`),
     enabled: Boolean(idOrSlug),
   });

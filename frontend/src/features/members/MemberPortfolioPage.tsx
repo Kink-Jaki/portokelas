@@ -3,12 +3,14 @@ import type { ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { Avatar } from '@/components/ui/Avatar';
+import { DevBadge } from '@/components/ui/Badge';
 import { AnimatedRule, Reveal, Stagger } from '@/components/ui/Reveal';
 import { CardSkeletonGrid, Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { buttonClasses } from '@/components/ui/Button';
 import { ProjectCardGrid } from '@/components/domain/ProjectCard';
+import { SpotifyPlayer } from '@/components/domain/SpotifyPlayer';
 import { useMember, useMemberProjects } from '@/hooks/usePublic';
 import { fadeUp } from '@/lib/motion';
 
@@ -134,19 +136,25 @@ export default function MemberPortfolioPage() {
 
         <div className="min-w-0 flex-1">
           <p className="eyebrow">Portofolio Anggota</p>
-          <h1 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">{member.name}</h1>
-
-          {member.headline ? (
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-fg">{member.headline}</p>
-          ) : null}
-
-          {member.bio ? (
-            <p className="mt-4 max-w-2xl whitespace-pre-line text-sm leading-relaxed text-muted">
-              {member.bio}
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <h1 className="font-display text-4xl leading-tight sm:text-5xl">
+              {member.alias || member.name}
+            </h1>
+            {member.role === 'admin' ? <DevBadge /> : null}
+          </div>
+          {member.alias ? (
+            <p className="mt-2 font-mono text-base uppercase tracking-[0.16em] text-muted">
+              {member.name}
             </p>
           ) : null}
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          {member.headline ? (
+            <p className="mt-2 max-w-2xl font-display text-lg leading-relaxed text-fg">
+              {member.headline}
+            </p>
+          ) : null}
+
+          <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <ActionButton href={member.instagramUrl}>
               <InstagramIcon />
               Instagram
@@ -162,6 +170,18 @@ export default function MemberPortfolioPage() {
           </div>
         </div>
       </motion.header>
+
+      {member.spotify ? (
+        <div className="mt-14 w-full">
+          <SpotifyPlayer spotify={member.spotify} />
+        </div>
+      ) : null}
+
+      {member.bio ? (
+        <div className={member.spotify ? 'mt-8 w-full' : 'mt-14 w-full'}>
+          <p className="whitespace-pre-line text-sm leading-relaxed text-muted">{member.bio}</p>
+        </div>
+      ) : null}
 
       <AnimatedRule className="mt-14" />
 

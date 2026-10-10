@@ -4,14 +4,13 @@ import { toast } from 'sonner';
 
 import { api, ApiError } from '@/lib/api';
 import { queryKeys } from '@/lib/query-client';
-import type { LoginPayload, MemberProfile, RegisterPayload } from '@/types/api';
+import type { LoginPayload, MemberProfile } from '@/types/api';
 
 type AuthContextValue = {
   user: MemberProfile | null;
   isLoading: boolean;
   error: ApiError | null;
   login: (payload: LoginPayload) => Promise<MemberProfile>;
-  register: (payload: RegisterPayload) => Promise<MemberProfile>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
 };
@@ -49,24 +48,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  const registerMutation = useMutation({
-    mutationFn: (payload: RegisterPayload) =>
-      api.post<{ user: MemberProfile }>('/auth/register', payload),
-    onSuccess: (data) => {
-      queryClient.setQueryData(queryKeys.me, data.user);
-      toast.success('Pendaftaran terkirim. Menunggu persetujuan admin.');
-    },
-    onError: (error) => {
-      const message =
-        error instanceof ApiError
-          ? error.message
-          : error instanceof Error
-            ? error.message
-            : 'Gagal mendaftar. Coba lagi.';
-      toast.error(message);
-    },
-  });
-
   const logoutMutation = useMutation({
     mutationFn: () => api.post<{ message: string }>('/auth/logout'),
     onSuccess: () => {
@@ -90,14 +71,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [loginMutation],
   );
 
-  const register = useCallback(
-    async (payload: RegisterPayload) => {
-      const data = await registerMutation.mutateAsync(payload);
-      return data.user;
-    },
-    [registerMutation],
-  );
-
   const logout = useCallback(async () => {
     await logoutMutation.mutateAsync();
   }, [logoutMutation]);
@@ -112,11 +85,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isLoading: meQuery.isLoading,
       error: meQuery.error instanceof ApiError ? meQuery.error : null,
       login,
-      register,
       logout,
       refresh,
     }),
-    [meQuery.data, meQuery.isLoading, meQuery.error, login, register, logout, refresh],
+    [meQuery.data, meQuery.isLoading, meQuery.error, login, logout, refresh],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { Avatar } from '@/components/ui/Avatar';
-import { RoleBadge, StatusBadge } from '@/components/ui/Badge';
+import { RoleBadge, StatusBadge, DevBadge } from '@/components/ui/Badge';
 import { buttonClasses } from '@/components/ui/Button';
 import { useAuth } from '@/providers/AuthProvider';
 import { cn } from '@/lib/utils';
@@ -23,7 +23,11 @@ function IconUsers({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" className={className} aria-hidden>
       <circle cx="9" cy="8" r="3" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M3.5 20a5.5 5.5 0 0 1 11 0M16 11a3 3 0 1 0 0-6M17 14.5a5.5 5.5 0 0 1 3.5 5" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M3.5 20a5.5 5.5 0 0 1 11 0M16 11a3 3 0 1 0 0-6M17 14.5a5.5 5.5 0 0 1 3.5 5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
     </svg>
   );
 }
@@ -40,7 +44,11 @@ function IconUser({ className }: IconProps) {
 function IconPortfolio({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" className={className} aria-hidden>
-      <path d="M4 7.5A1.5 1.5 0 0 1 5.5 6h4l1.5 2h7.5A1.5 1.5 0 0 1 20 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-10Z" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M4 7.5A1.5 1.5 0 0 1 5.5 6h4l1.5 2h7.5A1.5 1.5 0 0 1 20 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-10Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
     </svg>
   );
 }
@@ -59,7 +67,11 @@ function IconGrid({ className }: IconProps) {
 function IconShield({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" className={className} aria-hidden>
-      <path d="M12 4l7 3v5c0 4-3 7-7 8-4-1-7-4-7-8V7l7-3Z" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M12 4l7 3v5c0 4-3 7-7 8-4-1-7-4-7-8V7l7-3Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
     </svg>
   );
 }
@@ -67,7 +79,11 @@ function IconShield({ className }: IconProps) {
 function IconLogout({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" className={className} aria-hidden>
-      <path d="M14 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2M10 12h10m0 0-3-3m3 3-3 3" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M14 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2M10 12h10m0 0-3-3m3 3-3 3"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
     </svg>
   );
 }
@@ -97,10 +113,12 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
     { key: 'members', to: '/members', label: 'Anggota', icon: IconUsers },
   ];
 
+  if (user) {
+    items.push({ key: 'profile', to: '/profile', label: 'Profil', icon: IconUser });
+  }
   if (user?.role === 'admin') {
     items.push({ key: 'admin', to: '/admin', label: 'Panel admin', icon: IconShield });
   } else if (user) {
-    items.push({ key: 'profile', to: '/dashboard?tab=profile', label: 'Profil', icon: IconUser });
     if (user.status === 'approved' && user.slug) {
       items.push({
         key: 'porto',
@@ -171,14 +189,13 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
               <Avatar name={user.name} src={user.avatarUrl} size="md" muted />
               <div className="min-w-0">
                 <p className="truncate text-sm">{user.name}</p>
-                <p className="truncate font-mono text-[0.625rem] text-muted">
-                  {user.email}
-                </p>
+                <p className="truncate font-mono text-[0.625rem] text-muted">{user.email}</p>
               </div>
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
               <StatusBadge status={user.status} />
               <RoleBadge role={user.role} />
+              {user.role === 'admin' ? <DevBadge /> : null}
             </div>
           </div>
         ) : null}
@@ -201,17 +218,10 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           <div className="grid gap-2">
             <Link
               to="/login"
-              className={cn(buttonClasses('outline', 'sm'), 'justify-center')}
-              onClick={onNavigate}
-            >
-              Masuk
-            </Link>
-            <Link
-              to="/register"
               className={cn(buttonClasses('primary', 'sm'), 'justify-center')}
               onClick={onNavigate}
             >
-              Daftar
+              Masuk
             </Link>
           </div>
         )}
@@ -220,8 +230,11 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-/** Rail sidebar fixed di kiri layar untuk halaman beranda (desktop). */
+/** Rail sidebar fixed di kiri layar — hanya tampil setelah login. */
 export function AppSidebar() {
+  const { user } = useAuth();
+  if (!user) return null;
+
   return (
     <aside
       className="section-dark fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-line bg-subtle lg:block"
@@ -234,10 +247,11 @@ export function AppSidebar() {
   );
 }
 
-/** Drawer navigasi untuk layar kecil, dipanggil dari header. */
+/** Drawer navigasi untuk layar kecil, dipanggil dari header — hanya setelah login. */
 export function MobileSidebar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
 
   useEffect(() => {
     setOpen(false);
@@ -257,6 +271,7 @@ export function MobileSidebar() {
     };
   }, [open]);
 
+  if (!user) return null;
   if (typeof document === 'undefined') return null;
 
   return (
