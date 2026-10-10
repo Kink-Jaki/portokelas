@@ -72,7 +72,7 @@ export default function MembersPage() {
 
       <div className="mt-8">
         {isLoading ? (
-          <CardSkeletonGrid count={6} />
+          <CardSkeletonGrid count={6} separated />
         ) : isError ? (
           <ErrorState error={error} onRetry={() => void refetch()} />
         ) : members.length === 0 ? (

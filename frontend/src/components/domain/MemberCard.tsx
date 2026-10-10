@@ -13,7 +13,7 @@ export function MemberCard({ member, dark = false }: { member: PublicUser; dark?
     <motion.div variants={staggerItem} className="h-full">
       <Link
         to={`/m/${member.slug}`}
-        className={`group flex h-full flex-col justify-between border border-line bg-bg p-6 transition-all duration-300 hover:-translate-y-1 hover:border-line-strong hover:shadow-[0_18px_40px_-28px_rgba(0,0,0,0.45)] ${dark ? 'card-black' : ''}`}
+        className={`group flex h-full flex-col justify-between overflow-hidden rounded-lg border border-line bg-bg p-6 transition-all duration-300 hover:-translate-y-1 hover:border-line-strong hover:shadow-[0_18px_40px_-28px_rgba(0,0,0,0.45)] ${dark ? 'card-black' : ''}`}
       >
         <div className="flex items-start justify-between gap-4">
           <Avatar
@@ -115,7 +115,7 @@ export function MemberCard({ member, dark = false }: { member: PublicUser; dark?
 
 export function MemberCardGrid({ members }: { members: PublicUser[] }) {
   return (
-    <div className="grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {members.map((member, index) => {
         const dark = (Math.floor(index / 3) + (index % 3)) % 2 === 1;
         return <MemberCard key={member.id} member={member} dark={dark} />;

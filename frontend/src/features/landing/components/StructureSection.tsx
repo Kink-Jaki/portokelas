@@ -85,7 +85,7 @@ function MemberCard({ member, dark = false }: { member: PublicUser; dark?: boole
     <StaggerItem className="h-full">
       <div
         onClick={() => navigate(`/m/${member.slug}`)}
-        className={`group flex h-full cursor-pointer flex-col border border-line bg-bg p-5 transition-all duration-300 hover:-translate-y-1 hover:border-line-strong hover:shadow-[0_18px_40px_-28px_rgba(0,0,0,0.45)] sm:p-6 ${dark ? 'card-black' : ''}`}
+        className={`group flex h-full cursor-pointer flex-col overflow-hidden rounded-lg border border-line bg-bg p-5 transition-all duration-300 hover:-translate-y-1 hover:border-line-strong hover:shadow-[0_18px_40px_-28px_rgba(0,0,0,0.45)] sm:p-6 ${dark ? 'card-black' : ''}`}
       >
         <Avatar
           name={member.name}
@@ -155,7 +155,10 @@ export function StructureSection() {
           {isLoading ? (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="flex flex-col gap-5 border border-line p-6">
+                <div
+                  key={index}
+                  className="flex flex-col gap-5 rounded-lg border border-line p-6"
+                >
                   <Skeleton className="h-20 w-20 shrink-0" />
                   <div className="space-y-3">
                     <Skeleton className="h-5 w-2/3" />

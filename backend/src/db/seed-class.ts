@@ -6,6 +6,9 @@
  * Menghapus SELURUH akun yang ada lalu membuat ulang 31 akun anggota kelas.
  * Login memakai NIS (kolom `nim`) dengan password default "password".
  * Akun MUHAMMAD FAIRUZ ZAKY dibuat dengan role `admin` (badge "Dev").
+ *
+ * Field profil bersifat opsional: alias, headline, bio, media sosial, website,
+ * CV, dan tautan lagu Spotify.
  */
 import 'dotenv/config';
 
@@ -16,7 +19,20 @@ import { slugify } from '../lib/slug.js';
 
 const DEFAULT_PASSWORD = 'password';
 
-type ClassMember = { nim: string; name: string; admin?: boolean };
+type ClassMember = {
+  nim: string;
+  name: string;
+  admin?: boolean;
+  alias?: string;
+  headline?: string;
+  bio?: string;
+  githubUrl?: string;
+  linkedinUrl?: string;
+  instagramUrl?: string;
+  websiteUrl?: string;
+  cvUrl?: string;
+  spotifyUrl?: string;
+};
 
 const MEMBERS: ClassMember[] = [
   { nim: '17858', name: 'KEYLA RANI AZAHRA' },
@@ -25,7 +41,18 @@ const MEMBERS: ClassMember[] = [
   { nim: '17882', name: 'ZAHRA ARUM SANJAYA' },
   { nim: '17861', name: 'MARISKA YULIANA SARI' },
   { nim: '17853', name: 'HEYSELL RAMADHANI' },
-  { nim: '17865', name: 'MUHAMMAD FAIRUZ ZAKY', admin: true },
+  {
+    nim: '17865',
+    name: 'MUHAMMAD FAIRUZ ZAKY',
+    admin: true,
+    alias: 'ZAKYY',
+    headline: 'Backend Dev - Prompt Engineer',
+    bio: 'im fish',
+    githubUrl: 'https://github.com/Kink-Jaki',
+    instagramUrl: 'https://instagram.com/fzaky.13',
+    websiteUrl: 'https://fzaky.my.id',
+    spotifyUrl: 'https://open.spotify.com/track/4qqMPUmuvVukyvFHHPty2H?si=0c25cf20a85140c5',
+  },
   { nim: '17854', name: 'INDI ALVIN FADHOILLAH' },
   { nim: '17864', name: 'MUHAMMAD AZHAR RAFIF' },
   { nim: '17881', name: 'YULIANA KRISTIYANINGSIH' },
@@ -80,6 +107,15 @@ async function main() {
     role: member.admin ? ('admin' as const) : ('member' as const),
     status: 'approved' as const,
     slug: uniqueSlug(member.name, usedSlugs),
+    alias: member.alias ?? null,
+    headline: member.headline ?? null,
+    bio: member.bio ?? null,
+    githubUrl: member.githubUrl ?? null,
+    linkedinUrl: member.linkedinUrl ?? null,
+    instagramUrl: member.instagramUrl ?? null,
+    websiteUrl: member.websiteUrl ?? null,
+    cvUrl: member.cvUrl ?? null,
+    spotifyUrl: member.spotifyUrl ?? null,
   }));
 
   await db.insert(users).values(values);

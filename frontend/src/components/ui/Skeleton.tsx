@@ -4,11 +4,22 @@ export function Skeleton({ className }: { className?: string }) {
   return <div aria-hidden className={cn('animate-pulse rounded-sm bg-subtle', className)} />;
 }
 
-export function CardSkeletonGrid({ count = 6 }: { count?: number }) {
+export function CardSkeletonGrid({
+  count = 6,
+  separated = false,
+}: {
+  count?: number;
+  separated?: boolean;
+}) {
   return (
-    <div className="grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+    <div
+      className={cn(
+        'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
+        separated ? 'gap-4' : 'gap-px border border-line bg-line',
+      )}
+    >
       {Array.from({ length: count }).map((_, index) => (
-        <div key={index} className="bg-bg p-6">
+        <div key={index} className={cn('bg-bg p-6', separated && 'rounded-lg border border-line')}>
           <Skeleton className="aspect-[4/3] w-full" />
           <Skeleton className="mt-5 h-4 w-2/3" />
           <Skeleton className="mt-3 h-3 w-full" />
