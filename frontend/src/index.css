@@ -40,6 +40,18 @@
   --danger: #b42318;
   --success: #2f6b3a;
 
+  /* Palet "Editorial Academic Portfolio" — dipakai pada landing hero & header. */
+  --ivory: #f7f3e8;
+  --ivory-alt: #f0e9d9;
+  --ivory-warm: #fffcf4;
+  --forest: #193d32;
+  --forest-soft: #31594a;
+  --burgundy: #7a2435;
+  --burgundy-dark: #5e1b29;
+  --terracotta: #d85a32;
+  --line-warm: #d8d0c0;
+  --ink-soft: #776f60;
+
   /* Grain halus untuk permukaan kertas (dipakai via .paper). */
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
 
@@ -61,6 +73,16 @@
   --color-accent-soft: var(--accent-soft);
   --color-danger: var(--danger);
   --color-success: var(--success);
+  --color-ivory: var(--ivory);
+  --color-ivory-alt: var(--ivory-alt);
+  --color-ivory-warm: var(--ivory-warm);
+  --color-forest: var(--forest);
+  --color-forest-soft: var(--forest-soft);
+  --color-burgundy: var(--burgundy);
+  --color-burgundy-dark: var(--burgundy-dark);
+  --color-terracotta: var(--terracotta);
+  --color-line-warm: var(--line-warm);
+  --color-ink-soft: var(--ink-soft);
 }
 
 @layer base {
@@ -138,6 +160,14 @@
     .container-page {
       padding-inline: 3.5rem;
     }
+  }
+
+  /* Container lebih lebar untuk tata letak editorial (header + hero). */
+  .container-wide {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 90rem;
+    padding-inline: clamp(1.25rem, 5vw, 5rem);
   }
 
   /* Label kecil uppercase monospace — dipakai sebagai eyebrow. */

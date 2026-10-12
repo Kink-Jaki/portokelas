@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { buttonClasses } from '@/components/ui/Button';
@@ -6,15 +6,54 @@ import { MobileSidebar } from './AppSidebar';
 import { developerContact } from '@/lib/site';
 import { cn } from '@/lib/utils';
 
-function navClass({ isActive }: { isActive: boolean }) {
-  return cn(
-    "relative text-sm transition-colors duration-200 after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:bg-accent after:content-[''] after:transition-transform after:duration-300",
-    'hover:text-fg',
-    isActive ? 'text-fg after:scale-x-100' : 'text-muted after:scale-x-0',
+const landingSections = [
+  { label: 'Tentang', href: '#tentang' },
+  { label: 'Wali Kelas', href: '#wali-kelas' },
+  { label: 'Anggota', href: '#anggota' },
+  { label: 'Statistik', href: '#statistik' },
+  { label: 'Memories', href: '#memories' },
+];
+
+/** Navigasi bagian halaman landing — dipindah dari panel indeks hero. */
+function SectionNav() {
+  return (
+    <nav className="hidden items-center gap-7 lg:flex" aria-label="Navigasi bagian halaman">
+      {landingSections.map((item) => (
+        <a
+          key={item.href}
+          href={item.href}
+          className="group relative text-[0.9375rem] text-forest transition-colors duration-200 hover:text-burgundy"
+        >
+          {item.label}
+          <span
+            aria-hidden
+            className="absolute -bottom-1.5 left-0 h-px w-full origin-left scale-x-0 bg-burgundy transition-transform duration-300 group-hover:scale-x-100"
+          />
+        </a>
+      ))}
+    </nav>
   );
 }
 
-export function Logo({ className, compact = false }: { className?: string; compact?: boolean }) {
+function navClass({ isActive }: { isActive: boolean }) {
+  return cn(
+    "relative text-[0.9375rem] transition-colors duration-200 after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:bg-burgundy after:content-[''] after:transition-transform after:duration-300",
+    'text-forest hover:text-burgundy',
+    isActive ? 'after:scale-x-100' : 'after:scale-x-0',
+  );
+}
+
+export function Logo({
+  className,
+  compact = false,
+  variant = 'default',
+}: {
+  className?: string;
+  compact?: boolean;
+  variant?: 'default' | 'editorial';
+}) {
+  const editorial = variant === 'editorial';
+
   return (
     <Link
       to="/"
@@ -23,14 +62,33 @@ export function Logo({ className, compact = false }: { className?: string; compa
     >
       <span
         aria-hidden
-        className="grid h-9 w-9 shrink-0 place-items-center border border-line-strong bg-invert font-display text-sm leading-none text-invert-fg transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-accent-fg"
+        className={cn(
+          'grid shrink-0 place-items-center font-display leading-none transition-colors duration-300',
+          editorial
+            ? 'h-12 w-12 rounded-[3px] bg-forest text-lg text-ivory group-hover:bg-burgundy lg:h-14 lg:w-14 lg:text-xl'
+            : 'h-9 w-9 border border-line-strong bg-invert text-sm text-invert-fg group-hover:border-accent group-hover:bg-accent group-hover:text-accent-fg',
+        )}
       >
         SK
       </span>
       <span className="flex flex-col leading-none">
-        <span className="font-display text-lg tracking-tight">Satu Kelas</span>
+        <span
+          className={cn(
+            'font-display tracking-tight',
+            editorial ? 'text-xl font-semibold text-forest lg:text-2xl' : 'text-lg',
+          )}
+        >
+          Satu Kelas
+        </span>
         {!compact ? (
-          <span className="mt-1 hidden font-mono text-[0.5625rem] uppercase tracking-[0.24em] text-muted sm:block">
+          <span
+            className={cn(
+              'mt-1 hidden font-mono text-[0.5625rem] uppercase sm:block',
+              editorial
+                ? 'mt-1.5 text-[0.625rem] tracking-[0.3em] text-forest-soft'
+                : 'tracking-[0.24em] text-muted',
+            )}
+          >
             Portofolio Anggota
           </span>
         ) : null}
@@ -41,51 +99,45 @@ export function Logo({ className, compact = false }: { className?: string; compa
 
 export function SiteHeader() {
   const { user, isLoading } = useAuth();
+  const { pathname } = useLocation();
+  const isLanding = pathname === '/';
 
   return (
-    <header className="section-dark sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur-md">
-      <div className="container-page flex h-16 items-center justify-between gap-6 lg:h-[4.75rem]">
+    <header className="sticky top-0 z-40 border-b border-line-warm bg-ivory/90 backdrop-blur-md">
+      <div className="container-wide flex h-20 items-center justify-between gap-6 lg:h-[6.3rem]">
         <div className="flex items-center gap-3">
           <MobileSidebar />
-          <Logo />
+          <Logo variant="editorial" />
         </div>
 
-        <nav className="hidden items-center gap-8 md:flex" aria-label="Navigasi utama">
-          <NavLink to="/members" className={navClass}>
-            Anggota
-          </NavLink>
-          {user ? (
-            <NavLink to="/dashboard" className={navClass}>
-              Dashboard
-            </NavLink>
-          ) : null}
-          {user?.role === 'admin' ? (
-            <NavLink to="/admin" className={navClass}>
-              Admin
-            </NavLink>
-          ) : null}
-        </nav>
-
-        <div className="flex items-center gap-2">
-          {isLoading ? (
-            <div className="h-9 w-24 animate-pulse rounded-sm bg-subtle" />
+        <div className="flex items-center gap-8">
+          {isLanding ? (
+            <SectionNav />
           ) : user ? (
-            <Link
-              to={user.role === 'admin' ? '/admin' : '/dashboard'}
-              className={buttonClasses('outline', 'sm', 'hidden sm:inline-flex')}
-            >
-              {user.name.split(' ')[0]}
-            </Link>
-          ) : (
-            <>
-              <Link to="/members" className={buttonClasses('ghost', 'sm', 'hidden sm:inline-flex')}>
-                Direktori
+            <nav className="hidden items-center gap-8 md:flex" aria-label="Navigasi utama">
+              <NavLink to="/dashboard" className={navClass}>
+                Dashboard
+              </NavLink>
+              {user.role === 'admin' ? (
+                <NavLink to="/admin" className={navClass}>
+                  Admin
+                </NavLink>
+              ) : null}
+            </nav>
+          ) : null}
+
+          <div className="flex items-center gap-2">
+            {isLoading ? (
+              <div className="h-9 w-24 animate-pulse rounded-sm bg-ivory-alt" />
+            ) : user ? (
+              <Link
+                to={user.role === 'admin' ? '/admin' : '/dashboard'}
+                className={buttonClasses('forest', 'sm', 'hidden sm:inline-flex')}
+              >
+                {user.name.split(' ')[0]}
               </Link>
-              <Link to="/login" className={buttonClasses('primary', 'sm')}>
-                Masuk
-              </Link>
-            </>
-          )}
+            ) : null}
+          </div>
         </div>
       </div>
     </header>
