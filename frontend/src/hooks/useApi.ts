@@ -17,6 +17,8 @@ import type {
   ProfilePayload,
   PublicUser,
   Teacher,
+  UpdateEmailPayload,
+  UpdatePasswordPayload,
 } from '@/types/api';
 
 /* ------------------------------ Profil ------------------------------ */
@@ -67,6 +69,31 @@ export function useUploadAvatar() {
       toast.success('Foto profil diperbarui.');
     },
     onError: (error) => toastApiError(error, 'Gagal mengunggah foto profil.'),
+  });
+}
+
+export function useUpdateEmail() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdateEmailPayload) =>
+      api.patch<{ user: MemberProfile }>('/me/email', payload),
+    onSuccess: (data) => {
+      queryClient.setQueryData(queryKeys.me, data.user);
+      toast.success('Email berhasil diperbarui.');
+    },
+    onError: (error) => toastApiError(error, 'Gagal memperbarui email.'),
+  });
+}
+
+export function useUpdatePassword() {
+  return useMutation({
+    mutationFn: (payload: UpdatePasswordPayload) =>
+      api.patch<{ updated: boolean }>('/me/password', payload),
+    onSuccess: () => {
+      toast.success('Password berhasil diperbarui.');
+    },
+    onError: (error) => toastApiError(error, 'Gagal memperbarui password.'),
   });
 }
 

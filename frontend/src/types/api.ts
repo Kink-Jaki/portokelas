@@ -149,6 +149,16 @@ export type ProjectPatchPayload = Partial<ProjectPayload>;
 /** Update profil + role oleh admin (PATCH /admin/users/:id). */
 export type AdminUpdateUserPayload = ProfilePayload & { role?: UserRole };
 
+export type UpdateEmailPayload = {
+  email: string;
+  password: string;
+};
+
+export type UpdatePasswordPayload = {
+  currentPassword: string;
+  newPassword: string;
+};
+
 export type ValidationIssue = { path: string; message: string };
 
 export type SpotifyEntityType =

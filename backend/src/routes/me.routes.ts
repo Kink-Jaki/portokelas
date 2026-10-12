@@ -9,6 +9,8 @@ import { zJson } from '../lib/validate.js';
 import { getCurrentUser, requireAuth, type AppEnv } from '../middleware/auth.js';
 import {
   addProjectImages,
+  changeUserEmail,
+  changeUserPassword,
   createMemory,
   createProject,
   deleteMemoryForUser,
@@ -22,7 +24,7 @@ import {
 } from '../services/index.js';
 import { createProjectSchema, updateProjectSchema } from '../validators/project.js';
 import { memoryCaption } from '../validators/memory.js';
-import { updateProfileSchema } from '../validators/user.js';
+import { updateEmailSchema, updatePasswordSchema, updateProfileSchema } from '../validators/user.js';
 
 type FormValues = Record<string, string | File | (string | File)[]>;
 
@@ -63,6 +65,18 @@ export const meRoutes = new Hono<AppEnv>()
     const updated = await updateProfile(user.id, { ...input, name: input.name ?? user.name });
     if (!updated) throw AppError.internal('Gagal memperbarui profil');
     return c.json(ok({ user: updated }));
+  })
+
+  .patch('/email', zJson(updateEmailSchema), async (c) => {
+    const user = getCurrentUser(c);
+    const updated = await changeUserEmail(user.id, c.req.valid('json'));
+    return c.json(ok({ user: updated }));
+  })
+
+  .patch('/password', zJson(updatePasswordSchema), async (c) => {
+    const user = getCurrentUser(c);
+    await changeUserPassword(user.id, c.req.valid('json'));
+    return c.json(ok({ updated: true }));
   })
 
   .post('/avatar', async (c) => {

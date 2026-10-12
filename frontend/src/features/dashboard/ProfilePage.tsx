@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 
 import { ProfilePanel } from './ProfilePanel';
+import { AccountSecurityPanel } from './AccountSecurityPanel';
 import { AnimatedRule } from '@/components/ui/Reveal';
 import { fadeUp } from '@/lib/motion';
 
@@ -21,6 +22,18 @@ export default function ProfilePage() {
 
       <div className="mt-10">
         <ProfilePanel />
+      </div>
+
+      <AnimatedRule className="mt-14" />
+
+      <div className="mt-10">
+        <h2 className="font-display text-3xl leading-tight">Keamanan akun</h2>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
+          Perbarui email dan password untuk menjaga keamanan akun Anda.
+        </p>
+        <div className="mt-8">
+          <AccountSecurityPanel />
+        </div>
       </div>
     </div>
   );

@@ -50,7 +50,7 @@ bun install
 
 # 2. Siapkan environment backend
 cp backend/.env.example backend/.env      # Windows: copy backend\.env.example backend\.env
-#   isi DATABASE_URL, JWT_SECRET, dan kredensial admin
+#   isi DATABASE_URL & JWT_SECRET (JWT_SECRET minimal 32 karakter)
 
 # 3. Siapkan environment frontend (opsional untuk dev)
 cp frontend/.env.example frontend/.env
@@ -58,8 +58,10 @@ cp frontend/.env.example frontend/.env
 # 4. Jalankan migrasi skema
 bun run db:migrate
 
-# 5. Buat akun admin dari nilai ADMIN_* di backend/.env
-bun run seed:admin
+# 5. Isi data akun kelas (login pakai NIS, password default "password")
+bun run seed:class
+#    Opsional: buat akun admin terpisah dari nilai ADMIN_* di backend/.env
+# bun run seed:admin
 
 # 6. Jalankan backend + frontend (dua terminal)
 bun run dev:backend      # http://localhost:8787
@@ -83,7 +85,7 @@ Atau jalankan keduanya sekaligus dari root: `bun run dev`.
 | `UPLOAD_DIR` | tidak | Default `uploads` (relatif terhadap folder `backend`). |
 | `MAX_UPLOAD_SIZE_MB` | tidak | Default `2`. |
 | `PUBLIC_URL` | tidak | Origin publik backend, dipakai untuk penyusunan tautan. |
-| `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` | ya (untuk seed) | Dipakai `bun run seed:admin`. |
+| `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` | tidak | Hanya dipakai `bun run seed:admin` (akun admin opsional). Seeder utama `seed:class` tidak memerlukannya. |
 
 ### Konfigurasi `frontend/.env`
 
@@ -107,7 +109,8 @@ Atau jalankan keduanya sekaligus dari root: `bun run dev`.
 | `bun run db:generate` | Buat migrasi baru setelah mengubah `schema.ts` |
 | `bun run db:push` | Sinkronkan skema tanpa file migrasi (prototipe) |
 | `bun run db:studio` | Drizzle Studio |
-| `bun run seed:admin` | Buat/perbarui akun admin |
+| `bun run seed:class` | Hapus semua akun lalu buat 31 akun kelas (login pakai NIS) |
+| `bun run seed:admin` | Buat/perbarui akun admin dari `ADMIN_*` (opsional) |
 
 ## Struktur Proyek
 

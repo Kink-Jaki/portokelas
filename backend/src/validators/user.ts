@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { passwordSchema } from './auth.js';
+
 const nullableText = (max: number, label: string) =>
   z
     .string()
@@ -61,6 +63,28 @@ export const adminUpdateUserSchema = z
   .refine((value) => Object.keys(value).length > 0, 'Tidak ada perubahan yang dikirim');
 
 export type AdminUpdateUserInput = z.infer<typeof adminUpdateUserSchema>;
+
+export const updateEmailSchema = z
+  .object({
+    email: z.string().trim().toLowerCase().email('Format email tidak valid').max(160),
+    password: z.string().min(1, 'Password wajib diisi').max(128),
+  })
+  .strict();
+
+export type UpdateEmailInput = z.infer<typeof updateEmailSchema>;
+
+export const updatePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Password saat ini wajib diisi').max(128),
+    newPassword: passwordSchema,
+  })
+  .strict()
+  .refine((value) => value.currentPassword !== value.newPassword, {
+    message: 'Password baru harus berbeda dari password lama',
+    path: ['newPassword'],
+  });
+
+export type UpdatePasswordInput = z.infer<typeof updatePasswordSchema>;
 
 export const paginationSchema = z.object({
   page: z.coerce.number().int().min(1).max(1000).default(1),

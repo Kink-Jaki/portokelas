@@ -32,6 +32,34 @@ export const profileSchema = z.object({
 
 export type ProfileFormValues = z.infer<typeof profileSchema>;
 
+export const accountEmailSchema = z.object({
+  email: z.string().trim().email('Format email tidak valid').max(160, 'Email terlalu panjang'),
+  password: z.string().min(1, 'Password wajib diisi'),
+});
+
+export type AccountEmailFormValues = z.infer<typeof accountEmailSchema>;
+
+export const accountPasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Password saat ini wajib diisi'),
+    newPassword: z
+      .string()
+      .min(8, 'Password minimal 8 karakter')
+      .max(128, 'Password terlalu panjang')
+      .regex(/[A-Za-z]/, 'Password harus mengandung minimal satu huruf'),
+    confirmPassword: z.string().min(1, 'Konfirmasi password wajib diisi'),
+  })
+  .refine((value) => value.newPassword !== value.currentPassword, {
+    message: 'Password baru harus berbeda dari password lama',
+    path: ['newPassword'],
+  })
+  .refine((value) => value.newPassword === value.confirmPassword, {
+    message: 'Konfirmasi password tidak cocok',
+    path: ['confirmPassword'],
+  });
+
+export type AccountPasswordFormValues = z.infer<typeof accountPasswordSchema>;
+
 export const projectSchema = z.object({
   title: z
     .string()
