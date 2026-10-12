@@ -16,11 +16,11 @@ lalu mempublikasikan profil dan projectnya. Admin memoderasi anggota dan project
 | Admin | Login admin, approval/penolakan anggota (dengan alasan), moderasi sembunyikan/hapus project, daftar seluruh anggota & project |
 | Keamanan | Argon2id, JWT httpOnly cookie, rate limit login/registrasi, validasi Zod di frontend + backend, proteksi path traversal, RBAC `member`/`admin` |
 
-> **Catatan tampilan:** frontend saat ini disajikan sebagai **landing page satu halaman**. Hanya `/`
-> yang dirender; seluruh path lain (`/members`, `/login`, `/dashboard`, `/admin`, dan lainnya)
-> dialihkan ke `/`, dan semua CTA memakai anchor antar-section. Backend, database, dan API tetap
-> utuh. Halaman lama masih ada di `frontend/src/features/` dan dapat dipasang kembali ke router
-> di `frontend/src/main.tsx` bila dibutuhkan.
+> **Catatan tampilan:** seluruh route aktif di `frontend/src/main.tsx` — landing (`/`), direktori
+> anggota (`/members`), portofolio anggota (`/m/:slug`), detail project, login/registrasi, dashboard,
+> dan admin. Desain memakai arah *modern editorial*: kertas hangat, serif display (Fraunces), aksen
+> vermilion tunggal, aturan/nomor section, dan grid bergaris rambut. Backend, database, dan API tetap
+> utuh.
 
 ## Alur Status Anggota
 

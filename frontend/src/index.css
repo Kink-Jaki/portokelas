@@ -1,33 +1,49 @@
 @import 'tailwindcss';
 
+/* =========================================================================
+   DESIGN TOKENS — "Modern Editorial Developer Portfolio"
+   Warm paper + charcoal + satu aksen vermilion. Semua utilities warna
+   diturunkan dari variabel di bawah sehingga satu perubahan menyebar rata.
+   ========================================================================= */
+
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Playfair Display', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-display: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Radius sengaja tajam — bahasa visual editorial, bukan kartu SaaS. */
+  --radius-xs: 1px;
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-2xl: 8px;
+
+  /* Kurva gerak. */
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-quart: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 :root {
-  --bg: #ffffff;
-  --bg-subtle: #f6f6f6;
-  --bg-elevated: #ffffff;
-  --fg: #0a0a0a;
-  --fg-muted: #6e6e6e;
-  --line: #e4e4e4;
-  --line-strong: #c9c9c9;
-  --invert-bg: #0a0a0a;
-  --invert-fg: #fafafa;
+  --bg: #f4f0e7;
+  --bg-subtle: #e9e2d3;
+  --bg-elevated: #fbf8f2;
+  --fg: #17140f;
+  --fg-muted: #6d6557;
+  --line: #ddd5c3;
+  --line-strong: #b9ae97;
+  --invert-bg: #17140f;
+  --invert-fg: #f6f2e7;
+  --accent: #cd4520;
+  --accent-fg: #fbf8f2;
+  --accent-soft: rgba(205, 69, 32, 0.1);
   --danger: #b42318;
-  --success: #15803d;
-}
+  --success: #2f6b3a;
 
-html {
-  scroll-behavior: smooth;
-}
+  /* Grain halus untuk permukaan kertas (dipakai via .paper). */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+  color-scheme: light;
 }
 
 @theme inline {
@@ -40,6 +56,9 @@ html {
   --color-line-strong: var(--line-strong);
   --color-invert: var(--invert-bg);
   --color-invert-fg: var(--invert-fg);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
   --color-danger: var(--danger);
   --color-success: var(--success);
 }
@@ -52,6 +71,7 @@ html {
 
   body {
     background-color: var(--bg);
+    background-image: var(--grain);
     color: var(--fg);
     font-family: var(--font-sans);
     font-feature-settings: 'cv11', 'ss01';
@@ -60,20 +80,27 @@ html {
   }
 
   ::selection {
-    background: var(--fg);
-    color: var(--bg);
+    background: var(--accent);
+    color: var(--accent-fg);
   }
 
   :focus-visible {
-    outline: 2px solid var(--fg);
-    outline-offset: 2px;
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
   }
 
   h1,
   h2,
   h3 {
     font-family: var(--font-display);
+    font-optical-sizing: auto;
     letter-spacing: -0.02em;
+    font-weight: 500;
+  }
+
+  /* Angka besar lebih rapat dan berkarakter. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -93,19 +120,27 @@ html {
 }
 
 @layer components {
+  /* Container utama dengan max-width dan padding horizontal konsisten. */
   .container-page {
     width: 100%;
     margin-inline: auto;
-    max-width: 78rem;
+    max-width: 82rem;
     padding-inline: 1.25rem;
   }
 
   @media (min-width: 768px) {
     .container-page {
-      padding-inline: 2rem;
+      padding-inline: 2.5rem;
     }
   }
 
+  @media (min-width: 1280px) {
+    .container-page {
+      padding-inline: 3.5rem;
+    }
+  }
+
+  /* Label kecil uppercase monospace — dipakai sebagai eyebrow. */
   .eyebrow {
     font-family: var(--font-mono);
     font-size: 0.6875rem;
@@ -114,25 +149,64 @@ html {
     color: var(--fg-muted);
   }
 
-  /* Garis tipis dekoratif */
+  /* Nomor indeks section, selalu aksen. */
+  .index-num {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+
   .rule {
     height: 1px;
     background: var(--line);
   }
 
-  /* Section dengan palet terkunci: memaksa latar gelap/terang dan
-     membalik seluruh variabel warna turunan sehingga utilities seperti
-     bg-bg, text-fg, text-muted, dan border-line ikut menyesuaikan. */
+  /* Permukaan kertas dengan grain sangat halus. */
+  .paper {
+    background-image: var(--grain);
+    background-size: 140px 140px;
+  }
+
+  /* Tautan dengan garis bawah yang tumbuh dari kiri. */
+  .link-underline {
+    position: relative;
+  }
+
+  .link-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1px;
+    width: 100%;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s var(--ease-editorial);
+  }
+
+  .link-underline:hover::after,
+  .link-underline:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  /* Section dengan palet terkunci: memaksa latar gelap/terang dan membalik
+     variabel turunan agar utilities bg-bg, text-fg, border-line ikut pindah. */
   .section-dark {
-    --bg: #0a0a0a;
-    --bg-subtle: #121212;
-    --bg-elevated: #141414;
-    --fg: #f4f4f4;
-    --fg-muted: #9a9a9a;
-    --line: #262626;
-    --line-strong: #3d3d3d;
-    --invert-bg: #fafafa;
-    --invert-fg: #0a0a0a;
+    --bg: #14110c;
+    --bg-subtle: #1d1913;
+    --bg-elevated: #1a1610;
+    --fg: #f3efe4;
+    --fg-muted: #a2998a;
+    --line: #2e2820;
+    --line-strong: #463e30;
+    --invert-bg: #f3efe4;
+    --invert-fg: #14110c;
+    --accent: #e8603a;
+    --accent-fg: #14110c;
+    --accent-soft: rgba(232, 96, 58, 0.14);
     --danger: #f08a80;
     --success: #6ee7a8;
     background-color: var(--bg);
@@ -140,36 +214,20 @@ html {
   }
 
   .section-light {
-    --bg: #ffffff;
-    --bg-subtle: #f6f6f6;
-    --bg-elevated: #ffffff;
-    --fg: #0a0a0a;
-    --fg-muted: #6e6e6e;
-    --line: #e4e4e4;
-    --line-strong: #c9c9c9;
-    --invert-bg: #0a0a0a;
-    --invert-fg: #fafafa;
+    --bg: #f4f0e7;
+    --bg-subtle: #e9e2d3;
+    --bg-elevated: #fbf8f2;
+    --fg: #17140f;
+    --fg-muted: #6d6557;
+    --line: #ddd5c3;
+    --line-strong: #b9ae97;
+    --invert-bg: #17140f;
+    --invert-fg: #f6f2e7;
+    --accent: #cd4520;
+    --accent-fg: #fbf8f2;
+    --accent-soft: rgba(205, 69, 32, 0.1);
     --danger: #b42318;
-    --success: #15803d;
-    background-color: var(--bg);
-    color: var(--fg);
-  }
-
-  /* Kartu catur: kotak hitam membalik seluruh variabel turunan sehingga
-     utilities seperti bg-bg, text-fg, text-muted, dan border-line
-     otomatis menyesuaikan ke palet gelap. */
-  .card-black {
-    --bg: #0c0c0c;
-    --bg-subtle: #171717;
-    --bg-elevated: #141414;
-    --fg: #f5f5f5;
-    --fg-muted: #9a9a9a;
-    --line: #2b2b2b;
-    --line-strong: #454545;
-    --invert-bg: #fafafa;
-    --invert-fg: #0a0a0a;
-    --danger: #f08a80;
-    --success: #6ee7a8;
+    --success: #2f6b3a;
     background-color: var(--bg);
     color: var(--fg);
   }

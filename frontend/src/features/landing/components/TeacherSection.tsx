@@ -179,7 +179,7 @@ export function TeacherSection() {
           {teachers.map((teacher) => (
             <div
               key={teacher.id}
-              className="aspect-[4/5] w-full shrink-0 snap-start sm:w-1/2 lg:w-1/3"
+              className="aspect-[4/5] w-full shrink-0 snap-start"
             >
               <TeacherPhoto teacher={teacher} />
             </div>
@@ -217,11 +217,15 @@ export function TeacherSection() {
 
   return (
     <section id="wali-kelas" className="section-dark border-b border-line">
-      <div className="container-page grid items-center gap-10 py-16 lg:grid-cols-2 lg:gap-16 lg:py-24">
+      <div className="container-page grid items-center gap-10 py-16 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-16 lg:py-24">
         <Reveal>{carousel}</Reveal>
 
         <Reveal delay={0.08}>
-          <p className="eyebrow">Wali Kelas</p>
+          <p className="eyebrow flex items-center gap-3">
+            <span className="index-num">02</span>
+            <span aria-hidden className="h-px w-6 bg-line-strong" />
+            Wali Kelas
+          </p>
 
           <div className="mt-6 min-h-56 sm:min-h-52">
             {current ? (

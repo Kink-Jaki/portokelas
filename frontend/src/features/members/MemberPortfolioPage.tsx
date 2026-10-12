@@ -4,7 +4,8 @@ import { Link, useParams } from 'react-router-dom';
 
 import { Avatar } from '@/components/ui/Avatar';
 import { DevBadge } from '@/components/ui/Badge';
-import { AnimatedRule, Reveal, Stagger } from '@/components/ui/Reveal';
+import { AnimatedRule, Reveal } from '@/components/ui/Reveal';
+import { SectionHeader } from '@/components/ui/SectionHeader';
 import { CardSkeletonGrid, Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
@@ -13,6 +14,7 @@ import { ProjectCardGrid } from '@/components/domain/ProjectCard';
 import { SpotifyPlayer } from '@/components/domain/SpotifyPlayer';
 import { useMember, useMemberProjects } from '@/hooks/usePublic';
 import { fadeUp } from '@/lib/motion';
+import { formatDate } from '@/lib/utils';
 
 function InstagramIcon() {
   return (
@@ -85,17 +87,19 @@ export default function MemberPortfolioPage() {
 
   if (memberQuery.isLoading) {
     return (
-      <div className="container-page py-16">
-        <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:gap-12">
-          <Skeleton className="h-32 w-32 sm:h-40 sm:w-40" />
-          <div className="flex-1 space-y-4">
-            <Skeleton className="h-10 w-72" />
-            <Skeleton className="h-3 w-48" />
-            <Skeleton className="h-3 w-full max-w-xl" />
-            <Skeleton className="h-3 w-2/3 max-w-md" />
+      <div className="container-page py-16 lg:py-20">
+        <div className="grid gap-10 lg:grid-cols-12">
+          <div className="space-y-5 lg:col-span-8">
+            <Skeleton className="h-3 w-40" />
+            <Skeleton className="h-16 w-3/4" />
+            <Skeleton className="h-4 w-full max-w-xl" />
+            <Skeleton className="h-4 w-2/3 max-w-md" />
+          </div>
+          <div className="lg:col-span-4 lg:flex lg:justify-end">
+            <Skeleton className="h-40 w-40" />
           </div>
         </div>
-        <div className="mt-16">
+        <div className="mt-14">
           <CardSkeletonGrid count={3} />
         </div>
       </div>
@@ -124,80 +128,140 @@ export default function MemberPortfolioPage() {
     );
   }
 
+  const projectCountLabel = projectsQuery.isLoading ? '—' : String(projects.length);
+
   return (
-    <div className="container-page py-14">
-      <motion.header
-        variants={fadeUp}
-        initial="hidden"
-        animate="show"
-        className="flex flex-col gap-8 sm:flex-row sm:items-start sm:gap-12"
-      >
-        <Avatar name={member.name} src={member.avatarUrl} size="xl" />
+    <div className="container-page py-16 lg:py-20">
+      <motion.header variants={fadeUp} initial="hidden" animate="show">
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
+          <div className="order-2 min-w-0 lg:order-1 lg:col-span-8">
+            <p className="eyebrow flex items-center gap-3">
+              <span className="index-num">01</span>
+              <span aria-hidden className="h-px w-6 bg-line-strong" />
+              Portofolio Anggota
+            </p>
 
-        <div className="min-w-0 flex-1">
-          <p className="eyebrow">Portofolio Anggota</p>
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <h1 className="font-display text-4xl leading-tight sm:text-5xl">
-              {member.alias || member.name}
-            </h1>
-            {member.role === 'admin' ? <DevBadge /> : null}
+            <div className="mt-6 flex flex-wrap items-end gap-x-4 gap-y-3">
+              <h1 className="text-balance font-display text-[clamp(2.75rem,7vw,5.25rem)] leading-[0.95] tracking-[-0.035em]">
+                {member.alias || member.name}
+              </h1>
+              {member.role === 'admin' ? <DevBadge /> : null}
+            </div>
+
+            {member.alias ? (
+              <p className="mt-3 font-mono text-sm uppercase tracking-[0.16em] text-muted">
+                {member.name}
+              </p>
+            ) : null}
+
+            {member.headline ? (
+              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-fg sm:text-xl">
+                {member.headline}
+              </p>
+            ) : null}
+
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <ActionButton href={member.instagramUrl}>
+                <InstagramIcon />
+                Instagram
+              </ActionButton>
+              <ActionButton href={member.githubUrl}>
+                <GitHubIcon />
+                GitHub
+              </ActionButton>
+              <ActionButton href={member.cvUrl} variant="primary">
+                <CvIcon />
+                Buka CV
+              </ActionButton>
+            </div>
           </div>
-          {member.alias ? (
-            <p className="mt-2 font-mono text-base uppercase tracking-[0.16em] text-muted">
-              {member.name}
-            </p>
-          ) : null}
 
-          {member.headline ? (
-            <p className="mt-2 max-w-2xl font-display text-lg leading-relaxed text-fg">
-              {member.headline}
-            </p>
-          ) : null}
-
-          <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-            <ActionButton href={member.instagramUrl}>
-              <InstagramIcon />
-              Instagram
-            </ActionButton>
-            <ActionButton href={member.githubUrl}>
-              <GitHubIcon />
-              GitHub
-            </ActionButton>
-            <ActionButton href={member.cvUrl} variant="primary">
-              <CvIcon />
-              Buka CV
-            </ActionButton>
+          <div className="order-1 lg:order-2 lg:col-span-4 lg:flex lg:justify-end">
+            <div className="relative">
+              <span
+                aria-hidden
+                className="absolute -left-3 -top-3 hidden h-full w-full border border-line-strong lg:block"
+              />
+              <Avatar
+                name={member.name}
+                src={member.avatarUrl}
+                size="xl"
+                className="relative border-line-strong"
+              />
+            </div>
           </div>
         </div>
+
+        <dl className="mt-14 grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-3">
+          <div className="bg-bg p-6">
+            <dt className="eyebrow">Peran</dt>
+            <dd className="mt-3 font-display text-lg">
+              {member.role === 'admin' ? 'Admin / Developer' : 'Anggota kelas'}
+            </dd>
+          </div>
+          <div className="bg-bg p-6">
+            <dt className="eyebrow">Bergabung</dt>
+            <dd className="mt-3 font-display text-lg">{formatDate(member.createdAt)}</dd>
+          </div>
+          <div className="bg-bg p-6">
+            <dt className="eyebrow">Project tayang</dt>
+            <dd className="mt-3 font-display text-lg tabular-nums">{projectCountLabel}</dd>
+          </div>
+        </dl>
       </motion.header>
 
       {member.spotify ? (
-        <div className="mt-14 w-full">
-          <SpotifyPlayer spotify={member.spotify} />
-        </div>
+        <Reveal className="mt-12">
+          <div className="overflow-hidden border border-line">
+            <div className="flex items-center justify-between gap-4 border-b border-line px-5 py-3">
+              <p className="eyebrow flex items-center gap-2.5">
+                <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
+                Sedang didengar
+              </p>
+              <p className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-muted">
+                Spotify
+              </p>
+            </div>
+            <div className="p-3 sm:p-4">
+              <SpotifyPlayer spotify={member.spotify} />
+            </div>
+          </div>
+        </Reveal>
       ) : null}
 
       {member.bio ? (
-        <div className={member.spotify ? 'mt-8 w-full' : 'mt-14 w-full'}>
-          <p className="whitespace-pre-line text-sm leading-relaxed text-muted">{member.bio}</p>
-        </div>
-      ) : null}
-
-      <AnimatedRule className="mt-14" />
-
-      <section className="mt-12" aria-labelledby="projects-heading">
-        <Reveal>
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 id="projects-heading" className="font-display text-3xl">
-              Project
-            </h2>
-            <p className="font-mono text-xs uppercase tracking-[0.16em] text-muted">
-              {projects.length} project
+        <Reveal className={member.spotify ? 'mt-10' : 'mt-12'}>
+          <div className="grid gap-4 lg:grid-cols-12 lg:gap-8">
+            <p className="eyebrow lg:col-span-2">Bio</p>
+            <p className="whitespace-pre-line text-base leading-relaxed text-muted lg:col-span-10 lg:max-w-3xl lg:text-lg lg:leading-[1.75]">
+              {member.bio}
             </p>
           </div>
         </Reveal>
+      ) : null}
 
-        <div className="mt-8">
+      <AnimatedRule className="mt-16" />
+
+      <section className="mt-12" aria-label="Project">
+        <Reveal>
+          <SectionHeader
+            index="02"
+            eyebrow="Karya"
+            title="Project"
+            description={
+              projects.length > 0
+                ? 'Kumpulan project yang dikerjakan dan dibagikan secara publik.'
+                : undefined
+            }
+            action={
+              <p className="font-mono text-xs uppercase tracking-[0.16em] text-muted">
+                {projects.length} project
+              </p>
+            }
+          />
+        </Reveal>
+
+        <div className="mt-10">
           {projectsQuery.isLoading ? (
             <CardSkeletonGrid count={3} />
           ) : projectsQuery.isError ? (
@@ -210,9 +274,7 @@ export default function MemberPortfolioPage() {
               />
             </div>
           ) : (
-            <Stagger>
-              <ProjectCardGrid projects={projects} ownerSlug={member.slug} />
-            </Stagger>
+            <ProjectCardGrid projects={projects} ownerSlug={member.slug} featured />
           )}
         </div>
       </section>

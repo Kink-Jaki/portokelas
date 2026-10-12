@@ -9,7 +9,7 @@ const toneClasses: Record<Tone, string> = {
   outline: 'border-line-strong text-muted',
   danger: 'border-danger text-danger',
   success: 'border-success text-success',
-  warning: 'border-yellow-500 bg-yellow-300 text-yellow-950',
+  warning: 'border-accent bg-accent-soft text-accent',
 };
 
 export type BadgeProps = {
@@ -65,14 +65,14 @@ export function RoleBadge({ role }: { role: 'member' | 'admin' }) {
   );
 }
 
-/** Badge "Dev" beroutline kuning untuk anggota berrole admin. */
+/** Badge "Dev" beraksen untuk anggota berrole admin. */
 export function DevBadge() {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-sm border border-yellow-500 bg-white px-2.5 py-0.5',
-        'font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-yellow-700',
-        'transition-colors duration-200 hover:bg-yellow-500 hover:text-white',
+        'inline-flex items-center gap-1.5 rounded-sm border border-accent px-2.5 py-0.5',
+        'font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-accent',
+        'transition-colors duration-200 hover:bg-accent hover:text-accent-fg',
       )}
     >
       Dev

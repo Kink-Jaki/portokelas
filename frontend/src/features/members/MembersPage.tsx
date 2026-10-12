@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { buttonClasses } from '@/components/ui/Button';
 import { AnimatedRule } from '@/components/ui/Reveal';
+import { SectionHeader } from '@/components/ui/SectionHeader';
 import { useMembers } from '@/hooks/usePublic';
 import { fadeUp } from '@/lib/motion';
 
@@ -29,27 +30,39 @@ export default function MembersPage() {
   const meta = data?.meta;
 
   return (
-    <div className="container-page py-16">
-      <motion.header variants={fadeUp} initial="hidden" animate="show" className="max-w-2xl">
-        <p className="eyebrow">Direktori</p>
-        <h1 className="mt-4 font-display text-4xl sm:text-5xl">Anggota kelas</h1>
-        <p className="mt-4 text-sm leading-relaxed text-muted">
-          Hanya anggota yang sudah disetujui admin yang ditampilkan di sini. Klik nama untuk membuka
-          portofolio pribadi beserta project-nya.
-        </p>
+    <div className="container-page py-16 lg:py-20">
+      <motion.header variants={fadeUp} initial="hidden" animate="show">
+        <SectionHeader
+          as="h1"
+          index="0"
+          eyebrow="Direktori"
+          title="Anggota kelas"
+          description="Hanya anggota yang sudah disetujui admin yang ditampilkan di sini. Klik kartu untuk membuka portofolio pribadi beserta project-nya."
+        />
       </motion.header>
 
       <AnimatedRule className="mt-10" />
 
       <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-sm">
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            aria-hidden
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted"
+          >
+            <circle cx="11" cy="11" r="6" stroke="currentColor" strokeWidth="1.5" />
+            <path d="m20 20-3.5-3.5" stroke="currentColor" strokeWidth="1.5" />
+          </svg>
           <input
             type="search"
             value={searchInput}
             onChange={(event) => setSearchInput(event.target.value)}
             placeholder="Cari nama atau headline…"
             aria-label="Cari anggota"
-            className="w-full rounded-sm border border-line bg-bg py-2.5 pl-3.5 pr-9 text-sm placeholder:text-muted/70 focus:border-line-strong focus:outline-none focus:ring-1 focus:ring-line-strong"
+            className="w-full rounded-sm border border-line bg-bg py-2.5 pl-10 pr-9 text-sm placeholder:text-muted/70 transition-colors duration-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
           />
           {searchInput ? (
             <button
@@ -72,7 +85,7 @@ export default function MembersPage() {
 
       <div className="mt-8">
         {isLoading ? (
-          <CardSkeletonGrid count={6} separated />
+          <CardSkeletonGrid count={6} />
         ) : isError ? (
           <ErrorState error={error} onRetry={() => void refetch()} />
         ) : members.length === 0 ? (

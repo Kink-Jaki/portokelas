@@ -20,8 +20,8 @@ function Gallery({ images, title }: { images: string[]; title: string }) {
   if (images.length === 0) return null;
 
   return (
-    <section className="mt-10 space-y-4" aria-label={`Galeri ${title}`}>
-      <div className="grid grid-cols-2 gap-px border border-line bg-line md:grid-cols-3">
+    <section className="mt-12 space-y-4" aria-label={`Galeri ${title}`}>
+      <div className="grid grid-cols-2 gap-px overflow-hidden border border-line bg-line md:grid-cols-3">
         {images.map((image, index) => (
           <button
             key={image}
@@ -33,7 +33,7 @@ function Gallery({ images, title }: { images: string[]; title: string }) {
               src={assetUrl(image) ?? ''}
               alt={`${title} — gambar ${index + 1}`}
               loading="lazy"
-              className="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0"
+              className="h-full w-full object-cover grayscale transition-all duration-500 group-hover:scale-[1.03] group-hover:grayscale-0"
             />
             <span className="absolute inset-0 bg-fg/0 transition-colors duration-300 group-hover:bg-fg/10" />
           </button>
@@ -84,10 +84,10 @@ export default function ProjectDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="container-page py-16">
-        <Skeleton className="h-4 w-40" />
-        <Skeleton className="mt-6 h-12 w-2/3" />
-        <Skeleton className="mt-4 h-4 w-full max-w-2xl" />
+      <div className="container-page py-16 lg:py-20">
+        <Skeleton className="h-3 w-40" />
+        <Skeleton className="mt-6 h-14 w-2/3" />
+        <Skeleton className="mt-5 h-4 w-full max-w-2xl" />
         <Skeleton className="mt-10 aspect-[16/9] w-full" />
       </div>
     );
@@ -120,13 +120,20 @@ export default function ProjectDetailPage() {
   const backHref = author ? `/m/${author.slug}` : '/members';
 
   return (
-    <article className="container-page py-14">
+    <article className="container-page py-16 lg:py-20">
       <motion.nav variants={fadeUp} initial="hidden" animate="show" className="mb-10">
         <Link
           to={backHref}
-          className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-muted transition-colors hover:text-fg"
+          className="group inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-muted transition-colors hover:text-fg"
         >
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden>
+          <svg
+            viewBox="0 0 24 24"
+            width="14"
+            height="14"
+            fill="none"
+            aria-hidden
+            className="transition-transform duration-300 group-hover:-translate-x-1"
+          >
             <path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" strokeWidth="1.5" />
           </svg>
           {author ? author.name : 'Direktori anggota'}
@@ -134,10 +141,18 @@ export default function ProjectDetailPage() {
       </motion.nav>
 
       <motion.header variants={fadeUp} initial="hidden" animate="show" className="max-w-3xl">
-        <p className="eyebrow">Project</p>
-        <h1 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">{project.title}</h1>
+        <p className="eyebrow flex items-center gap-3">
+          <span className="index-num">01</span>
+          <span aria-hidden className="h-px w-6 bg-line-strong" />
+          Project
+        </p>
+        <h1 className="mt-5 text-balance font-display text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.98] tracking-[-0.03em]">
+          {project.title}
+        </h1>
         {project.shortDescription ? (
-          <p className="mt-5 text-lg leading-relaxed text-muted">{project.shortDescription}</p>
+          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted">
+            {project.shortDescription}
+          </p>
         ) : null}
 
         <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-line pt-6">
@@ -145,7 +160,7 @@ export default function ProjectDetailPage() {
             <Link to={`/m/${author.slug}`} className="group flex items-center gap-3">
               <Avatar name={author.name} src={author.avatarUrl} size="sm" muted />
               <div>
-                <p className="flex flex-wrap items-center gap-2 text-sm transition-colors group-hover:underline">
+                <p className="flex flex-wrap items-center gap-2 text-sm transition-colors group-hover:text-fg">
                   {author.name}
                   {author.role === 'admin' ? <DevBadge /> : null}
                 </p>
@@ -186,7 +201,7 @@ export default function ProjectDetailPage() {
 
       {gallery.length > 0 ? <Gallery images={gallery} title={project.title} /> : null}
 
-      <div className="mt-14 grid gap-12 lg:grid-cols-[1fr_18rem]">
+      <div className="mt-16 grid gap-12 lg:grid-cols-[1fr_18rem]">
         <div>
           {project.description ? (
             <Markdown>{project.description}</Markdown>
@@ -198,7 +213,7 @@ export default function ProjectDetailPage() {
           )}
         </div>
 
-        <aside className="space-y-8">
+        <aside className="space-y-8 lg:border-l lg:border-line lg:pl-8">
           <div>
             <p className="eyebrow">Teknologi</p>
             <TechStack items={project.techStack ?? []} className="mt-4" />
@@ -223,7 +238,7 @@ export default function ProjectDetailPage() {
                     href={project.demoUrl}
                     target="_blank"
                     rel="noopener noreferrer nofollow"
-                    className="text-muted underline underline-offset-4 transition-colors hover:text-fg"
+                    className="link-underline text-muted transition-colors hover:text-fg"
                   >
                     {project.demoUrl}
                   </a>
@@ -235,7 +250,7 @@ export default function ProjectDetailPage() {
                     href={project.repoUrl}
                     target="_blank"
                     rel="noopener noreferrer nofollow"
-                    className="text-muted underline underline-offset-4 transition-colors hover:text-fg"
+                    className="link-underline text-muted transition-colors hover:text-fg"
                   >
                     {project.repoUrl}
                   </a>

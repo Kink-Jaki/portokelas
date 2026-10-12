@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { useEffect, type ReactNode } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import { SiteFooter, SiteHeader } from './SiteHeader';
@@ -31,15 +31,38 @@ export function PageTransition({ children }: { children: ReactNode }) {
   );
 }
 
+const SIDEBAR_KEY = 'sk:sidebar-collapsed';
+
 export function RootLayout() {
   const location = useLocation();
   const reduceMotion = useReducedMotion();
   const { user } = useAuth();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.localStorage.getItem(SIDEBAR_KEY) === '1';
+  });
+
+  const toggleSidebar = useCallback(() => {
+    setSidebarCollapsed((previous) => {
+      const next = !previous;
+      try {
+        window.localStorage.setItem(SIDEBAR_KEY, next ? '1' : '0');
+      } catch {
+        /* abaikan bila storage tidak tersedia */
+      }
+      return next;
+    });
+  }, []);
 
   return (
-    <div className={cn('flex min-h-screen flex-col', user && 'lg:pl-64')}>
+    <div
+      className={cn(
+        'flex min-h-screen flex-col transition-[padding] duration-300 ease-out',
+        user && (sidebarCollapsed ? 'lg:pl-[4.75rem]' : 'lg:pl-64'),
+      )}
+    >
       <ScrollToTop />
-      {user ? <AppSidebar /> : null}
+      {user ? <AppSidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} /> : null}
       <SiteHeader />
       <main className="flex-1">
         <AnimatePresence mode="wait">

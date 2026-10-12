@@ -88,6 +88,18 @@ function IconLogout({ className }: IconProps) {
   );
 }
 
+function CollapseIcon({ collapsed }: { collapsed: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden>
+      <path
+        d={collapsed ? 'M9 6l6 6-6 6' : 'M15 6l-6 6 6 6'}
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+}
+
 type NavItem = {
   key: string;
   to: string;
@@ -96,15 +108,23 @@ type NavItem = {
   end?: boolean;
 };
 
-const itemClass = ({ isActive }: { isActive: boolean }) =>
-  cn(
-    'flex items-center gap-3 border-l-2 px-3 py-2.5 text-sm transition-colors duration-200',
-    isActive
-      ? 'border-fg bg-bg text-fg'
-      : 'border-transparent text-muted hover:border-line-strong hover:bg-bg hover:text-fg',
-  );
+const itemClass = (collapsed: boolean) =>
+  ({ isActive }: { isActive: boolean }) =>
+    cn(
+      'flex items-center border-l-2 text-sm transition-colors duration-200',
+      collapsed ? 'justify-center px-0 py-2.5' : 'gap-3 px-3 py-2.5',
+      isActive
+        ? 'border-fg bg-bg text-fg'
+        : 'border-transparent text-muted hover:border-line-strong hover:bg-bg hover:text-fg',
+    );
 
-function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
+function SidebarNav({
+  onNavigate,
+  collapsed = false,
+}: {
+  onNavigate?: () => void;
+  collapsed?: boolean;
+}) {
   const { user, isLoading, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -136,47 +156,52 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
     });
   }
 
+  const linkClass = itemClass(collapsed);
+
+  const renderLink = (item: NavItem) => (
+    <NavLink
+      key={item.key}
+      to={item.to}
+      end={item.end}
+      className={linkClass}
+      onClick={onNavigate}
+      title={collapsed ? item.label : undefined}
+      aria-label={collapsed ? item.label : undefined}
+    >
+      <item.icon />
+      {collapsed ? null : item.label}
+    </NavLink>
+  );
+
   return (
     <div className="flex h-full flex-col justify-between gap-8">
       <div className="space-y-8">
         <div>
-          <p className="px-3 font-mono text-[0.625rem] uppercase tracking-[0.22em] text-muted">
-            Jelajahi
-          </p>
-          <nav className="mt-3 space-y-0.5" aria-label="Navigasi sidebar">
-            {items.slice(0, 2).map((item) => (
-              <NavLink
-                key={item.key}
-                to={item.to}
-                end={item.end}
-                className={itemClass}
-                onClick={onNavigate}
-              >
-                <item.icon />
-                {item.label}
-              </NavLink>
-            ))}
+          {collapsed ? null : (
+            <p className="px-3 font-mono text-[0.625rem] uppercase tracking-[0.22em] text-muted">
+              Jelajahi
+            </p>
+          )}
+          <nav
+            className={cn('space-y-0.5', collapsed ? 'mt-0' : 'mt-3')}
+            aria-label="Navigasi sidebar"
+          >
+            {items.slice(0, 2).map(renderLink)}
           </nav>
         </div>
 
         {items.length > 2 ? (
           <div>
-            <p className="px-3 font-mono text-[0.625rem] uppercase tracking-[0.22em] text-muted">
-              Akun saya
-            </p>
-            <nav className="mt-3 space-y-0.5" aria-label="Menu akun">
-              {items.slice(2).map((item) => (
-                <NavLink
-                  key={item.key}
-                  to={item.to}
-                  end={item.end}
-                  className={itemClass}
-                  onClick={onNavigate}
-                >
-                  <item.icon />
-                  {item.label}
-                </NavLink>
-              ))}
+            {collapsed ? null : (
+              <p className="px-3 font-mono text-[0.625rem] uppercase tracking-[0.22em] text-muted">
+                Akun saya
+              </p>
+            )}
+            <nav
+              className={cn('space-y-0.5', collapsed ? 'mt-0' : 'mt-3')}
+              aria-label="Menu akun"
+            >
+              {items.slice(2).map(renderLink)}
             </nav>
           </div>
         ) : null}
@@ -184,33 +209,47 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
 
       <div className="space-y-4">
         {user ? (
-          <div className="border border-line bg-bg p-4">
-            <div className="flex items-center gap-3">
+          collapsed ? (
+            <div
+              className="flex justify-center border border-line bg-bg p-3"
+              title={`${user.name} · ${user.email}`}
+            >
               <Avatar name={user.name} src={user.avatarUrl} size="md" muted />
-              <div className="min-w-0">
-                <p className="truncate text-sm">{user.name}</p>
-                <p className="truncate font-mono text-[0.625rem] text-muted">{user.email}</p>
+            </div>
+          ) : (
+            <div className="border border-line bg-bg p-4">
+              <div className="flex items-center gap-3">
+                <Avatar name={user.name} src={user.avatarUrl} size="md" muted />
+                <div className="min-w-0">
+                  <p className="truncate text-sm">{user.name}</p>
+                  <p className="truncate font-mono text-[0.625rem] text-muted">{user.email}</p>
+                </div>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <StatusBadge status={user.status} />
+                <RoleBadge role={user.role} />
+                {user.role === 'admin' ? <DevBadge /> : null}
               </div>
             </div>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <StatusBadge status={user.status} />
-              <RoleBadge role={user.role} />
-              {user.role === 'admin' ? <DevBadge /> : null}
-            </div>
-          </div>
+          )
         ) : null}
 
         {user ? (
           <button
             type="button"
-            className={cn(buttonClasses('outline', 'sm'), 'w-full justify-center')}
+            title={collapsed ? 'Keluar' : undefined}
+            aria-label={collapsed ? 'Keluar' : undefined}
+            className={cn(
+              buttonClasses('outline', 'sm'),
+              collapsed ? 'w-full justify-center px-0' : 'w-full justify-center',
+            )}
             onClick={() => {
               onNavigate?.();
               void logout().then(() => navigate('/', { replace: true }));
             }}
           >
             <IconLogout />
-            Keluar
+            {collapsed ? null : 'Keluar'}
           </button>
         ) : isLoading ? (
           <div className="h-9 w-full animate-pulse rounded-sm bg-bg" />
@@ -221,7 +260,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
               className={cn(buttonClasses('primary', 'sm'), 'justify-center')}
               onClick={onNavigate}
             >
-              Masuk
+              {collapsed ? <IconUser /> : 'Masuk'}
             </Link>
           </div>
         )}
@@ -231,17 +270,49 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
 }
 
 /** Rail sidebar fixed di kiri layar — hanya tampil setelah login. */
-export function AppSidebar() {
+export function AppSidebar({
+  collapsed = false,
+  onToggle,
+}: {
+  collapsed?: boolean;
+  onToggle?: () => void;
+}) {
   const { user } = useAuth();
   if (!user) return null;
 
   return (
     <aside
-      className="section-dark fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-line bg-subtle lg:block"
+      className={cn(
+        'section-dark fixed inset-y-0 left-0 z-30 hidden border-r border-line bg-subtle transition-[width] duration-300 ease-out lg:block',
+        collapsed ? 'w-[4.75rem]' : 'w-64',
+      )}
       aria-label="Sidebar aplikasi"
     >
-      <div className="h-full overflow-y-auto px-5 py-7">
-        <SidebarNav />
+      <div className="flex h-full flex-col">
+        <div
+          className={cn(
+            'flex items-center border-b border-line',
+            collapsed ? 'justify-center px-2 py-4' : 'justify-end px-5 py-4',
+          )}
+        >
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-label={collapsed ? 'Buka sidebar' : 'Tutup sidebar'}
+            aria-expanded={!collapsed}
+            className="grid h-9 w-9 place-items-center border border-line text-muted transition-colors duration-200 hover:border-line-strong hover:text-fg"
+          >
+            <CollapseIcon collapsed={collapsed} />
+          </button>
+        </div>
+        <div
+          className={cn(
+            'h-full overflow-y-auto py-7',
+            collapsed ? 'px-2' : 'px-5',
+          )}
+        >
+          <SidebarNav collapsed={collapsed} />
+        </div>
       </div>
     </aside>
   );

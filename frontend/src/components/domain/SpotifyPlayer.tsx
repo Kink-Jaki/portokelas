@@ -22,7 +22,7 @@ export function SpotifyPlayer({ spotify }: { spotify: SpotifyEmbed }) {
         loading="eager"
         allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
         allowFullScreen
-        className="h-[80px] w-full rounded-xl border-0 bg-black"
+        className="h-[80px] w-full rounded-sm border-0 bg-black"
       />
     </div>
   );

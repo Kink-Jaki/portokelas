@@ -80,7 +80,7 @@ export function TechStack({ items, className }: { items: string[]; className?: s
       {items.map((item) => (
         <li
           key={item}
-          className="rounded-sm border border-line px-2.5 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-muted"
+          className="rounded-sm border border-line px-2.5 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-muted transition-colors duration-200 hover:border-line-strong hover:text-fg"
         >
           {item}
         </li>

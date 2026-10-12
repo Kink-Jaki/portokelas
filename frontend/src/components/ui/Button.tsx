@@ -13,13 +13,14 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const baseClasses =
-  'relative inline-flex items-center justify-center gap-2 rounded-sm font-medium tracking-tight ' +
-  'transition-[background-color,color,border-color,opacity,transform] duration-200 ' +
-  'disabled:cursor-not-allowed disabled:opacity-50 select-none';
+  'group relative inline-flex items-center justify-center gap-2 rounded-sm font-medium tracking-tight ' +
+  'transition-[background-color,color,border-color,opacity,transform] duration-200 ease-editorial ' +
+  'disabled:cursor-not-allowed disabled:opacity-50 select-none active:translate-y-px';
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-invert text-invert-fg hover:opacity-90 border border-invert',
-  outline: 'border border-line-strong text-fg hover:bg-subtle',
+  primary:
+    'border border-invert bg-invert text-invert-fg hover:border-accent hover:bg-accent hover:text-accent-fg',
+  outline: 'border border-line-strong text-fg hover:border-fg hover:bg-subtle',
   ghost: 'text-fg hover:bg-subtle',
   danger: 'border border-danger text-danger hover:bg-danger hover:text-bg',
   subtle: 'bg-subtle text-fg border border-line hover:border-line-strong',
