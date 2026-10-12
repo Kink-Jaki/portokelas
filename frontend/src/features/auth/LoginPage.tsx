@@ -31,8 +31,6 @@ export default function LoginPage() {
     try {
       const user = await login(values);
       if (user.role === 'admin') navigate('/admin', { replace: true });
-      else if (user.status === 'pending') navigate('/pending', { replace: true });
-      else if (user.status !== 'approved') navigate('/login', { replace: true });
       else navigate(redirectTo, { replace: true });
     } catch (error) {
       if (error instanceof ApiError) {

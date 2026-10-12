@@ -35,7 +35,7 @@ export function StatsSection() {
 
         <div className="mt-12 grid gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
           <Reveal>
-            <StatBlock value={isLoading ? undefined : data?.members} label="Anggota disetujui" />
+            <StatBlock value={isLoading ? undefined : data?.members} label="Anggota" />
           </Reveal>
           <Reveal delay={0.08}>
             <StatBlock value={isLoading ? undefined : data?.projects} label="Project tayang" />
@@ -43,8 +43,8 @@ export function StatsSection() {
           <Reveal delay={0.16} className="sm:col-span-2">
             <div className="flex h-full flex-col justify-between gap-8 bg-bg p-8">
               <p className="max-w-md text-sm leading-relaxed text-muted">
-                Hanya anggota yang sudah disetujui admin yang tampil di direktori publik. Project
-                yang disembunyikan moderator tidak ikut tayang.
+                Semua anggota tampil di direktori publik. Project yang disembunyikan moderator tidak
+                ikut tayang.
               </p>
               <Link to="/login" className={buttonClasses('outline', 'sm', 'self-start')}>
                 Masuk
@@ -57,40 +57,4 @@ export function StatsSection() {
   );
 }
 
-export function ClosingCta() {
-  return (
-    <section id="daftar" className="section-light paper border-b border-line">
-      <div className="container-page py-24 lg:py-32">
-        <Reveal>
-          <p className="eyebrow flex items-center gap-3">
-            <span className="index-num">05</span>
-            <span aria-hidden className="h-px w-6 bg-line-strong" />
-            Khusus anggota
-          </p>
-          <h2 className="mt-6 max-w-4xl text-balance font-display text-[clamp(2.5rem,6vw,4.5rem)] leading-[1.02] tracking-[-0.03em]">
-            Punya project yang <span className="italic text-accent">layak dipamerkan?</span>
-          </h2>
-        </Reveal>
 
-        <div className="mt-10 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <Reveal delay={0.08}>
-            <p className="max-w-xl text-base leading-relaxed text-muted">
-              Masuk ke dashboard, lengkapi profil, lalu tambahkan project beserta gambarnya. Setelah
-              tersimpan, halaman portofolio pribadimu langsung bisa dibagikan.
-            </p>
-          </Reveal>
-          <Reveal delay={0.12}>
-            <div className="flex flex-wrap gap-3">
-              <Link to="/login" className={buttonClasses('primary', 'lg')}>
-                Masuk
-              </Link>
-              <Link to="/members" className={buttonClasses('outline', 'lg')}>
-                Lihat anggota
-              </Link>
-            </div>
-          </Reveal>
-        </div>
-      </div>
-    </section>
-  );
-}

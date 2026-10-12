@@ -1,5 +1,5 @@
 import { Hono, type Context } from 'hono';
-import { count, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import type { ZodTypeAny } from 'zod';
 
 import { db } from '../db/index.js';
@@ -10,30 +10,25 @@ import { zJson, zQuery } from '../lib/validate.js';
 import { getCurrentUser, requireAdmin, requireAuth, type AppEnv } from '../middleware/auth.js';
 import {
   createTeacher,
+  deleteMemoryAsAdmin,
   deleteProjectAsAdmin,
   deleteStoredFile,
   deleteTeacher,
   getAbout,
   getProjectAuthor,
   listAllProjects,
+  listMemoriesForAdmin,
   listTeachers,
   listUsersForAdmin,
   saveImage,
   setProjectHidden,
   updateProfile,
   updateTeacher,
-  updateUserRole,
-  updateUserStatus,
   upsertAbout,
 } from '../services/index.js';
 import { aboutFormSchema, teacherFormSchema, teacherUpdateFormSchema } from '../validators/content.js';
 import { adminProjectQuerySchema, hideProjectSchema } from '../validators/project.js';
-import {
-  adminUpdateUserSchema,
-  adminUserQuerySchema,
-  updateUserRoleSchema,
-  updateUserStatusSchema,
-} from '../validators/user.js';
+import { adminUpdateUserSchema, adminUserQuerySchema } from '../validators/user.js';
 
 type FormValues = Record<string, string | File | (string | File)[]>;
 
@@ -86,66 +81,6 @@ export const adminRoutes = new Hono<AppEnv>()
     return c.json(ok(result));
   })
 
-  .get('/users/summary', async (c) => {
-    const rows = await db
-      .select({ status: users.status, value: count() })
-      .from(users)
-      .groupBy(users.status);
-
-    const summary: Record<'all' | 'pending' | 'approved' | 'rejected' | 'suspended', number> = {
-      all: 0,
-      pending: 0,
-      approved: 0,
-      rejected: 0,
-      suspended: 0,
-    };
-
-    for (const row of rows) {
-      summary.all += row.value;
-      summary[row.status] = row.value;
-    }
-
-    return c.json(ok(summary));
-  })
-
-  .patch('/users/:id/status', zJson(updateUserStatusSchema), async (c) => {
-    const admin = getCurrentUser(c);
-    const targetId = requireParam(c.req.param('id'), 'id');
-    const { status, reason } = c.req.valid('json');
-
-    if (targetId === admin.id) {
-      throw AppError.badRequest('Anda tidak dapat mengubah status akun admin sendiri.');
-    }
-
-    const target = await db
-      .select({ id: users.id, role: users.role })
-      .from(users)
-      .where(eq(users.id, targetId))
-      .limit(1);
-
-    const row = target[0];
-    if (!row) throw AppError.notFound('Anggota tidak ditemukan');
-    if (row.role === 'admin') {
-      throw AppError.badRequest('Status akun admin tidak dapat diubah dari halaman ini.');
-    }
-
-    const updated = await updateUserStatus(targetId, status, reason ?? null);
-    return c.json(ok({ user: updated }));
-  })
-
-  .patch('/users/:id/role', zJson(updateUserRoleSchema), async (c) => {
-    const admin = getCurrentUser(c);
-    const targetId = requireParam(c.req.param('id'), 'id');
-    const { role } = c.req.valid('json');
-
-    if (targetId === admin.id) {
-      throw AppError.badRequest('Anda tidak dapat mengubah role akun sendiri.');
-    }
-
-    const updated = await updateUserRole(targetId, role);
-    return c.json(ok({ user: updated }));
-  })
-
   .patch('/users/:id', zJson(adminUpdateUserSchema), async (c) => {
     const admin = getCurrentUser(c);
     const targetId = requireParam(c.req.param('id'), 'id');
@@ -156,10 +91,6 @@ export const adminRoutes = new Hono<AppEnv>()
     }
 
     const patch: Partial<typeof users.$inferInsert> = { ...input };
-    if (input.role === 'admin') {
-      patch.status = 'approved';
-      patch.rejectionReason = null;
-    }
 
     const updated = await updateProfile(targetId, patch);
     if (!updated) throw AppError.notFound('Anggota tidak ditemukan');
@@ -200,6 +131,20 @@ export const adminRoutes = new Hono<AppEnv>()
     for (const image of images) await deleteStoredFile(image.imageUrl);
 
     return c.json(ok({ id: project.id, deleted: true }));
+  })
+
+  /* --------------------------------- Kenangan --------------------------------- */
+
+  .get('/memories', async (c) => {
+    const result = await listMemoriesForAdmin();
+    return c.json(ok({ memories: result }));
+  })
+
+  .delete('/memories/:id', async (c) => {
+    const memoryId = c.req.param('id');
+    const removed = await deleteMemoryAsAdmin(memoryId);
+    await deleteStoredFile(removed.imageUrl);
+    return c.json(ok({ id: removed.id, deleted: true }));
   })
 
   /* ------------------------------ Konten landing ------------------------------ */

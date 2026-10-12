@@ -5,6 +5,7 @@ import { queryKeys } from '@/lib/query-client';
 import type {
   About,
   MemberWithSpotify,
+  MemoryWithAuthor,
   Paginated,
   Project,
   PublicStats,
@@ -32,6 +33,14 @@ export function useTeachers() {
   return useQuery({
     queryKey: queryKeys.teachers,
     queryFn: () => api.get<{ teachers: Teacher[] }>('/teachers'),
+    staleTime: 60_000,
+  });
+}
+
+export function usePublicMemories() {
+  return useQuery({
+    queryKey: queryKeys.publicMemories,
+    queryFn: () => api.get<{ memories: MemoryWithAuthor[] }>('/memories'),
     staleTime: 60_000,
   });
 }

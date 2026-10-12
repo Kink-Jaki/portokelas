@@ -14,19 +14,13 @@ import {
 import { RootLayout } from '@/components/layout/RootLayout';
 import { ErrorBoundary } from '@/components/layout/ErrorBoundary';
 import { AppToaster } from '@/components/ui/Toaster';
-import {
-  RedirectIfAuthed,
-  RequireAdmin,
-  RequireApproved,
-  RequireAuth,
-} from '@/components/layout/guards';
+import { RedirectIfAuthed, RequireAdmin, RequireAuth } from '@/components/layout/guards';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { setServerIssueHandler } from '@/lib/api';
 import { queryClient } from '@/lib/query-client';
 
 import LandingPage from '@/features/landing/LandingPage';
 import LoginPage from '@/features/auth/LoginPage';
-import PendingPage from '@/features/auth/PendingPage';
 import MembersPage from '@/features/members/MembersPage';
 import MemberPortfolioPage from '@/features/members/MemberPortfolioPage';
 import ProjectDetailPage from '@/features/projects/ProjectDetailPage';
@@ -67,7 +61,6 @@ const router = createBrowserRouter(
             </RedirectIfAuthed>
           ),
         },
-        { path: 'pending', element: <PendingPage /> },
         {
           path: 'profile',
           element: (
@@ -81,25 +74,25 @@ const router = createBrowserRouter(
         {
           path: 'm/:slug/:projectSlug',
           element: (
-            <RequireApproved>
+            <RequireAuth>
               <ProjectDetailPage />
-            </RequireApproved>
+            </RequireAuth>
           ),
         },
         {
           path: 'project/:projectSlug',
           element: (
-            <RequireApproved>
+            <RequireAuth>
               <ProjectDetailPage />
-            </RequireApproved>
+            </RequireAuth>
           ),
         },
         {
           path: 'dashboard',
           element: (
-            <RequireApproved>
+            <RequireAuth>
               <DashboardPage />
-            </RequireApproved>
+            </RequireAuth>
           ),
         },
         {

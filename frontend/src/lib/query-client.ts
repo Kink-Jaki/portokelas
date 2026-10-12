@@ -28,9 +28,10 @@ export const queryKeys = {
   memberProjects: (slug: string) => ['public', 'member', slug, 'projects'] as const,
   project: (idOrSlug: string) => ['public', 'project', idOrSlug] as const,
   myProjects: ['me', 'projects'] as const,
-  adminUsers: (status: string, search: string, page: number) =>
-    ['admin', 'users', { status, search, page }] as const,
-  adminUsersSummary: ['admin', 'users', 'summary'] as const,
+  publicMemories: ['public', 'memories'] as const,
+  myMemories: ['me', 'memories'] as const,
+  adminMemories: ['admin', 'memories'] as const,
+  adminUsers: (search: string, page: number) => ['admin', 'users', { search, page }] as const,
   adminProjects: (search: string, hidden: string | undefined, page: number) =>
     ['admin', 'projects', { search, hidden, page }] as const,
 };

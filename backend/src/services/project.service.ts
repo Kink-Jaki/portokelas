@@ -93,7 +93,6 @@ export async function listProjectsByMemberSlug(slug: string): Promise<ProjectWit
     .where(
       and(
         eq(users.slug, slug),
-        eq(users.status, 'approved'),
         eq(projects.isHidden, false),
       ),
     )
@@ -233,7 +232,6 @@ export async function getPublicProject(idOrSlug: string): Promise<ProjectWithIma
       and(
         condition,
         eq(projects.isHidden, false),
-        eq(users.status, 'approved'),
       ),
     )
     .limit(1);

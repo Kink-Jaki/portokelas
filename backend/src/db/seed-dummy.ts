@@ -3,7 +3,7 @@
  *
  *   bun run src/db/seed-dummy.ts
  *
- * Membuat user dummy (approved) dengan URL sosial, serta 1 project dummy.
+ * Membuat user dummy dengan URL sosial, serta 1 project dummy.
  * Aman dijalankan berkali-kali (akan update jika sudah ada).
  */
 import 'dotenv/config';
@@ -40,8 +40,6 @@ async function main() {
         name: dummyName,
         passwordHash,
         role: 'member',
-        status: 'approved',
-        rejectionReason: null,
         slug: dummySlug,
         avatarUrl: null,
         headline: 'Frontend Developer · Mahasiswa',
@@ -62,7 +60,6 @@ async function main() {
         email: dummyEmail,
         passwordHash,
         role: 'member',
-        status: 'approved',
         slug: dummySlug,
         headline: 'Frontend Developer · Mahasiswa',
         bio: 'User dummy untuk keperluan testing tampilan portofolio kelas.',

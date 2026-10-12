@@ -1,5 +1,4 @@
 export type UserRole = 'member' | 'admin';
-export type UserStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
 
 export type PublicUser = {
   id: string;
@@ -23,10 +22,23 @@ export type MemberProfile = PublicUser & {
   email: string;
   nim: string | null;
   role: UserRole;
-  status: UserStatus;
-  rejectionReason: string | null;
   updatedAt: string;
 };
+
+export type Memory = {
+  id: string;
+  userId: string;
+  imageUrl: string;
+  caption: string | null;
+  createdAt: string;
+};
+
+export type MemoryAuthor = Pick<
+  PublicUser,
+  'id' | 'name' | 'alias' | 'slug' | 'avatarUrl' | 'role'
+>;
+
+export type MemoryWithAuthor = Memory & { author: MemoryAuthor | null };
 
 export type ProjectImage = {
   id: string;
@@ -93,11 +105,6 @@ export type Teacher = {
   updatedAt: string;
 };
 
-export type UserStatusSummary = Record<
-  'all' | 'pending' | 'approved' | 'rejected' | 'suspended',
-  number
->;
-
 /** Bentuk respons seragam dari backend. */
 export type ApiSuccess<T> = { success: true; data: T; error: null };
 export type ApiFailure = {
@@ -144,8 +151,17 @@ export type AdminUpdateUserPayload = ProfilePayload & { role?: UserRole };
 
 export type ValidationIssue = { path: string; message: string };
 
-/** Info embed lagu Spotify yang disediakan backend pada halaman member. */
+export type SpotifyEntityType =
+  | 'track'
+  | 'playlist'
+  | 'album'
+  | 'artist'
+  | 'episode'
+  | 'show';
+
+/** Info embed Spotify (lagu, playlist, album, artis, atau episode) dari backend. */
 export type SpotifyEmbed = {
+  type?: SpotifyEntityType;
   embedUrl: string;
   title: string | null;
   artistName: string | null;

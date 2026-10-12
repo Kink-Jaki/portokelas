@@ -4,7 +4,7 @@
  *   bun run seed:admin
  *
  * Kredensial dibaca dari backend/.env (ADMIN_NAME, ADMIN_NIM, ADMIN_EMAIL,
- * ADMIN_PASSWORD). Akun dibuat sebagai role `admin` dengan status `approved`.
+ * ADMIN_PASSWORD). Akun dibuat sebagai role `admin`.
  * Aman dijalankan berkali-kali: bila email sudah ada, kredensial diperbarui.
  */
 import 'dotenv/config';
@@ -37,8 +37,6 @@ async function main() {
         name: env.ADMIN_NAME,
         passwordHash,
         role: 'admin',
-        status: 'approved',
-        rejectionReason: null,
         updatedAt: new Date(),
       })
       .where(eq(users.id, current.id));
@@ -50,7 +48,6 @@ async function main() {
       email,
       passwordHash,
       role: 'admin',
-      status: 'approved',
       slug,
     });
 

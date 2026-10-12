@@ -105,7 +105,6 @@ async function main() {
     nim: member.nim,
     passwordHash,
     role: member.admin ? ('admin' as const) : ('member' as const),
-    status: 'approved' as const,
     slug: uniqueSlug(member.name, usedSlugs),
     alias: member.alias ?? null,
     headline: member.headline ?? null,

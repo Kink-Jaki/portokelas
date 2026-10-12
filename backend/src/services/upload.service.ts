@@ -4,7 +4,7 @@ import path from 'node:path';
 import { env } from '../env.js';
 import { AppError } from '../lib/errors.js';
 
-export type UploadKind = 'avatars' | 'projects' | 'content';
+export type UploadKind = 'avatars' | 'projects' | 'content' | 'memories';
 
 const ALLOWED_MIME = new Map<string, string>([
   ['image/jpeg', 'jpg'],

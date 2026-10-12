@@ -39,7 +39,6 @@ export async function registerMember(input: RegisterInput): Promise<AuthResult> 
       passwordHash,
       slug,
       role: 'member',
-      status: 'pending',
     })
     .returning(memberProfileColumns);
 
@@ -49,7 +48,6 @@ export async function registerMember(input: RegisterInput): Promise<AuthResult> 
   const token = await signSession({
     sub: user.id,
     role: user.role,
-    status: user.status,
     name: user.name,
     slug: user.slug,
   });
@@ -67,28 +65,12 @@ export async function loginMember(input: LoginInput): Promise<AuthResult> {
     throw new AppError(401, 'INVALID_CREDENTIALS', 'NIS/email atau password salah.');
   }
 
-  if (user.status === 'rejected') {
-    throw new AppError(
-      403,
-      'ACCOUNT_REJECTED',
-      user.rejectionReason ?? 'Pendaftaran Anda ditolak oleh admin.',
-      { status: user.status, reason: user.rejectionReason },
-    );
-  }
-
-  if (user.status === 'suspended') {
-    throw new AppError(403, 'ACCOUNT_SUSPENDED', 'Akun Anda dinonaktifkan oleh admin.', {
-      status: user.status,
-    });
-  }
-
   const profile = await findUserById(user.id);
   if (!profile) throw AppError.unauthorized();
 
   const token = await signSession({
     sub: profile.id,
     role: profile.role,
-    status: profile.status,
     name: profile.name,
     slug: profile.slug,
   });

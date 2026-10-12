@@ -12,7 +12,6 @@ import {
 } from 'drizzle-orm/pg-core';
 
 export const userRole = pgEnum('user_role', ['member', 'admin']);
-export const userStatus = pgEnum('user_status', ['pending', 'approved', 'rejected', 'suspended']);
 
 export const users = pgTable(
   'users',
@@ -25,8 +24,6 @@ export const users = pgTable(
     spotifyUrl: text('spotify_url'),
     passwordHash: text('password_hash').notNull(),
     role: userRole('role').notNull().default('member'),
-    status: userStatus('status').notNull().default('pending'),
-    rejectionReason: text('rejection_reason'),
     slug: text('slug').notNull(),
     avatarUrl: text('avatar_url'),
     bio: text('bio'),
@@ -43,7 +40,6 @@ export const users = pgTable(
     uniqueIndex('users_email_unique').on(table.email),
     uniqueIndex('users_nim_unique').on(table.nim),
     uniqueIndex('users_slug_unique').on(table.slug),
-    index('users_status_idx').on(table.status),
     index('users_role_idx').on(table.role),
     index('users_created_at_idx').on(table.createdAt),
   ],
@@ -120,8 +116,27 @@ export const teachers = pgTable(
   (table) => [index('teachers_sort_order_idx').on(table.sortOrder)],
 );
 
+/** Kenangan/album foto yang diunggah anggota untuk carousel landing page. */
+export const memories = pgTable(
+  'memories',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    imageUrl: text('image_url').notNull(),
+    caption: text('caption'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('memories_user_id_idx').on(table.userId),
+    index('memories_created_at_idx').on(table.createdAt),
+  ],
+);
+
 export const usersRelations = relations(users, ({ many }) => ({
   projects: many(projects),
+  memories: many(memories),
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
@@ -131,6 +146,10 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
 
 export const projectImagesRelations = relations(projectImages, ({ one }) => ({
   project: one(projects, { fields: [projectImages.projectId], references: [projects.id] }),
+}));
+
+export const memoriesRelations = relations(memories, ({ one }) => ({
+  author: one(users, { fields: [memories.userId], references: [users.id] }),
 }));
 
 export type User = typeof users.$inferSelect;
@@ -143,9 +162,10 @@ export type About = typeof abouts.$inferSelect;
 export type NewAbout = typeof abouts.$inferInsert;
 export type Teacher = typeof teachers.$inferSelect;
 export type NewTeacher = typeof teachers.$inferInsert;
+export type Memory = typeof memories.$inferSelect;
+export type NewMemory = typeof memories.$inferInsert;
 
 export type UserRole = User['role'];
-export type UserStatus = User['status'];
 
 /** Kolom yang boleh dikirim klien saat membuat project. */
 export const publicUserColumns = {
@@ -191,10 +211,7 @@ export const memberProfileColumns = {
   email: users.email,
   nim: users.nim,
   role: users.role,
-  status: users.status,
-  rejectionReason: users.rejectionReason,
   updatedAt: users.updatedAt,
 } as const;
 
-export type MemberProfile = PublicUser &
-  Pick<User, 'email' | 'nim' | 'role' | 'status' | 'rejectionReason' | 'updatedAt'>;
+export type MemberProfile = PublicUser & Pick<User, 'email' | 'nim' | 'role' | 'updatedAt'>;

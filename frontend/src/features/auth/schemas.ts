@@ -17,8 +17,9 @@ export const profileSchema = z.object({
     .refine(
       (value) =>
         value.length === 0 ||
-        (/^https:\/\/open\.spotify\.com\//i.test(value) && /\/track\//i.test(value)),
-      'URL harus tautan lagu Spotify (open.spotify.com/track/...)',
+        (/^https:\/\/open\.spotify\.com\//i.test(value) &&
+          /\/(track|playlist|album|artist|episode|show)\//i.test(value)),
+      'URL harus tautan Spotify (lagu, playlist, album, atau artis)',
     ),
   headline: z.string().trim().max(120, 'Headline maksimal 120 karakter'),
   bio: z.string().trim().max(1500, 'Bio maksimal 1500 karakter'),

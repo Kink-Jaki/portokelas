@@ -2,71 +2,31 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 
 import { ContentPanel } from './ContentPanel';
+import { AdminMemoriesPanel } from './AdminMemoriesPanel';
 import { ProjectModerationList } from './ProjectModeration';
 import { UserRow } from './UserRow';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { TableSkeleton } from '@/components/ui/Skeleton';
 import { AnimatedRule } from '@/components/ui/Reveal';
-import { useAdminUsers, useAdminUsersSummary } from '@/hooks/useApi';
+import { useAdminUsers } from '@/hooks/useApi';
 import { fadeUp } from '@/lib/motion';
 import { useAuth } from '@/providers/AuthProvider';
 
-type Tab = 'users' | 'projects' | 'content';
-type StatusFilter = 'all' | 'pending' | 'approved' | 'rejected' | 'suspended';
-
-const statusFilters: { id: StatusFilter; label: string }[] = [
-  { id: 'pending', label: 'Menunggu' },
-  { id: 'approved', label: 'Disetujui' },
-  { id: 'rejected', label: 'Ditolak' },
-  { id: 'suspended', label: 'Dinonaktifkan' },
-  { id: 'all', label: 'Semua' },
-];
+type Tab = 'users' | 'projects' | 'content' | 'memories';
 
 function UserManagement() {
-  const [status, setStatus] = useState<StatusFilter>('pending');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
-  const summaryQuery = useAdminUsersSummary();
-  const usersQuery = useAdminUsers(status, search, page);
+  const usersQuery = useAdminUsers(search, page);
 
   const users = usersQuery.data?.items ?? [];
   const meta = usersQuery.data?.meta;
-  const summary = summaryQuery.data;
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-wrap gap-2">
-          {statusFilters.map((filter) => {
-            const count = summary?.[filter.id];
-            const active = status === filter.id;
-            return (
-              <button
-                key={filter.id}
-                type="button"
-                onClick={() => {
-                  setStatus(filter.id);
-                  setPage(1);
-                }}
-                className={`inline-flex items-center gap-2 rounded-sm border px-3 py-1.5 text-xs transition-colors duration-200 ${
-                  active
-                    ? 'border-invert bg-invert text-invert-fg'
-                    : 'border-line text-muted hover:border-line-strong hover:text-fg'
-                }`}
-              >
-                {filter.label}
-                {count !== undefined ? (
-                  <span className="font-mono text-[0.6875rem] tabular-nums opacity-80">
-                    {count}
-                  </span>
-                ) : null}
-              </button>
-            );
-          })}
-        </div>
-
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-end">
         <input
           type="search"
           value={search}
@@ -164,6 +124,7 @@ export default function AdminPage() {
     { id: 'projects', label: 'Moderasi project' },
     { id: 'users', label: 'Anggota' },
     { id: 'content', label: 'Landing page' },
+    { id: 'memories', label: 'Kenangan' },
   ];
 
   return (
@@ -212,7 +173,7 @@ export default function AdminPage() {
       </div>
 
       {user ? (
-        <p className="mt-6 font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">
+        <p className="mt-6 break-all font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">
           Masuk sebagai {user.email}
         </p>
       ) : null}
@@ -227,8 +188,10 @@ export default function AdminPage() {
           <UserManagement />
         ) : tab === 'projects' ? (
           <ProjectModerationList />
-        ) : (
+        ) : tab === 'content' ? (
           <ContentPanel />
+        ) : (
+          <AdminMemoriesPanel />
         )}
       </div>
     </div>

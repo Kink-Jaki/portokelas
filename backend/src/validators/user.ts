@@ -26,8 +26,9 @@ const spotifyUrlField = z
   .refine(
     (value) =>
       value.length === 0 ||
-      (/^https:\/\/open\.spotify\.com\//i.test(value) && /\/track\//i.test(value)),
-    'URL harus tautan lagu Spotify (open.spotify.com/track/...)',
+      (/^https:\/\/open\.spotify\.com\//i.test(value) &&
+        /\/(track|playlist|album|artist|episode|show)\//i.test(value)),
+    'URL harus tautan Spotify (lagu, playlist, album, atau artis)',
   )
   .transform((value) => (value.length === 0 ? null : value))
   .nullable();
@@ -72,37 +73,8 @@ export const memberQuerySchema = paginationSchema.extend({
 
 export type MemberQuery = z.infer<typeof memberQuerySchema>;
 
-export const statusEnum = z.enum(['pending', 'approved', 'rejected', 'suspended']);
-
 export const adminUserQuerySchema = paginationSchema.extend({
-  status: statusEnum.optional(),
   search: z.string().trim().max(80).optional(),
 });
 
 export type AdminUserQuery = z.infer<typeof adminUserQuerySchema>;
-
-export const updateUserStatusSchema = z
-  .object({
-    status: statusEnum,
-    reason: z.string().trim().max(300, 'Alasan maksimal 300 karakter').optional(),
-  })
-  .strict()
-  .superRefine((value, ctx) => {
-    if (value.status === 'rejected' && !value.reason) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['reason'],
-        message: 'Alasan wajib diisi saat menolak pendaftaran',
-      });
-    }
-  });
-
-export type UpdateUserStatusInput = z.infer<typeof updateUserStatusSchema>;
-
-export const updateUserRoleSchema = z
-  .object({
-    role: roleEnum,
-  })
-  .strict();
-
-export type UpdateUserRoleInput = z.infer<typeof updateUserRoleSchema>;

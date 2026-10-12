@@ -6,21 +6,31 @@ import { projectImages, projects } from '../db/schema.js';
 import { AppError } from '../lib/errors.js';
 import { ok, requireParam } from '../lib/http.js';
 import { zJson } from '../lib/validate.js';
-import { getCurrentUser, requireApproved, requireAuth, type AppEnv } from '../middleware/auth.js';
+import { getCurrentUser, requireAuth, type AppEnv } from '../middleware/auth.js';
 import {
   addProjectImages,
+  createMemory,
   createProject,
+  deleteMemoryForUser,
   deleteProjectForUser,
   deleteStoredFile,
+  listMemoriesForUser,
   listProjectsByUser,
   saveImage,
   updateProfile,
   updateProjectForUser,
 } from '../services/index.js';
 import { createProjectSchema, updateProjectSchema } from '../validators/project.js';
+import { memoryCaption } from '../validators/memory.js';
 import { updateProfileSchema } from '../validators/user.js';
 
 type FormValues = Record<string, string | File | (string | File)[]>;
+
+function formText(form: FormValues, field: string): string | undefined {
+  const value = form[field];
+  const candidate = Array.isArray(value) ? value[0] : value;
+  return typeof candidate === 'string' ? candidate : undefined;
+}
 
 function pickFile(form: FormValues, fields: string[]): File | null {
   for (const field of fields) {
@@ -75,19 +85,59 @@ export const meRoutes = new Hono<AppEnv>()
     return c.json(ok({ user: updated }));
   })
 
-  .get('/projects', requireApproved, async (c) => {
+  .get('/memories', async (c) => {
+    const user = getCurrentUser(c);
+    const data = await listMemoriesForUser(user.id);
+    return c.json(ok({ memories: data }));
+  })
+
+  .post('/memories', async (c) => {
+    const user = getCurrentUser(c);
+    const form = (await c.req.parseBody({ all: true })) as FormValues;
+    const file = pickFile(form, ['image', 'file', 'photo']);
+    if (!file) throw AppError.badRequest('File gambar kenangan wajib diunggah (field "image").');
+
+    const rawCaption = formText(form, 'caption');
+    const parsed = memoryCaption.safeParse(rawCaption ?? undefined);
+    if (!parsed.success) {
+      throw AppError.unprocessable(
+        'Data tidak lolos validasi.',
+        parsed.error.issues.map((i) => ({ path: i.path.join('.'), message: i.message })),
+      );
+    }
+    const caption = parsed.data?.trim() ? parsed.data.trim() : null;
+
+    const imageUrl = await saveImage(file, 'memories');
+    try {
+      const memory = await createMemory(user.id, imageUrl, caption);
+      return c.json(ok({ memory }), 201);
+    } catch (error) {
+      await deleteStoredFile(imageUrl);
+      throw error;
+    }
+  })
+
+  .delete('/memories/:id', async (c) => {
+    const user = getCurrentUser(c);
+    const memoryId = c.req.param('id');
+    const removed = await deleteMemoryForUser(user.id, memoryId);
+    await deleteStoredFile(removed.imageUrl);
+    return c.json(ok({ id: removed.id, deleted: true }));
+  })
+
+  .get('/projects', async (c) => {
     const user = getCurrentUser(c);
     const data = await listProjectsByUser(user.id);
     return c.json(ok({ projects: data }));
   })
 
-  .post('/projects', requireApproved, zJson(createProjectSchema), async (c) => {
+  .post('/projects', zJson(createProjectSchema), async (c) => {
     const user = getCurrentUser(c);
     const project = await createProject(user.id, c.req.valid('json'));
     return c.json(ok({ project }), 201);
   })
 
-  .patch('/projects/:id', requireApproved, zJson(updateProjectSchema), async (c) => {
+  .patch('/projects/:id', zJson(updateProjectSchema), async (c) => {
     const user = getCurrentUser(c);
     const projectId = requireParam(c.req.param('id'), 'id');
     const input = c.req.valid('json');
@@ -107,7 +157,7 @@ export const meRoutes = new Hono<AppEnv>()
     return c.json(ok({ project }));
   })
 
-  .delete('/projects/:id', requireApproved, async (c) => {
+  .delete('/projects/:id', async (c) => {
     const user = getCurrentUser(c);
     const projectId = c.req.param('id');
 
@@ -130,7 +180,7 @@ export const meRoutes = new Hono<AppEnv>()
     return c.json(ok({ id: project.id, deleted: true }));
   })
 
-  .post('/projects/:id/images', requireApproved, async (c) => {
+  .post('/projects/:id/images', async (c) => {
     const user = getCurrentUser(c);
     const projectId = c.req.param('id');
 
@@ -150,7 +200,7 @@ export const meRoutes = new Hono<AppEnv>()
     return c.json(ok({ images }), 201);
   })
 
-  .delete('/projects/:projectId/images/:imageId', requireApproved, async (c) => {
+  .delete('/projects/:projectId/images/:imageId', async (c) => {
     const user = getCurrentUser(c);
     const projectId = c.req.param('projectId');
     const imageId = c.req.param('imageId');

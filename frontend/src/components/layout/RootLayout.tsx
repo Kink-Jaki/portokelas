@@ -1,5 +1,5 @@
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { useCallback, useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import { SiteFooter, SiteHeader } from './SiteHeader';
@@ -17,18 +17,6 @@ function ScrollToTop() {
   }, [pathname]);
 
   return null;
-}
-
-export function PageTransition({ children }: { children: ReactNode }) {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) return <>{children}</>;
-
-  return (
-    <motion.div variants={pageVariants} initial="initial" animate="animate">
-      {children}
-    </motion.div>
-  );
 }
 
 const SIDEBAR_KEY = 'sk:sidebar-collapsed';
@@ -65,17 +53,18 @@ export function RootLayout() {
       {user ? <AppSidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} /> : null}
       <SiteHeader />
       <main className="flex-1">
-        <AnimatePresence mode="wait">
+        {reduceMotion ? (
+          <Outlet />
+        ) : (
           <motion.div
-            key={location.pathname}
+            key={`${location.pathname}${location.search}`}
             initial="initial"
             animate="animate"
-            exit="exit"
-            variants={reduceMotion ? undefined : pageVariants}
+            variants={pageVariants}
           >
             <Outlet />
           </motion.div>
-        </AnimatePresence>
+        )}
       </main>
       <SiteFooter />
     </div>

@@ -5,7 +5,7 @@ import type { Context } from 'hono';
 import { eq } from 'drizzle-orm';
 
 import { db } from '../db/index.js';
-import { users, type UserRole, type UserStatus } from '../db/schema.js';
+import { users, type UserRole } from '../db/schema.js';
 import { env } from '../env.js';
 import { AppError } from '../lib/errors.js';
 import { verifySession } from '../lib/jwt.js';
@@ -16,9 +16,7 @@ export type AuthUser = {
   email: string;
   slug: string;
   role: UserRole;
-  status: UserStatus;
   avatarUrl: string | null;
-  rejectionReason: string | null;
 };
 
 export type AppEnv = {
@@ -41,9 +39,7 @@ async function resolveUser(token: string | undefined): Promise<AuthUser | null> 
       email: users.email,
       slug: users.slug,
       role: users.role,
-      status: users.status,
       avatarUrl: users.avatarUrl,
-      rejectionReason: users.rejectionReason,
     })
     .from(users)
     .where(eq(users.id, payload.sub))
@@ -72,31 +68,6 @@ export const requireAdmin = createMiddleware<AppEnv>(async (c, next) => {
     throw AppError.forbidden('Hanya admin yang dapat mengakses sumber daya ini.');
   }
   await next();
-});
-
-/** Wajib berstatus approved (admin otomatis lolos). */
-export const requireApproved = createMiddleware<AppEnv>(async (c, next) => {
-  const user = c.get('user');
-  if (!user) throw AppError.unauthorized();
-
-  if (user.role === 'admin') {
-    await next();
-    return;
-  }
-
-  switch (user.status) {
-    case 'pending':
-      throw AppError.forbidden('Menunggu konfirmasi admin.', { status: user.status });
-    case 'rejected':
-      throw AppError.forbidden(user.rejectionReason ?? 'Pendaftaran ditolak oleh admin.', {
-        status: user.status,
-        reason: user.rejectionReason,
-      });
-    case 'suspended':
-      throw AppError.forbidden('Akun Anda dinonaktifkan oleh admin.', { status: user.status });
-    default:
-      await next();
-  }
 });
 
 export function getCurrentUser(c: { get: (key: 'user') => AuthUser | null }): AuthUser {

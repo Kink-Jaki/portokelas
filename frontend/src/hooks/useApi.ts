@@ -7,6 +7,8 @@ import type {
   About,
   AdminUpdateUserPayload,
   MemberProfile,
+  Memory,
+  MemoryWithAuthor,
   Paginated,
   Project,
   ProjectImage,
@@ -15,9 +17,6 @@ import type {
   ProfilePayload,
   PublicUser,
   Teacher,
-  UserRole,
-  UserStatus,
-  UserStatusSummary,
 } from '@/types/api';
 
 /* ------------------------------ Profil ------------------------------ */
@@ -185,64 +184,74 @@ export function useUploadProjectCover() {
   });
 }
 
+/* ------------------------------ Kenangan ---------------------------- */
+
+export function useMyMemories() {
+  return useQuery({
+    queryKey: queryKeys.myMemories,
+    queryFn: () => api.get<{ memories: Memory[] }>('/me/memories'),
+  });
+}
+
+export function useUploadMemory() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ image, caption }: { image: File; caption?: string }) => {
+      const form = new FormData();
+      form.append('image', image);
+      if (caption && caption.trim()) form.append('caption', caption.trim());
+      return api.post<{ memory: Memory }>('/me/memories', form);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.myMemories });
+      queryClient.invalidateQueries({ queryKey: queryKeys.publicMemories });
+      toast.success('Kenangan berhasil diunggah.');
+    },
+    onError: (error) => toastApiError(error, 'Gagal mengunggah kenangan.'),
+  });
+}
+
+export function useDeleteMemory() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.delete<{ id: string; deleted: boolean }>(`/me/memories/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.myMemories });
+      queryClient.invalidateQueries({ queryKey: queryKeys.publicMemories });
+      toast.success('Kenangan dihapus.');
+    },
+    onError: (error) => toastApiError(error, 'Gagal menghapus kenangan.'),
+  });
+}
+
+export function useAdminMemories() {
+  return useQuery({
+    queryKey: queryKeys.adminMemories,
+    queryFn: () => api.get<{ memories: MemoryWithAuthor[] }>('/admin/memories'),
+  });
+}
+
+export function useAdminDeleteMemory() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.delete<{ id: string; deleted: boolean }>(`/admin/memories/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.adminMemories });
+      queryClient.invalidateQueries({ queryKey: queryKeys.publicMemories });
+      toast.success('Kenangan dihapus.');
+    },
+    onError: (error) => toastApiError(error, 'Gagal menghapus kenangan.'),
+  });
+}
+
 /* ------------------------------- Admin ------------------------------ */
 
-export function useAdminUsers(status: string, search: string, page: number) {
+export function useAdminUsers(search: string, page: number) {
   return useQuery({
-    queryKey: queryKeys.adminUsers(status, search, page),
+    queryKey: queryKeys.adminUsers(search, page),
     queryFn: () =>
-      api.get<Paginated<MemberProfile>>(
-        `/admin/users${buildQuery({ status: status === 'all' ? undefined : status, search, page, limit: 12 })}`,
-      ),
+      api.get<Paginated<MemberProfile>>(`/admin/users${buildQuery({ search, page, limit: 12 })}`),
     placeholderData: (previous) => previous,
-  });
-}
-
-export function useAdminUsersSummary() {
-  return useQuery({
-    queryKey: queryKeys.adminUsersSummary,
-    queryFn: () => api.get<UserStatusSummary>('/admin/users/summary'),
-  });
-}
-
-export function useUpdateUserStatus() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, status, reason }: { id: string; status: UserStatus; reason?: string }) =>
-      api.patch<{ user: MemberProfile }>(`/admin/users/${id}/status`, { status, reason }),
-    onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['admin'] });
-      queryClient.invalidateQueries({ queryKey: queryKeys.me });
-      queryClient.invalidateQueries({ queryKey: ['public'] });
-
-      const messages: Partial<Record<UserStatus, string>> = {
-        approved: 'Pendaftaran disetujui.',
-        rejected: 'Pendaftaran ditolak.',
-        suspended: 'Akun dinonaktifkan.',
-      };
-      toast.success(messages[variables.status] ?? 'Status anggota diperbarui.');
-    },
-    onError: (error) => toastApiError(error, 'Gagal memperbarui status anggota.'),
-  });
-}
-
-export function useUpdateUserRole() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, role }: { id: string; role: UserRole }) =>
-      api.patch<{ user: MemberProfile }>(`/admin/users/${id}/role`, { role }),
-    onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['admin'] });
-      queryClient.invalidateQueries({ queryKey: queryKeys.me });
-      queryClient.invalidateQueries({ queryKey: ['public'] });
-
-      toast.success(
-        variables.role === 'admin' ? 'Anggota dijadikan admin.' : 'Admin dijadikan anggota.',
-      );
-    },
-    onError: (error) => toastApiError(error, 'Gagal mengubah role anggota.'),
   });
 }
 

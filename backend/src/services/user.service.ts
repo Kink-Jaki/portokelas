@@ -8,10 +8,7 @@ import {
   users,
   type MemberProfile,
   type PublicUser,
-  type UserRole,
-  type UserStatus,
 } from '../db/schema.js';
-import { AppError } from '../lib/errors.js';
 import { slugify } from '../lib/slug.js';
 import type { MemberQuery } from '../validators/user.js';
 
@@ -79,10 +76,10 @@ export async function generateUniqueSlug(name: string): Promise<string> {
   return `${base}-${crypto.randomUUID().slice(0, 8)}`;
 }
 
-export async function listApprovedMembers(query: MemberQuery): Promise<Paginated<PublicUser>> {
+export async function listMembers(query: MemberQuery): Promise<Paginated<PublicUser>> {
   const { search, page, limit } = query;
 
-  const conditions: SQL[] = [eq(users.status, 'approved')];
+  const conditions: SQL[] = [];
   if (search) {
     const pattern = `%${search}%`;
     const searchCondition = or(
@@ -92,7 +89,7 @@ export async function listApprovedMembers(query: MemberQuery): Promise<Paginated
     );
     if (searchCondition) conditions.push(searchCondition);
   }
-  const where = and(...conditions);
+  const where = conditions.length > 0 ? and(...conditions) : undefined;
 
   const rows = await db
     .select(publicUserColumns)
@@ -107,11 +104,11 @@ export async function listApprovedMembers(query: MemberQuery): Promise<Paginated
   return toPaginated(rows, totals[0]?.value ?? 0, page, limit);
 }
 
-export async function getApprovedMemberBySlug(slug: string): Promise<PublicUser | null> {
+export async function getMemberBySlug(slug: string): Promise<PublicUser | null> {
   const rows = await db
     .select(publicUserColumns)
     .from(users)
-    .where(and(eq(users.slug, slug), eq(users.status, 'approved')))
+    .where(eq(users.slug, slug))
     .limit(1);
   return rows[0] ?? null;
 }
@@ -126,15 +123,13 @@ export async function getAdminProfileBySlug(slug: string): Promise<MemberProfile
 }
 
 export async function listUsersForAdmin(query: {
-  status?: UserStatus;
   search?: string;
   page: number;
   limit: number;
 }): Promise<Paginated<MemberProfile>> {
-  const { status, search, page, limit } = query;
+  const { search, page, limit } = query;
 
   const conditions: SQL[] = [];
-  if (status) conditions.push(eq(users.status, status));
   if (search) {
     const pattern = `%${search}%`;
     const searchCondition = or(
@@ -168,55 +163,14 @@ export async function updateProfile(userId: string, data: Partial<typeof users.$
   return rows[0] ?? null;
 }
 
-export async function updateUserStatus(
-  targetId: string,
-  status: UserStatus,
-  reason?: string | null,
-): Promise<MemberProfile> {
-  const rows = await db
-    .update(users)
-    .set({
-      status,
-      rejectionReason: status === 'rejected' ? (reason ?? null) : null,
-      updatedAt: new Date(),
-    })
-    .where(eq(users.id, targetId))
-    .returning(memberProfileColumns);
-
-  const updated = rows[0];
-  if (!updated) throw AppError.notFound('Anggota tidak ditemukan');
-  return updated;
-}
-
-export async function updateUserRole(targetId: string, role: UserRole): Promise<MemberProfile> {
-  const patch: Partial<typeof users.$inferInsert> = { role, updatedAt: new Date() };
-  if (role === 'admin') {
-    patch.status = 'approved';
-    patch.rejectionReason = null;
-  }
-
-  const rows = await db
-    .update(users)
-    .set(patch)
-    .where(eq(users.id, targetId))
-    .returning(memberProfileColumns);
-
-  const updated = rows[0];
-  if (!updated) throw AppError.notFound('Anggota tidak ditemukan');
-  return updated;
-}
-
 export async function getPublicStats(): Promise<{ members: number; projects: number }> {
   const [memberTotals, projectTotals] = await Promise.all([
-    db
-      .select({ value: count() })
-      .from(users)
-      .where(eq(users.status, 'approved')),
+    db.select({ value: count() }).from(users),
     db
       .select({ value: count() })
       .from(projects)
       .innerJoin(users, eq(projects.userId, users.id))
-      .where(and(eq(projects.isHidden, false), eq(users.status, 'approved'))),
+      .where(eq(projects.isHidden, false)),
   ]);
 
   return {

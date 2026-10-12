@@ -1,5 +1,5 @@
-import { motion, useReducedMotion } from 'framer-motion';
-import type { ReactNode } from 'react';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { useRef, type ReactNode } from 'react';
 
 import { ease } from '@/lib/motion';
 import { cn } from '@/lib/utils';
@@ -43,12 +43,21 @@ export function Stagger({
   delayChildren?: number;
   staggerChildren?: number;
 }) {
+  const reduceMotion = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-10% 0px' });
+
+  if (reduceMotion) return <div className={className}>{children}</div>;
+
   return (
     <motion.div
+      ref={ref}
       className={className}
       initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, margin: '-10% 0px' }}
+      // State "show" disimpan permanen setelah masuk viewport agar kartu yang
+      // dipasang belakangan (mis. saat pindah halaman pagination) tetap terlihat
+      // dan ikut dianimasikan, bukan berhenti di opacity 0.
+      animate={inView ? 'show' : 'hidden'}
       variants={{
         hidden: {},
         show: { transition: { staggerChildren, delayChildren } },

@@ -68,7 +68,7 @@ export function StructureSection() {
             <div className="border border-line">
               <EmptyState
                 title="Belum ada anggota"
-                description="Daftar anggota akan tampil setelah admin menyetujui pendaftaran pertama."
+                description="Daftar anggota akan tampil setelah anggota pertama bergabung."
                 action={
                   <Link to="/login" className={buttonClasses('primary', 'sm')}>
                     Masuk

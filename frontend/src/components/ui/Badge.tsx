@@ -1,6 +1,5 @@
 import { cn } from '@/lib/utils';
-import { userStatusLabel, userRoleLabel } from '@/lib/utils';
-import type { UserStatus } from '@/types/api';
+import { userRoleLabel } from '@/lib/utils';
 
 type Tone = 'neutral' | 'outline' | 'danger' | 'success' | 'warning';
 
@@ -30,32 +29,6 @@ export function Badge({ children, tone = 'outline', className }: BadgeProps) {
     >
       {children}
     </span>
-  );
-}
-
-export function StatusBadge({ status }: { status: UserStatus }) {
-  const tone: Tone =
-    status === 'approved'
-      ? 'success'
-      : status === 'rejected' || status === 'suspended'
-        ? 'danger'
-        : 'outline';
-
-  return (
-    <Badge tone={tone}>
-      <span
-        aria-hidden
-        className={cn(
-          'h-1.5 w-1.5 rounded-full',
-          status === 'approved'
-            ? 'bg-success'
-            : status === 'rejected' || status === 'suspended'
-              ? 'bg-danger'
-              : 'bg-muted',
-        )}
-      />
-      {userStatusLabel[status] ?? status}
-    </Badge>
   );
 }
 

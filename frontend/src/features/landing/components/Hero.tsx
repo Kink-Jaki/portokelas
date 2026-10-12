@@ -12,7 +12,7 @@ const sectionIndex = [
   { num: '02', label: 'Wali Kelas', href: '#wali-kelas' },
   { num: '03', label: 'Anggota', href: '#anggota' },
   { num: '04', label: 'Statistik', href: '#statistik' },
-  { num: '05', label: 'Bergabung', href: '#daftar' },
+  { num: '05', label: 'Memories', href: '#memories' },
 ];
 
 export function Hero() {

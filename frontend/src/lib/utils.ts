@@ -45,13 +45,6 @@ export function truncate(value: string, max: number): string {
 
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const userStatusLabel: Record<string, string> = {
-  pending: 'Menunggu',
-  approved: 'Disetujui',
-  rejected: 'Ditolak',
-  suspended: 'Dinonaktifkan',
-};
-
 export const userRoleLabel: Record<string, string> = {
   member: 'Anggota',
   admin: 'Admin',

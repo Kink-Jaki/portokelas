@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { Avatar } from '@/components/ui/Avatar';
-import { RoleBadge, StatusBadge, DevBadge } from '@/components/ui/Badge';
+import { RoleBadge, DevBadge } from '@/components/ui/Badge';
 import { buttonClasses } from '@/components/ui/Button';
 import { useAuth } from '@/providers/AuthProvider';
 import { cn } from '@/lib/utils';
@@ -139,7 +139,7 @@ function SidebarNav({
   if (user?.role === 'admin') {
     items.push({ key: 'admin', to: '/admin', label: 'Panel admin', icon: IconShield });
   } else if (user) {
-    if (user.status === 'approved' && user.slug) {
+    if (user.slug) {
       items.push({
         key: 'porto',
         to: `/m/${user.slug}`,
@@ -150,7 +150,7 @@ function SidebarNav({
     items.push({
       key: 'dashboard',
       to: '/dashboard',
-      label: 'Kelola project',
+      label: 'Dashboard',
       icon: IconGrid,
       end: true,
     });
@@ -226,7 +226,6 @@ function SidebarNav({
                 </div>
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
-                <StatusBadge status={user.status} />
                 <RoleBadge role={user.role} />
                 {user.role === 'admin' ? <DevBadge /> : null}
               </div>

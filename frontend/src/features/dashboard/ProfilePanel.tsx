@@ -144,7 +144,7 @@ export function ProfilePanel() {
           </div>
         </dl>
 
-        {user.slug && user.status === 'approved' ? (
+        {user.slug ? (
           <a
             href={`/m/${user.slug}`}
             target="_blank"
@@ -176,8 +176,8 @@ export function ProfilePanel() {
 
         <Input
           label="Spotify"
-          placeholder="https://open.spotify.com/track/..."
-          hint="Tautan lagu Spotify. Pemutar berputar otomatis di halaman portofoliomu, lengkap dengan judul lagu, sampul, dan nama penyanyi."
+          placeholder="https://open.spotify.com/track/... atau /playlist/..."
+          hint="Tautan lagu, playlist, album, atau artis Spotify. Pemutar berputar otomatis di halaman portofoliomu."
           error={errors.spotifyUrl?.message}
           {...register('spotifyUrl')}
         />

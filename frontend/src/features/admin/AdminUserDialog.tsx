@@ -143,8 +143,8 @@ export function AdminUserDialog({
 
         <Input
           label="Spotify"
-          placeholder="https://open.spotify.com/track/..."
-          hint="Tautan lagu Spotify. Diputar otomatis di halaman portofolio, lengkap dengan judul lagu, sampul, dan penyanyi."
+          placeholder="https://open.spotify.com/track/... atau /playlist/..."
+          hint="Tautan lagu, playlist, album, atau artis Spotify. Diputar otomatis di halaman portofolio."
           error={errors.spotifyUrl?.message}
           {...register('spotifyUrl')}
         />

@@ -4,39 +4,41 @@ import { motion } from 'framer-motion';
 
 import { ProfilePanel } from './ProfilePanel';
 import { ProjectsPanel } from './ProjectsPanel';
+import { MemoriesPanel } from './MemoriesPanel';
 import { AnimatedRule } from '@/components/ui/Reveal';
-import { StatusBadge } from '@/components/ui/Badge';
 import { buttonClasses } from '@/components/ui/Button';
 import { fadeUp } from '@/lib/motion';
 import { useAuth } from '@/providers/AuthProvider';
 
-type Tab = 'profile' | 'projects';
+type Tab = 'profile' | 'projects' | 'memories';
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [tab, setTab] = useState<Tab>(
-    searchParams.get('tab') === 'projects' ? 'projects' : 'profile',
+    searchParams.get('tab') === 'projects'
+      ? 'projects'
+      : searchParams.get('tab') === 'memories'
+        ? 'memories'
+        : 'profile',
   );
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'profile', label: 'Profil' },
     { id: 'projects', label: 'Project' },
+    { id: 'memories', label: 'Kenangan' },
   ];
 
   const selectTab = (next: Tab) => {
     setTab(next);
-    setSearchParams(next === 'profile' ? {} : { tab: 'projects' }, { replace: true });
+    setSearchParams(next === 'profile' ? {} : { tab: next }, { replace: true });
   };
 
   return (
     <div className="container-page py-14">
       <motion.header variants={fadeUp} initial="hidden" animate="show" className="max-w-2xl">
-        <div className="flex flex-wrap items-center gap-3">
-          <p className="eyebrow">Dashboard anggota</p>
-          {user ? <StatusBadge status={user.status} /> : null}
-        </div>
+        <p className="eyebrow">Dashboard anggota</p>
         <h1 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">
           Halo, {user?.name.split(' ')[0]}.
         </h1>
@@ -102,7 +104,13 @@ export default function DashboardPage() {
         id={`dashboard-panel-${tab}`}
         aria-labelledby={`dashboard-tab-${tab}`}
       >
-        {tab === 'profile' ? <ProfilePanel /> : <ProjectsPanel />}
+        {tab === 'profile' ? (
+          <ProfilePanel />
+        ) : tab === 'projects' ? (
+          <ProjectsPanel />
+        ) : (
+          <MemoriesPanel />
+        )}
       </div>
     </div>
   );

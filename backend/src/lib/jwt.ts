@@ -1,14 +1,13 @@
 import { sign, verify } from 'hono/jwt';
 
 import { env } from '../env.js';
-import type { UserRole, UserStatus } from '../db/schema.js';
+import type { UserRole } from '../db/schema.js';
 
 const ALG = 'HS256' as const;
 
 export type SessionPayload = {
   sub: string;
   role: UserRole;
-  status: UserStatus;
   name: string;
   slug: string;
   exp: number;
@@ -17,7 +16,6 @@ export type SessionPayload = {
 export async function signSession(payload: {
   sub: string;
   role: UserRole;
-  status: UserStatus;
   name: string;
   slug: string;
 }): Promise<string> {
