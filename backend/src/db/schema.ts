@@ -92,12 +92,41 @@ export const projectImages = pgTable(
   ],
 );
 
+/** Kolaborator project — anggota lain yang ikut mengerjakan project bersama. */
+export const projectCollaborators = pgTable(
+  'project_collaborators',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    projectId: uuid('project_id')
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('project_collaborators_project_user_unique').on(table.projectId, table.userId),
+    index('project_collaborators_project_id_idx').on(table.projectId),
+    index('project_collaborators_user_id_idx').on(table.userId),
+  ],
+);
+
 /** Konten statis halaman landing — baris "Tentang" (single row). */
 export const abouts = pgTable('abouts', {
   id: uuid('id').primaryKey().defaultRandom(),
   title: text('title'),
   description: text('description').notNull(),
   imageUrl: text('image_url'),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Konten statis hero landing — kolase tiga gambar (single row). */
+export const heroes = pgTable('heroes', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  image1Url: text('image1_url'),
+  image2Url: text('image2_url'),
+  image3Url: text('image3_url'),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -137,15 +166,22 @@ export const memories = pgTable(
 export const usersRelations = relations(users, ({ many }) => ({
   projects: many(projects),
   memories: many(memories),
+  collaborations: many(projectCollaborators),
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
   author: one(users, { fields: [projects.userId], references: [users.id] }),
   images: many(projectImages),
+  collaborators: many(projectCollaborators),
 }));
 
 export const projectImagesRelations = relations(projectImages, ({ one }) => ({
   project: one(projects, { fields: [projectImages.projectId], references: [projects.id] }),
+}));
+
+export const projectCollaboratorsRelations = relations(projectCollaborators, ({ one }) => ({
+  project: one(projects, { fields: [projectCollaborators.projectId], references: [projects.id] }),
+  user: one(users, { fields: [projectCollaborators.userId], references: [users.id] }),
 }));
 
 export const memoriesRelations = relations(memories, ({ one }) => ({
@@ -158,8 +194,12 @@ export type Project = typeof projects.$inferSelect;
 export type NewProject = typeof projects.$inferInsert;
 export type ProjectImage = typeof projectImages.$inferSelect;
 export type NewProjectImage = typeof projectImages.$inferInsert;
+export type ProjectCollaborator = typeof projectCollaborators.$inferSelect;
+export type NewProjectCollaborator = typeof projectCollaborators.$inferInsert;
 export type About = typeof abouts.$inferSelect;
 export type NewAbout = typeof abouts.$inferInsert;
+export type Hero = typeof heroes.$inferSelect;
+export type NewHero = typeof heroes.$inferInsert;
 export type Teacher = typeof teachers.$inferSelect;
 export type NewTeacher = typeof teachers.$inferInsert;
 export type Memory = typeof memories.$inferSelect;

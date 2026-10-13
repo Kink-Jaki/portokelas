@@ -15,6 +15,7 @@ import {
   deleteStoredFile,
   deleteTeacher,
   getAbout,
+  getHero,
   getProjectAuthor,
   listAllProjects,
   listMemoriesForAdmin,
@@ -25,7 +26,9 @@ import {
   updateProfile,
   updateTeacher,
   upsertAbout,
+  upsertHero,
 } from '../services/index.js';
+import type { HeroInput } from '../services/index.js';
 import { aboutFormSchema, teacherFormSchema, teacherUpdateFormSchema } from '../validators/content.js';
 import { adminProjectQuerySchema, hideProjectSchema } from '../validators/project.js';
 import { adminUpdateUserSchema, adminUserQuerySchema } from '../validators/user.js';
@@ -150,8 +153,8 @@ export const adminRoutes = new Hono<AppEnv>()
   /* ------------------------------ Konten landing ------------------------------ */
 
   .get('/content', async (c) => {
-    const [about, teacherList] = await Promise.all([getAbout(), listTeachers()]);
-    return c.json(ok({ about, teachers: teacherList }));
+    const [about, hero, teacherList] = await Promise.all([getAbout(), getHero(), listTeachers()]);
+    return c.json(ok({ about, hero, teachers: teacherList }));
   })
 
   .patch('/about', async (c) => {
@@ -180,6 +183,42 @@ export const adminRoutes = new Hono<AppEnv>()
     }
 
     return c.json(ok({ about }));
+  })
+
+  .patch('/hero', async (c) => {
+    const form = await readForm(c);
+    const previous = await getHero();
+
+    const slots = [
+      { field: 'image1', removeField: 'removeImage1', current: previous?.image1Url ?? null },
+      { field: 'image2', removeField: 'removeImage2', current: previous?.image2Url ?? null },
+      { field: 'image3', removeField: 'removeImage3', current: previous?.image3Url ?? null },
+    ] as const;
+
+    const next: HeroInput = {};
+    const obsolete: string[] = [];
+
+    for (const slot of slots) {
+      const file = formFile(form, [slot.field]);
+      const remove = formText(form, slot.removeField) === 'true';
+
+      let value: string | null | undefined;
+      if (file) value = await saveImage(file, 'content');
+      else if (remove) value = null;
+      if (value === undefined) continue;
+
+      if (slot.field === 'image1') next.image1Url = value;
+      else if (slot.field === 'image2') next.image2Url = value;
+      else next.image3Url = value;
+
+      if (slot.current && slot.current !== value) obsolete.push(slot.current);
+    }
+
+    const hero = await upsertHero(next);
+
+    for (const stored of obsolete) await deleteStoredFile(stored);
+
+    return c.json(ok({ hero }));
   })
 
   .get('/teachers', async (c) => {

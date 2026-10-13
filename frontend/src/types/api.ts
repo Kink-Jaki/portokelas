@@ -47,6 +47,12 @@ export type ProjectImage = {
   sortOrder: number;
 };
 
+/** Anggota yang ikut mengerjakan sebuah project (tanpa kredensial). */
+export type CollaboratorUser = Pick<
+  PublicUser,
+  'id' | 'name' | 'alias' | 'slug' | 'avatarUrl' | 'headline' | 'role'
+>;
+
 export type Project = {
   id: string;
   userId: string;
@@ -62,6 +68,7 @@ export type Project = {
   createdAt: string;
   updatedAt: string;
   images: ProjectImage[];
+  collaborators: CollaboratorUser[];
 };
 
 export type ProjectWithAuthor = Project & {
@@ -91,6 +98,15 @@ export type About = {
   title: string | null;
   description: string;
   imageUrl: string | null;
+  updatedAt: string;
+};
+
+/** Gambar kolase hero di halaman landing (tiga slot, opsional). */
+export type Hero = {
+  id: string;
+  image1Url: string | null;
+  image2Url: string | null;
+  image3Url: string | null;
   updatedAt: string;
 };
 
@@ -142,6 +158,7 @@ export type ProjectPayload = {
   demoUrl?: string | null;
   repoUrl?: string | null;
   coverImageUrl?: string | null;
+  collaboratorIds?: string[];
 };
 
 export type ProjectPatchPayload = Partial<ProjectPayload>;

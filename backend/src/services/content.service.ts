@@ -1,7 +1,15 @@
 import { asc, eq } from 'drizzle-orm';
 
 import { db } from '../db/index.js';
-import { abouts, teachers, type About, type NewTeacher, type Teacher } from '../db/schema.js';
+import {
+  abouts,
+  heroes,
+  teachers,
+  type About,
+  type Hero,
+  type NewTeacher,
+  type Teacher,
+} from '../db/schema.js';
 import { AppError } from '../lib/errors.js';
 
 /* --------------------------------- About --------------------------------- */
@@ -41,6 +49,48 @@ export async function upsertAbout(input: AboutInput): Promise<About> {
       title: input.title,
       description: input.description,
       imageUrl: input.imageUrl ?? null,
+    })
+    .returning();
+  return rows[0]!;
+}
+
+/* --------------------------------- Hero ---------------------------------- */
+
+export async function getHero(): Promise<Hero | null> {
+  const rows = await db.select().from(heroes).orderBy(asc(heroes.id)).limit(1);
+  return rows[0] ?? null;
+}
+
+export type HeroInput = {
+  image1Url?: string | null;
+  image2Url?: string | null;
+  image3Url?: string | null;
+};
+
+/** Simpan kolase gambar hero — hanya ada satu baris. */
+export async function upsertHero(input: HeroInput): Promise<Hero> {
+  const existing = await getHero();
+
+  if (existing) {
+    const rows = await db
+      .update(heroes)
+      .set({
+        ...(input.image1Url === undefined ? {} : { image1Url: input.image1Url }),
+        ...(input.image2Url === undefined ? {} : { image2Url: input.image2Url }),
+        ...(input.image3Url === undefined ? {} : { image3Url: input.image3Url }),
+        updatedAt: new Date(),
+      })
+      .where(eq(heroes.id, existing.id))
+      .returning();
+    return rows[0]!;
+  }
+
+  const rows = await db
+    .insert(heroes)
+    .values({
+      image1Url: input.image1Url ?? null,
+      image2Url: input.image2Url ?? null,
+      image3Url: input.image3Url ?? null,
     })
     .returning();
   return rows[0]!;

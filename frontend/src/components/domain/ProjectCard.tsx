@@ -3,10 +3,11 @@ import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
 import { ProjectCover, TechStack } from './shared';
+import { Avatar } from '@/components/ui/Avatar';
 import { buttonClasses } from '@/components/ui/Button';
 import { Stagger } from '@/components/ui/Reveal';
 import { staggerItem } from '@/lib/motion';
-import { formatDate } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import type { Project } from '@/types/api';
 
 export function projectHref(project: Project, ownerSlug?: string): string {
@@ -97,6 +98,26 @@ export function ProjectCard({
           </p>
 
           <TechStack items={project.techStack ?? []} className="mt-5" />
+
+          {project.collaborators.length > 0 ? (
+            <div className="mt-4 flex items-center gap-2">
+              <div className="flex items-center">
+                {project.collaborators.slice(0, 3).map((member, collaboratorIndex) => (
+                  <Avatar
+                    key={member.id}
+                    name={member.name}
+                    src={member.avatarUrl}
+                    size="sm"
+                    muted
+                    className={cn('h-6 w-6', collaboratorIndex > 0 && '-ml-2')}
+                  />
+                ))}
+              </div>
+              <span className="font-mono text-[0.625rem] uppercase tracking-[0.14em] text-muted">
+                Bersama {project.collaborators.length}
+              </span>
+            </div>
+          ) : null}
 
           <div className="mt-auto pt-6">
             <ProjectMeta project={project} meta={meta} />

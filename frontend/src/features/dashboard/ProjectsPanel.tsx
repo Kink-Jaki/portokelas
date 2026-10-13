@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 
+import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ConfirmDialog } from '@/components/ui/Modal';
@@ -15,10 +16,13 @@ import {
 } from '@/hooks/useApi';
 import { assetUrl } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
+import { useAuth } from '@/providers/AuthProvider';
 import type { Project } from '@/types/api';
 import { ProjectDialog } from './ProjectDialog';
 
 function ProjectRow({ project, onEdit }: { project: Project; onEdit: () => void }) {
+  const { user } = useAuth();
+  const isOwner = project.userId === user?.id;
   const [pendingDelete, setPendingDelete] = useState(false);
   const deleteProject = useDeleteProject();
   const uploadImages = useUploadProjectImages();
@@ -43,6 +47,11 @@ function ProjectRow({ project, onEdit }: { project: Project; onEdit: () => void 
                   Disembunyikan admin
                 </span>
               ) : null}
+              {!isOwner ? (
+                <span className="rounded-sm border border-line-strong px-2 py-0.5 font-mono text-[0.625rem] uppercase tracking-[0.14em] text-muted">
+                  Project bersama
+                </span>
+              ) : null}
             </div>
             <p className="mt-1 font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">
               {project.slug} · {formatDate(project.createdAt)}
@@ -53,9 +62,11 @@ function ProjectRow({ project, onEdit }: { project: Project; onEdit: () => void 
             <Button variant="outline" size="sm" onClick={onEdit}>
               Edit
             </Button>
-            <Button variant="danger" size="sm" onClick={() => setPendingDelete(true)}>
-              Hapus
-            </Button>
+            {isOwner ? (
+              <Button variant="danger" size="sm" onClick={() => setPendingDelete(true)}>
+                Hapus
+              </Button>
+            ) : null}
           </div>
         </div>
 
@@ -64,6 +75,25 @@ function ProjectRow({ project, onEdit }: { project: Project; onEdit: () => void 
         </p>
 
         <TechStack items={project.techStack ?? []} />
+
+        {project.collaborators.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted">
+            <span className="font-mono uppercase tracking-[0.14em]">Bersama</span>
+            <div className="flex flex-wrap items-center gap-3">
+              {project.collaborators.map((member) => (
+                <span key={member.id} className="inline-flex items-center gap-2">
+                  <Avatar
+                    name={member.name}
+                    src={member.avatarUrl}
+                    size="sm"
+                    className="h-6 w-6"
+                  />
+                  {member.alias || member.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         <div className="flex flex-wrap gap-2 border-t border-line pt-4">
           <input
@@ -170,7 +200,8 @@ export function ProjectsPanel() {
         <div>
           <h2 className="font-display text-2xl">Project saya</h2>
           <p className="mt-1 text-sm text-muted">
-            Project yang Anda tambahkan tampil di portofolio publik (kecuali disembunyikan admin).
+            Project yang Anda buat atau ikut kerjakan tampil di portofolio publik (kecuali
+            disembunyikan admin).
           </p>
         </div>
         <Button

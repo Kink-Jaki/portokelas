@@ -3,11 +3,17 @@ import { motion } from 'framer-motion';
 
 import { buttonClasses } from '@/components/ui/Button';
 import { Magnetic } from '@/components/ui/Magnetic';
+import { useHero } from '@/hooks/usePublic';
+import { assetUrl } from '@/lib/api';
 import { fadeUp, stagger, staggerItem } from '@/lib/motion';
 
 const headlineLines = ['Karya yang', 'dibangun', 'bersama'];
 
-const collageImages = [
+type CollageImage = { src: string; alt: string };
+type Collage = [CollageImage, CollageImage, CollageImage];
+
+/** Gambar bawaan bila admin belum menyetel kolase hero. */
+const DEFAULT_COLLAGE: Collage = [
   {
     src: 'https://plus.unsplash.com/premium_photo-1682284353484-4e16001c58eb?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
     alt: 'Anggota kelas sedang menulis dan mengerjakan proyek di meja belajar',
@@ -20,9 +26,7 @@ const collageImages = [
     src: 'https://plus.unsplash.com/premium_photo-1713296255442-e9338f42aad8?q=80&w=722&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
     alt: 'Buku dan laptop di atas meja belajar',
   },
-] as const;
-
-const [studyImage, schoolImage, deskImage] = collageImages;
+];
 
 /** Ornamen tepi halaman — aksen dekoratif ringan di belakang konten. */
 function EdgeOrnaments() {
@@ -59,7 +63,9 @@ function EdgeOrnaments() {
 }
 
 /** Kolase editorial tiga gambar yang saling bertumpuk secara terkontrol. */
-function ImageCollage() {
+function ImageCollage({ images }: { images: Collage }) {
+  const [studyImage, schoolImage, deskImage] = images;
+
   return (
     <div className="relative mx-auto aspect-[5/6] w-full max-w-[24rem] sm:max-w-[26rem] lg:max-w-none">
       {/* Ornamen di belakang gambar */}
@@ -107,6 +113,24 @@ function ImageCollage() {
 }
 
 export function Hero() {
+  const { data } = useHero();
+  const hero = data?.hero ?? null;
+
+  const images: Collage = [
+    {
+      src: assetUrl(hero?.image1Url) ?? DEFAULT_COLLAGE[0].src,
+      alt: DEFAULT_COLLAGE[0].alt,
+    },
+    {
+      src: assetUrl(hero?.image2Url) ?? DEFAULT_COLLAGE[1].src,
+      alt: DEFAULT_COLLAGE[1].alt,
+    },
+    {
+      src: assetUrl(hero?.image3Url) ?? DEFAULT_COLLAGE[2].src,
+      alt: DEFAULT_COLLAGE[2].alt,
+    },
+  ];
+
   return (
     <section className="paper relative isolate overflow-hidden border-b border-line-warm bg-ivory text-forest">
       <EdgeOrnaments />
@@ -172,7 +196,7 @@ export function Hero() {
 
           {/* Kolase gambar */}
           <motion.div variants={staggerItem}>
-            <ImageCollage />
+            <ImageCollage images={images} />
           </motion.div>
         </motion.div>
       </div>

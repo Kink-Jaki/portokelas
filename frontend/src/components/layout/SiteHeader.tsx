@@ -181,7 +181,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-line-warm bg-ivory/50 backdrop-blur-md">
       <div className="container-wide flex h-20 items-center justify-between gap-6 lg:h-[6.3rem]">
         <div className="flex items-center gap-3">
-          <MobileSidebar />
+          {user ? <MobileSidebar /> : null}
           <Logo variant="editorial" />
         </div>
 
@@ -202,6 +202,12 @@ export function SiteHeader() {
           ) : null}
 
           <div className="flex items-center gap-2">
+            <Link
+              to="/docs"
+              className={buttonClasses('ghost', 'sm', 'hidden sm:inline-flex')}
+            >
+              Docs
+            </Link>
             {isLoading ? (
               <div className="h-9 w-24 animate-pulse rounded-sm bg-ivory-alt" />
             ) : user ? (
@@ -222,6 +228,7 @@ export function SiteHeader() {
 const footerNav = [
   { label: 'Beranda', to: '/' },
   { label: 'Direktori anggota', to: '/members' },
+  { label: 'Dokumentasi', to: '/docs' },
   { label: 'Masuk', to: '/login' },
 ];
 

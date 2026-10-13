@@ -27,6 +27,7 @@ import ProjectDetailPage from '@/features/projects/ProjectDetailPage';
 import DashboardPage from '@/features/dashboard/DashboardPage';
 import ProfilePage from '@/features/dashboard/ProfilePage';
 import AdminPage from '@/features/admin/AdminPage';
+import DocsPage from '@/features/docs/DocsPage';
 import NotFoundPage from '@/features/misc/NotFoundPage';
 import ErrorPage from '@/features/misc/ErrorPage';
 
@@ -52,6 +53,7 @@ const router = createBrowserRouter(
       errorElement: <RouteErrorElement />,
       children: [
         { path: '/', element: <LandingPage /> },
+        { path: '/docs', element: <DocsPage /> },
         { path: '/error', element: <ErrorRoute /> },
         {
           path: 'login',

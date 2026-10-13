@@ -4,6 +4,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 
 import { SiteFooter, SiteHeader } from './SiteHeader';
 import { AppSidebar } from './AppSidebar';
+import { useAuth } from '@/providers/AuthProvider';
 import { cn } from '@/lib/utils';
 import { pageVariants } from '@/lib/motion';
 
@@ -23,6 +24,8 @@ const SIDEBAR_KEY = 'sk:sidebar-collapsed';
 export function RootLayout() {
   const location = useLocation();
   const reduceMotion = useReducedMotion();
+  const { user } = useAuth();
+  const showSidebar = Boolean(user);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false;
     return window.localStorage.getItem(SIDEBAR_KEY) === '1';
@@ -44,11 +47,11 @@ export function RootLayout() {
     <div
       className={cn(
         'flex min-h-screen flex-col transition-[padding] duration-300 ease-out',
-        sidebarCollapsed ? 'lg:pl-[4.75rem]' : 'lg:pl-64',
+        showSidebar && (sidebarCollapsed ? 'lg:pl-[4.75rem]' : 'lg:pl-64'),
       )}
     >
       <ScrollToTop />
-      <AppSidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
+      {showSidebar ? <AppSidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} /> : null}
       <SiteHeader />
       <main className="flex-1">
         {reduceMotion ? (
