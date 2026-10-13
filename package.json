@@ -1,8 +1,8 @@
 {
-  "name": "portofolio-kelas",
+  "name": "craftly",
   "version": "1.0.0",
   "private": true,
-  "description": "Portofolio Kelas — anggota kelas mendaftarkan diri dan menampilkan project mereka lewat portofolio publik.",
+  "description": "Craftly — kreator mendaftarkan diri dan menampilkan project mereka lewat portofolio publik.",
   "type": "module",
   "workspaces": [
     "backend",

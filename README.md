@@ -1,7 +1,7 @@
-# Satu Kelas
+# Craftly
 
-Platform portofolio untuk mahasiswa/kelas: anggota mendaftar, menunggu persetujuan admin,
-lalu mempublikasikan profil dan projectnya. Admin memoderasi anggota dan project.
+Platform portofolio untuk kreator: kreator mendaftar, menunggu kurasi admin,
+lalu mempublikasikan profil dan projectnya. Admin mengkurasi kreator dan project.
 
 - **Frontend** — React 18 + TypeScript + Vite, React Router, TanStack Query, Tailwind CSS v4, Framer Motion.
 - **Backend** — Bun + Hono + Drizzle ORM + PostgreSQL, autentikasi cookie JWT (argon2id).
@@ -11,18 +11,18 @@ lalu mempublikasikan profil dan projectnya. Admin memoderasi anggota dan project
 
 | Area | Kemampuan |
 | --- | --- |
-| Publik | Landing, daftar anggota approved, portofolio anggota (`/m/:slug`), detail project, statistik, pencarian |
-| Anggota | Registrasi, login (email), halaman "menunggu persetujuan", dashboard profil + project, upload avatar/cover/galeri |
-| Admin | Login admin, approval/penolakan anggota (dengan alasan), moderasi sembunyikan/hapus project, daftar seluruh anggota & project |
+| Publik | Landing, daftar kreator, portofolio kreator (`/m/:slug`), detail project, statistik, pencarian |
+| Kreator | Registrasi, login, dashboard profil + project, upload avatar/cover/galeri |
+| Admin | Login admin, kurasi kreator, moderasi sembunyikan/hapus project, daftar seluruh kreator & project |
 | Keamanan | Argon2id, JWT httpOnly cookie, rate limit login/registrasi, validasi Zod di frontend + backend, proteksi path traversal, RBAC `member`/`admin` |
 
 > **Catatan tampilan:** seluruh route aktif di `frontend/src/main.tsx` — landing (`/`), direktori
-> anggota (`/members`), portofolio anggota (`/m/:slug`), detail project, login/registrasi, dashboard,
+> kreator (`/members`), portofolio kreator (`/m/:slug`), detail project, login/registrasi, dashboard,
 > dan admin. Desain memakai arah *modern editorial*: kertas hangat, serif display (Fraunces), aksen
 > vermilion tunggal, aturan/nomor section, dan grid bergaris rambut. Backend, database, dan API tetap
 > utuh.
 
-## Alur Status Anggota
+## Alur Status Kreator
 
 ```
 registrasi ──► pending ──(admin setujui)──► approved ──(admin suspend)──► suspended
@@ -58,7 +58,7 @@ cp frontend/.env.example frontend/.env
 # 4. Jalankan migrasi skema
 bun run db:migrate
 
-# 5. Isi data akun kelas (login pakai NIS, password default "password")
+# 5. Isi data akun contoh (login pakai NIS, password default "password")
 bun run seed:class
 #    Opsional: buat akun admin terpisah dari nilai ADMIN_* di backend/.env
 # bun run seed:admin
@@ -80,7 +80,7 @@ Atau jalankan keduanya sekaligus dari root: `bun run dev`.
 | `NODE_ENV` | tidak | Default `development`. |
 | `JWT_SECRET` | ya | Minimal 32 karakter acak. Generate: `openssl rand -base64 48`. |
 | `JWT_EXPIRES_IN` | tidak | Default `7d`. |
-| `COOKIE_NAME` | tidak | Default `pk_session`. |
+| `COOKIE_NAME` | tidak | Default `craftly_session`. |
 | `CORS_ORIGIN` | tidak | Default `http://localhost:5173`, bisa dipisah koma untuk beberapa origin. |
 | `UPLOAD_DIR` | tidak | Default `uploads` (relatif terhadap folder `backend`). |
 | `MAX_UPLOAD_SIZE_MB` | tidak | Default `2`. |
@@ -109,13 +109,13 @@ Atau jalankan keduanya sekaligus dari root: `bun run dev`.
 | `bun run db:generate` | Buat migrasi baru setelah mengubah `schema.ts` |
 | `bun run db:push` | Sinkronkan skema tanpa file migrasi (prototipe) |
 | `bun run db:studio` | Drizzle Studio |
-| `bun run seed:class` | Hapus semua akun lalu buat 31 akun kelas (login pakai NIS) |
+| `bun run seed:class` | Hapus semua akun lalu buat 31 akun kreator contoh (login pakai NIS) |
 | `bun run seed:admin` | Buat/perbarui akun admin dari `ADMIN_*` (opsional) |
 
 ## Struktur Proyek
 
 ```
-portofolio-kelas/
+craftly/
 ├── backend/
 │   ├── drizzle/              # hasil db:generate
 │   ├── uploads/              # avatar & cover (diabaikan git)
