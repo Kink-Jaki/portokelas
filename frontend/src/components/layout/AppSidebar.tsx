@@ -108,6 +108,12 @@ type NavItem = {
   end?: boolean;
 };
 
+/** Tautan anchor ke bagian halaman landing (ditampilkan di drawer mobile). */
+export type SectionLink = {
+  label: string;
+  href: string;
+};
+
 const itemClass = (collapsed: boolean) =>
   ({ isActive }: { isActive: boolean }) =>
     cn(
@@ -121,9 +127,11 @@ const itemClass = (collapsed: boolean) =>
 function SidebarNav({
   onNavigate,
   collapsed = false,
+  sections = [],
 }: {
   onNavigate?: () => void;
   collapsed?: boolean;
+  sections?: SectionLink[];
 }) {
   const { user, isLoading, logout } = useAuth();
   const navigate = useNavigate();
@@ -188,6 +196,26 @@ function SidebarNav({
             {items.slice(0, 2).map(renderLink)}
           </nav>
         </div>
+
+        {!collapsed && sections.length > 0 ? (
+          <div>
+            <p className="px-3 font-mono text-[0.625rem] uppercase tracking-[0.22em] text-muted">
+              Di halaman ini
+            </p>
+            <nav className="mt-3 space-y-0.5" aria-label="Bagian halaman">
+              {sections.map((section) => (
+                <a
+                  key={section.href}
+                  href={section.href}
+                  onClick={onNavigate}
+                  className="flex items-center border-l-2 border-transparent px-3 py-2.5 text-sm text-muted transition-colors duration-200 hover:border-line-strong hover:bg-bg hover:text-fg"
+                >
+                  {section.label}
+                </a>
+              ))}
+            </nav>
+          </div>
+        ) : null}
 
         {items.length > 2 ? (
           <div>
@@ -313,8 +341,8 @@ export function AppSidebar({
   );
 }
 
-/** Drawer navigasi untuk layar kecil, dipanggil dari header — hanya setelah login. */
-export function MobileSidebar() {
+/** Drawer navigasi untuk layar kecil, dipanggil dari header — semua pengunjung. */
+export function MobileSidebar({ sections }: { sections?: SectionLink[] }) {
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
@@ -389,7 +417,7 @@ export function MobileSidebar() {
                   </button>
                 </div>
                 <div className="flex-1 overflow-y-auto px-5 py-6">
-                  <SidebarNav onNavigate={() => setOpen(false)} />
+                  <SidebarNav onNavigate={() => setOpen(false)} sections={sections} />
                 </div>
               </motion.div>
             </div>

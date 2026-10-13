@@ -32,9 +32,11 @@ const DEFAULT_COLLAGE: Collage = [
 function EdgeOrnaments() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-      {/* Kiri atas: potongan lingkaran maroon + outline hijau */}
-      <span className="absolute -left-24 -top-28 h-60 w-60 rounded-full bg-burgundy" />
-      <span className="absolute -left-[7.5rem] -top-[8.5rem] h-72 w-72 rounded-full border border-forest/40" />
+      {/* Kiri atas: potongan lingkaran maroon + outline hijau.
+          Di layar kecil ornamen digeser lebih jauh ke pojok agar tidak
+          menabrak judul/eyebrow yang kini lebih rapat ke tepi. */}
+      <span className="absolute -left-[13rem] -top-[11rem] h-56 w-56 rounded-full bg-burgundy sm:-left-24 sm:-top-28 sm:h-60 sm:w-60" />
+      <span className="absolute -left-[13rem] -top-[11.5rem] h-56 w-56 rounded-full border border-forest/40 sm:-left-[7.5rem] sm:-top-[8.5rem] sm:h-72 sm:w-72" />
 
       {/* Kiri bawah: daun hijau sederhana */}
       <svg
@@ -55,9 +57,12 @@ function EdgeOrnaments() {
         ))}
       </div>
 
-      {/* Kanan bawah: lingkaran maroon + outline hijau (mirror kiri atas) */}
-      <span className="absolute -bottom-28 -right-24 h-60 w-60 rounded-full bg-burgundy" />
-      <span className="absolute -bottom-[8.5rem] -right-[7.5rem] h-72 w-72 rounded-full border border-forest/40" />
+      {/* Sambungan ke section Tentang di pojok kanan bawah: separuh atas
+          lingkaran maroon + garis hijau. Separuh bawah digambar oleh
+          AboutSection dengan geometri yang sama. */}
+      <span aria-hidden className="seam-circle seam-circle--maroon seam--hero" />
+      <span aria-hidden className="seam-circle seam-circle--ring seam--hero" />
+      <span aria-hidden className="seam-circle seam-circle--dash seam--hero" />
     </div>
   );
 }
@@ -132,7 +137,7 @@ export function Hero() {
   ];
 
   return (
-    <section className="paper relative isolate overflow-hidden border-b border-line-warm bg-ivory text-forest">
+    <section className="paper relative isolate overflow-hidden bg-ivory text-forest">
       <EdgeOrnaments />
 
       <div className="container-wide relative z-10 py-20 lg:py-24">
@@ -144,14 +149,17 @@ export function Hero() {
         >
           {/* Area teks utama */}
           <div>
-            <motion.p variants={staggerItem} className="flex items-center gap-4">
-              <span aria-hidden className="h-px w-10 bg-burgundy" />
-              <span className="text-[0.6875rem] font-medium uppercase tracking-[0.3em] text-forest-soft sm:text-xs">
+            <motion.p
+              variants={staggerItem}
+              className="flex flex-wrap items-center gap-x-3 gap-y-2 sm:gap-x-4"
+            >
+              <span aria-hidden className="h-px w-8 shrink-0 bg-burgundy sm:w-10" />
+              <span className="text-[0.625rem] font-medium uppercase tracking-[0.2em] text-forest-soft sm:text-xs sm:tracking-[0.3em]">
                 Satu Kelas · Portofolio Anggota
               </span>
             </motion.p>
 
-            <h1 className="mt-7 max-w-[37rem] font-display text-[clamp(2.75rem,6.5vw,5.5rem)] font-semibold leading-[0.92] tracking-[-0.03em] text-forest">
+            <h1 className="mt-6 max-w-[37rem] font-display text-[clamp(2.35rem,7.5vw,5.5rem)] font-semibold leading-[0.95] tracking-[-0.03em] text-forest sm:mt-7 sm:leading-[0.92]">
               {headlineLines.map((line, index) => (
                 <span key={line} className="block overflow-clip [overflow-clip-margin:0.22em]">
                   <motion.span variants={fadeUp} className="block">

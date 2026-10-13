@@ -12,7 +12,8 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "seed:admin": "bun src/db/seed-admin.ts",
-    "seed:class": "bun src/db/seed-class.ts"
+    "seed:class": "bun src/db/seed-class.ts",
+    "seed:teachers": "bun src/db/seed-teachers.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",
