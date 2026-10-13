@@ -174,7 +174,7 @@ export function SiteHeader() {
   const isLanding = pathname === '/';
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line-warm bg-ivory/50 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-line-warm bg-ivory">
       <div className="container-wide flex h-20 items-center justify-between gap-6 lg:h-[6.3rem]">
         <div className="flex items-center gap-3">
           <MobileSidebar />
