@@ -1,4 +1,4 @@
-import { Reveal, Stagger, StaggerItem } from '@/components/ui/Reveal';
+﻿import { Reveal, Stagger, StaggerItem } from '@/components/ui/Reveal';
 import { useTeachers } from '@/hooks/usePublic';
 import { assetUrl } from '@/lib/api';
 import { initials } from '@/lib/utils';
@@ -66,7 +66,7 @@ function QuoteMark({ className }: { className?: string }) {
   );
 }
 
-/** Ranting botanical line-art — garis tipis, dipakai sebagai ornamen latar. */
+/** Ranting botanical line-art ΓÇö garis tipis, dipakai sebagai ornamen latar. */
 function BotanicalBranch({ className }: { className?: string }) {
   return (
     <svg
@@ -113,7 +113,7 @@ function TeacherOrnaments() {
       {/* Lingkaran sage kiri atas (dipertahankan) */}
       <span className="absolute -left-24 top-16 h-72 w-72 rounded-full bg-sage-tint" />
 
-      {/* Lingkaran besar kanan atas — sebagian di luar batas section */}
+      {/* Lingkaran besar kanan atas ΓÇö sebagian di luar batas section */}
       <span className="absolute -right-32 -top-28 hidden h-96 w-96 rounded-full bg-pine/[0.07] sm:block" />
 
       {/* Bentuk organik maroon sangat transparan di kanan bawah */}
@@ -122,7 +122,7 @@ function TeacherOrnaments() {
       {/* Ranting botanical kiri bawah */}
       <BotanicalBranch className="absolute -bottom-10 -left-10 hidden h-40 w-40 -rotate-6 text-sage opacity-25 sm:block" />
 
-      {/* Ranting botanical kanan atas — rotasi dan ukuran berbeda */}
+      {/* Ranting botanical kanan atas ΓÇö rotasi dan ukuran berbeda */}
       <BotanicalBranch className="absolute -right-8 -top-8 hidden h-36 w-36 rotate-180 text-sage opacity-20 lg:block" />
 
       {/* Garis lengkung maroon di kanan bawah */}
@@ -145,7 +145,7 @@ function TeacherOrnaments() {
         />
       </svg>
 
-      {/* Aksen emas tipis — sejajar area sudut */}
+      {/* Aksen emas tipis ΓÇö sejajar area sudut */}
       <svg
         viewBox="0 0 160 120"
         fill="none"
@@ -225,7 +225,7 @@ type TeacherCardProps = {
 /**
  * Satu komponen untuk semua wali kelas. Ketiga kartu memakai struktur yang
  * identik sehingga tinggi, ukuran foto, badge, nama, jabatan, deskripsi, dan
- * kutipan selalu sejajar — perbedaan hanya pada isi data.
+ * kutipan selalu sejajar ΓÇö perbedaan hanya pada isi data.
  */
 function TeacherCard({
   classLabel,
@@ -237,7 +237,7 @@ function TeacherCard({
 }: TeacherCardProps) {
   return (
     <article className="group flex h-full flex-col rounded-[24px] border border-line bg-elevated p-6 text-center shadow-[0_28px_60px_-48px_rgba(24,63,50,0.6)] transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-[3px] hover:shadow-[0_36px_72px_-42px_rgba(24,63,50,0.5)] motion-reduce:transform-none motion-reduce:transition-none sm:p-7">
-      {/* Foto portrait berbentuk arch — bingkai editorial berlapis */}
+      {/* Foto portrait berbentuk arch ΓÇö bingkai editorial berlapis */}
       <div className="mx-auto w-full max-w-[15rem]">
         <div className="rounded-t-full rounded-b-[22px] border border-gold/60 p-[7px]">
           <div className="rounded-t-full rounded-b-[15px] border border-line bg-cream-card p-2 shadow-[0_24px_50px_-32px_rgba(24,63,50,0.45)]">
@@ -261,7 +261,7 @@ function TeacherCard({
         </div>
       </div>
 
-      {/* Badge kelas — bertumpang tindih sedikit dengan foto */}
+      {/* Badge kelas ΓÇö bertumpang tindih sedikit dengan foto */}
       <div className="relative z-10 -mt-5 flex justify-center">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-pine px-4 py-1.5 text-xs font-semibold tracking-wide text-ivory-warm ring-1 ring-maroon/40">
           <CapIcon />
@@ -280,7 +280,7 @@ function TeacherCard({
       {/* Deskripsi peran */}
       <p className="mt-4 text-sm leading-[1.65] text-moss">{description}</p>
 
-      {/* Kutipan — selalu menempel di bawah agar sejajar antar kartu */}
+      {/* Kutipan ΓÇö selalu menempel di bawah agar sejajar antar kartu */}
       <div className="mt-auto pt-6">
         <blockquote className="rounded-[16px] border border-line/70 bg-subtle px-5 py-4">
           <QuoteMark className="mx-auto h-4 w-4 text-maroon" />
