@@ -135,10 +135,6 @@ function SidebarNav({
 
   if (user) {
     items.push({ key: 'profile', to: '/profile', label: 'Profil', icon: IconUser });
-  }
-  if (user?.role === 'admin') {
-    items.push({ key: 'admin', to: '/admin', label: 'Panel admin', icon: IconShield });
-  } else if (user) {
     if (user.slug) {
       items.push({
         key: 'porto',
@@ -154,6 +150,9 @@ function SidebarNav({
       icon: IconGrid,
       end: true,
     });
+  }
+  if (user?.role === 'admin') {
+    items.push({ key: 'admin', to: '/admin', label: 'Panel admin', icon: IconShield });
   }
 
   const linkClass = itemClass(collapsed);
@@ -268,7 +267,7 @@ function SidebarNav({
   );
 }
 
-/** Rail sidebar fixed di kiri layar — hanya tampil setelah login. */
+/** Rail sidebar fixed di kiri layar — sumber tunggal navigasi aplikasi. */
 export function AppSidebar({
   collapsed = false,
   onToggle,
@@ -276,9 +275,6 @@ export function AppSidebar({
   collapsed?: boolean;
   onToggle?: () => void;
 }) {
-  const { user } = useAuth();
-  if (!user) return null;
-
   return (
     <aside
       className={cn(
@@ -321,7 +317,6 @@ export function AppSidebar({
 export function MobileSidebar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
-  const { user } = useAuth();
 
   useEffect(() => {
     setOpen(false);
@@ -341,7 +336,6 @@ export function MobileSidebar() {
     };
   }, [open]);
 
-  if (!user) return null;
   if (typeof document === 'undefined') return null;
 
   return (

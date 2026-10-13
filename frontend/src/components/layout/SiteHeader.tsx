@@ -1,18 +1,9 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import { useAuth } from '@/providers/AuthProvider';
 import { buttonClasses } from '@/components/ui/Button';
 import { MobileSidebar } from './AppSidebar';
 import { developerContact } from '@/lib/site';
 import { cn } from '@/lib/utils';
-
-function navClass({ isActive }: { isActive: boolean }) {
-  return cn(
-    "relative text-sm transition-colors duration-200 after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:bg-accent after:content-[''] after:transition-transform after:duration-300",
-    'hover:text-fg',
-    isActive ? 'text-fg after:scale-x-100' : 'text-muted after:scale-x-0',
-  );
-}
 
 export function Logo({ className, compact = false }: { className?: string; compact?: boolean }) {
   return (
@@ -39,54 +30,17 @@ export function Logo({ className, compact = false }: { className?: string; compa
   );
 }
 
+/**
+ * Header atas sengaja dikosongkan dari navigasi — seluruh navigasi kini
+ * berada di sidebar (AppSidebar). Hanya menyisakan brand + pemicu drawer
+ * untuk layar kecil.
+ */
 export function SiteHeader() {
-  const { user, isLoading } = useAuth();
-
   return (
     <header className="section-dark sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur-md">
-      <div className="container-page flex h-16 items-center justify-between gap-6 lg:h-[4.75rem]">
-        <div className="flex items-center gap-3">
-          <MobileSidebar />
-          <Logo />
-        </div>
-
-        <nav className="hidden items-center gap-8 md:flex" aria-label="Navigasi utama">
-          <NavLink to="/members" className={navClass}>
-            Anggota
-          </NavLink>
-          {user ? (
-            <NavLink to="/dashboard" className={navClass}>
-              Dashboard
-            </NavLink>
-          ) : null}
-          {user?.role === 'admin' ? (
-            <NavLink to="/admin" className={navClass}>
-              Admin
-            </NavLink>
-          ) : null}
-        </nav>
-
-        <div className="flex items-center gap-2">
-          {isLoading ? (
-            <div className="h-9 w-24 animate-pulse rounded-sm bg-subtle" />
-          ) : user ? (
-            <Link
-              to={user.role === 'admin' ? '/admin' : '/dashboard'}
-              className={buttonClasses('outline', 'sm', 'hidden sm:inline-flex')}
-            >
-              {user.name.split(' ')[0]}
-            </Link>
-          ) : (
-            <>
-              <Link to="/members" className={buttonClasses('ghost', 'sm', 'hidden sm:inline-flex')}>
-                Direktori
-              </Link>
-              <Link to="/login" className={buttonClasses('primary', 'sm')}>
-                Masuk
-              </Link>
-            </>
-          )}
-        </div>
+      <div className="container-page flex h-16 items-center gap-3 lg:h-[4.75rem]">
+        <MobileSidebar />
+        <Logo />
       </div>
     </header>
   );
