@@ -1,5 +1,5 @@
 /**
- * Seed akun admin kelas.
+ * Seed akun admin Craftly.
  *
  *   bun run seed:admin
  *

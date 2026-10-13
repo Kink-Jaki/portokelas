@@ -101,7 +101,7 @@ export const abouts = pgTable('abouts', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
-/** Wali kelas yang tampil di carousel landing page. */
+/** Mentor yang tampil di carousel landing page. */
 export const teachers = pgTable(
   'teachers',
   {
@@ -116,7 +116,7 @@ export const teachers = pgTable(
   (table) => [index('teachers_sort_order_idx').on(table.sortOrder)],
 );
 
-/** Kenangan/album foto yang diunggah anggota untuk carousel landing page. */
+/** Kenangan/album foto yang diunggah kreator untuk carousel landing page. */
 export const memories = pgTable(
   'memories',
   {

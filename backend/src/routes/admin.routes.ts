@@ -93,7 +93,7 @@ export const adminRoutes = new Hono<AppEnv>()
     const patch: Partial<typeof users.$inferInsert> = { ...input };
 
     const updated = await updateProfile(targetId, patch);
-    if (!updated) throw AppError.notFound('Anggota tidak ditemukan');
+    if (!updated) throw AppError.notFound('Kreator tidak ditemukan');
 
     return c.json(ok({ user: updated }));
   })
@@ -226,7 +226,7 @@ export const adminRoutes = new Hono<AppEnv>()
       .where(eq(teachers.id, teacherId))
       .limit(1);
     const current = existing[0];
-    if (!current) throw AppError.notFound('Wali kelas tidak ditemukan');
+    if (!current) throw AppError.notFound('Mentor tidak ditemukan');
 
     const file = formFile(form, ['photo', 'file', 'image']);
     const removePhoto = formText(form, 'removePhoto') === 'true';
@@ -255,7 +255,7 @@ export const adminRoutes = new Hono<AppEnv>()
       .from(teachers)
       .where(eq(teachers.id, teacherId))
       .limit(1);
-    if (existing.length === 0) throw AppError.notFound('Wali kelas tidak ditemukan');
+    if (existing.length === 0) throw AppError.notFound('Mentor tidak ditemukan');
 
     const removed = await deleteTeacher(teacherId);
     await deleteStoredFile(existing[0]?.photoUrl ?? null);

@@ -5,7 +5,7 @@ import { pool } from './db/index.js';
 import { env } from './env.js';
 
 const server = serve({ fetch: app.fetch, port: env.PORT }, (info) => {
-  console.info(`\n  Satu Kelas API`);
+  console.info(`\n  Craftly API`);
   console.info(`  ▸ http://localhost:${info.port}`);
   console.info(`  ▸ env: ${env.NODE_ENV}`);
   console.info(`  ▸ upload: ${env.UPLOAD_DIR} (public: ${env.PUBLIC_URL}/uploads)\n`);

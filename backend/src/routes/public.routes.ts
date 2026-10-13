@@ -16,7 +16,7 @@ import {
 } from '../services/index.js';
 import { memberQuerySchema } from '../validators/user.js';
 
-/** Endpoint publik — data anggota & konten yang tampil di landing page. */
+/** Endpoint publik — data kreator & konten yang tampil di landing page. */
 export const publicRoutes = new Hono()
   .get('/stats', async (c) => {
     const stats = await getPublicStats();
@@ -41,7 +41,7 @@ export const publicRoutes = new Hono()
   .get('/members/:slug', async (c) => {
     const member = await getMemberBySlug(c.req.param('slug'));
     if (!member) {
-      throw AppError.notFound('Portofolio anggota tidak ditemukan.');
+      throw AppError.notFound('Portofolio kreator tidak ditemukan.');
     }
     const spotify = member.spotifyUrl ? await resolveSpotifyEmbed(member.spotifyUrl) : null;
     return c.json(ok({ member: spotify ? { ...member, spotify } : member }));
@@ -50,7 +50,7 @@ export const publicRoutes = new Hono()
     const slug = c.req.param('slug');
     const member = await getMemberBySlug(slug);
     if (!member) {
-      throw AppError.notFound('Portofolio anggota tidak ditemukan.');
+      throw AppError.notFound('Portofolio kreator tidak ditemukan.');
     }
     const projects = await listProjectsByMemberSlug(slug);
     return c.json(ok({ projects }));
