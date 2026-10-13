@@ -62,7 +62,7 @@ export default function LoginPage() {
           </p>
           <AnimatedRule className="mt-8 max-w-md" />
           <p className="mt-8 text-sm text-muted">
-            Pendaftaran akun ditutup. Akun dibagikan oleh pengurus kelas.
+            Pendaftaran akun ditutup. Akun dibagikan oleh tim Craftly.
           </p>
         </motion.div>
 
@@ -96,7 +96,7 @@ export default function LoginPage() {
           </Button>
 
           <p className="text-xs leading-relaxed text-muted">
-            Gunakan NIS yang terdaftar. Hubungi pengurus kelas bila belum memiliki akun.
+            Gunakan NIS yang terdaftar. Hubungi tim Craftly bila belum memiliki akun.
           </p>
         </motion.form>
       </div>

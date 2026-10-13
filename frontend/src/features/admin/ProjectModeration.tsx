@@ -37,7 +37,7 @@ export function ProjectModerationRow({ project }: { project: AdminProject }) {
                   {project.author.name}
                 </a>
               ) : (
-                'Anggota dihapus'
+                'Kreator dihapus'
               )}
               {project.author?.role === 'admin' ? (
                 <>
@@ -78,7 +78,7 @@ export function ProjectModerationRow({ project }: { project: AdminProject }) {
         isLoading={deleteProject.isPending}
         title="Hapus project?"
         description={`Project “${project.title}” akan dihapus permanen dari portofolio ${
-          project.author?.name ?? 'anggota'
+          project.author?.name ?? 'kreator'
         }.`}
         confirmLabel="Hapus permanen"
       />
@@ -115,7 +115,7 @@ export function ProjectModerationList() {
             setSearch(event.target.value);
             setPage(1);
           }}
-          placeholder="Cari judul project atau nama anggota…"
+          placeholder="Cari judul project atau nama kreator…"
           aria-label="Cari project"
           className="w-full rounded-sm border border-line bg-bg py-2.5 pl-3.5 pr-3 text-sm placeholder:text-muted/70 focus:border-line-strong focus:outline-none focus:ring-1 focus:ring-line-strong sm:max-w-sm"
         />

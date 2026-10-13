@@ -45,7 +45,7 @@ export function RequireAdmin({ children }: { children: ReactNode }) {
           <div className="mx-auto max-w-2xl border border-line">
             <EmptyState
               title="Akses ditolak"
-              description="Hanya admin kelas yang dapat membuka halaman ini."
+              description="Hanya admin yang dapat membuka halaman ini."
               action={
                 <a href="/" className={buttonClasses('outline')}>
                   Kembali ke beranda

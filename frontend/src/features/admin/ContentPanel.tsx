@@ -79,7 +79,7 @@ function AboutEditor() {
         <p className="eyebrow">Section Tentang</p>
         <h2 className="font-display text-2xl">Deskripsi singkat &amp; foto</h2>
         <p className="max-w-2xl text-sm leading-relaxed text-muted">
-          Tampil tepat setelah hero: foto di kiri, deskripsi singkat kelas di kanan.
+          Tampil tepat setelah hero: foto di kiri, deskripsi singkat komunitas di kanan.
         </p>
       </header>
 
@@ -95,7 +95,7 @@ function AboutEditor() {
               label="Judul"
               value={title}
               onChange={(event) => setTitle(event.target.value)}
-              placeholder="cth. Satu kelas, satu etalase karya."
+              placeholder="cth. Satu ruang, seribu karya."
               error={error?.fields.title}
               maxLength={120}
             />
@@ -105,7 +105,7 @@ function AboutEditor() {
               rows={6}
               value={description}
               onChange={(event) => setDescription(event.target.value)}
-              placeholder="Jelaskan kelas ini dalam beberapa kalimat…"
+              placeholder="Jelaskan komunitas ini dalam beberapa kalimat…"
               error={error?.fields.description}
               hint="Maksimal 2000 karakter."
               maxLength={2000}
@@ -160,7 +160,7 @@ function AboutEditor() {
   );
 }
 
-/* ------------------------------ Wali kelas ------------------------------ */
+/* ------------------------------ Mentor ------------------------------ */
 
 function TeacherRow({
   teacher,
@@ -281,8 +281,8 @@ function TeacherEditor() {
   return (
     <section className="space-y-6 border border-line p-6">
       <header className="space-y-2">
-        <p className="eyebrow">Section Wali Kelas</p>
-        <h2 className="font-display text-2xl">Carousel wali kelas</h2>
+        <p className="eyebrow">Section Mentor</p>
+        <h2 className="font-display text-2xl">Carousel mentor</h2>
         <p className="max-w-2xl text-sm leading-relaxed text-muted">
           Setiap entri punya satu foto, nama, dan deskripsi. Saat pengunjung menggeser carousel,
           nama serta deskripsi ikut berganti mengikuti foto aktif.
@@ -293,7 +293,7 @@ function TeacherEditor() {
         <div className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
-              label="Nama wali kelas"
+              label="Nama mentor"
               required
               value={form.name}
               onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
@@ -309,7 +309,7 @@ function TeacherEditor() {
               onChange={(event) =>
                 setForm((current) => ({ ...current, description: event.target.value }))
               }
-              placeholder="Perkenalan singkat wali kelas…"
+              placeholder="Perkenalan singkat mentor…"
               error={error?.fields.description}
               hint="Maksimal 1000 karakter."
               maxLength={1000}
@@ -335,7 +335,7 @@ function TeacherEditor() {
                 isLoading={mutation.isPending}
                 disabled={!form.name.trim() || !form.description.trim()}
               >
-                {editingId ? 'Simpan perubahan' : 'Tambah wali kelas'}
+                {editingId ? 'Simpan perubahan' : 'Tambah mentor'}
               </Button>
               {editingId ? (
                 <Button type="button" variant="ghost" size="sm" onClick={resetForm}>
@@ -348,7 +348,7 @@ function TeacherEditor() {
           <div className="space-y-3 border-t border-line pt-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="block text-xs font-medium uppercase tracking-[0.16em] text-muted">
-                {editingId ? 'Foto untuk wali kelas terpilih' : 'Foto wali kelas (opsional)'}
+                {editingId ? 'Foto untuk mentor terpilih' : 'Foto mentor (opsional)'}
               </p>
               {editingId && editing?.photoUrl && !removePhoto && !file ? (
                 <button
@@ -366,7 +366,7 @@ function TeacherEditor() {
                 {currentPhoto ? (
                   <img
                     src={currentPhoto}
-                    alt="Pratinjau foto wali kelas"
+                    alt="Pratinjau foto mentor"
                     className="h-full w-full object-cover"
                   />
                 ) : (
@@ -390,7 +390,7 @@ function TeacherEditor() {
 
         <div className="space-y-3">
           <p className="block text-xs font-medium uppercase tracking-[0.16em] text-muted">
-            Daftar wali kelas ({teachers.length})
+            Daftar mentor ({teachers.length})
           </p>
 
           {isLoading ? (
@@ -401,7 +401,7 @@ function TeacherEditor() {
             </div>
           ) : teachers.length === 0 ? (
             <div className="border border-line p-4 text-sm leading-relaxed text-muted">
-              Belum ada wali kelas. Isi form di kiri untuk menambahkan entri pertama.
+              Belum ada mentor. Isi form di kiri untuk menambahkan entri pertama.
             </div>
           ) : (
             <div className="max-h-[32rem] space-y-3 overflow-y-auto pr-1">
@@ -426,7 +426,7 @@ function TeacherEditor() {
           setPendingDelete(null);
         }}
         isLoading={deleteTeacher.isPending}
-        title="Hapus wali kelas?"
+        title="Hapus mentor?"
         description={`Entri “${pendingDelete?.name ?? ''}” akan dihapus dari carousel landing page.`}
         confirmLabel="Hapus"
       />

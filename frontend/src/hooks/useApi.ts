@@ -295,7 +295,7 @@ export function useAdminUpdateUser() {
 
       toast.success(`Profil ${data.user.name} diperbarui.`);
     },
-    onError: (error) => toastApiError(error, 'Gagal memperbarui profil anggota.'),
+    onError: (error) => toastApiError(error, 'Gagal memperbarui profil kreator.'),
   });
 }
 
@@ -403,9 +403,9 @@ export function useCreateTeacher() {
       api.post<{ teacher: Teacher }>('/admin/teachers', toTeacherForm(payload)),
     onSuccess: () => {
       invalidateContent(queryClient);
-      toast.success('Wali kelas berhasil ditambahkan.');
+      toast.success('Mentor berhasil ditambahkan.');
     },
-    onError: (error) => toastApiError(error, 'Gagal menambahkan wali kelas.'),
+    onError: (error) => toastApiError(error, 'Gagal menambahkan mentor.'),
   });
 }
 
@@ -417,9 +417,9 @@ export function useUpdateTeacher() {
       api.patch<{ teacher: Teacher }>(`/admin/teachers/${id}`, toTeacherForm(payload)),
     onSuccess: () => {
       invalidateContent(queryClient);
-      toast.success('Wali kelas berhasil diperbarui.');
+      toast.success('Mentor berhasil diperbarui.');
     },
-    onError: (error) => toastApiError(error, 'Gagal memperbarui wali kelas.'),
+    onError: (error) => toastApiError(error, 'Gagal memperbarui mentor.'),
   });
 }
 
@@ -431,8 +431,8 @@ export function useDeleteTeacher() {
       api.delete<{ id: string; deleted: boolean }>(`/admin/teachers/${id}`),
     onSuccess: () => {
       invalidateContent(queryClient);
-      toast.success('Wali kelas dihapus.');
+      toast.success('Mentor dihapus.');
     },
-    onError: (error) => toastApiError(error, 'Gagal menghapus wali kelas.'),
+    onError: (error) => toastApiError(error, 'Gagal menghapus mentor.'),
   });
 }

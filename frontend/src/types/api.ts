@@ -94,7 +94,7 @@ export type About = {
   updatedAt: string;
 };
 
-/** Satu entri wali kelas pada carousel landing. */
+/** Satu entri mentor pada carousel landing. */
 export type Teacher = {
   id: string;
   name: string;

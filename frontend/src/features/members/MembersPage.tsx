@@ -36,8 +36,8 @@ export default function MembersPage() {
           as="h1"
           index="0"
           eyebrow="Direktori"
-          title="Anggota kelas"
-          description="Hanya anggota yang sudah disetujui admin yang ditampilkan di sini. Klik kartu untuk membuka portofolio pribadi beserta project-nya."
+          title="Kreator"
+          description="Hanya kreator yang sudah dikurasi yang ditampilkan di sini. Klik kartu untuk membuka portofolio pribadi beserta project-nya."
         />
       </motion.header>
 
@@ -61,7 +61,7 @@ export default function MembersPage() {
             value={searchInput}
             onChange={(event) => setSearchInput(event.target.value)}
             placeholder="Cari nama atau headline…"
-            aria-label="Cari anggota"
+            aria-label="Cari kreator"
             className="w-full rounded-sm border border-line bg-bg py-2.5 pl-10 pr-9 text-sm placeholder:text-muted/70 transition-colors duration-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
           />
           {searchInput ? (
@@ -79,7 +79,7 @@ export default function MembersPage() {
         </div>
 
         <p className="font-mono text-xs uppercase tracking-[0.16em] text-muted">
-          {isFetching ? 'Memuat…' : `${meta?.total ?? 0} anggota`}
+          {isFetching ? 'Memuat…' : `${meta?.total ?? 0} kreator`}
         </p>
       </div>
 
@@ -91,11 +91,11 @@ export default function MembersPage() {
         ) : members.length === 0 ? (
           <div className="border border-line">
             <EmptyState
-              title={search ? 'Tidak ada anggota yang cocok' : 'Belum ada anggota'}
+              title={search ? 'Tidak ada kreator yang cocok' : 'Belum ada kreator'}
               description={
                 search
-                  ? `Tidak ditemukan anggota dengan kata kunci “${search}”.`
-                  : 'Direktori akan terisi setelah admin menyetujui pendaftar pertama.'
+                  ? `Tidak ditemukan kreator dengan kata kunci “${search}”.`
+                  : 'Direktori akan terisi setelah kreator pertama bergabung.'
               }
               action={
                 search ? (

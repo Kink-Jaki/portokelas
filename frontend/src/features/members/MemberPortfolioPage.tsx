@@ -115,7 +115,7 @@ export default function MemberPortfolioPage() {
             description={
               memberQuery.isError
                 ? memberQuery.error.message
-                : 'Anggota ini belum disetujui atau tautannya salah.'
+                : 'Kreator ini belum tersedia atau tautannya salah.'
             }
             action={
               <Link to="/members" className={buttonClasses('outline')}>
@@ -138,7 +138,7 @@ export default function MemberPortfolioPage() {
             <p className="eyebrow flex items-center gap-3">
               <span className="index-num">01</span>
               <span aria-hidden className="h-px w-6 bg-line-strong" />
-              Portofolio Anggota
+              Portofolio Kreator
             </p>
 
             <div className="mt-6 flex flex-wrap items-end gap-x-4 gap-y-3">
@@ -196,7 +196,7 @@ export default function MemberPortfolioPage() {
           <div className="bg-bg p-6">
             <dt className="eyebrow">Peran</dt>
             <dd className="mt-3 font-display text-lg">
-              {member.role === 'admin' ? 'Admin / Developer' : 'Anggota kelas'}
+              {member.role === 'admin' ? 'Admin / Developer' : 'Kreator'}
             </dd>
           </div>
           <div className="bg-bg p-6">
