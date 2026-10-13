@@ -135,17 +135,14 @@ export function Logo({
       className={cn('group flex items-center gap-3', className)}
       aria-label="Craftly — beranda"
     >
-      <span
-        aria-hidden
+      <img
+        src="/craftly-mark.png"
+        alt=""
         className={cn(
-          'grid shrink-0 place-items-center font-display leading-none transition-colors duration-300',
-          editorial
-            ? 'h-12 w-12 rounded-[3px] bg-forest text-lg text-ivory group-hover:bg-burgundy lg:h-14 lg:w-14 lg:text-xl'
-            : 'h-9 w-9 border border-line-strong bg-invert text-sm text-invert-fg group-hover:border-accent group-hover:bg-accent group-hover:text-accent-fg',
+          'shrink-0 object-contain',
+          editorial ? 'h-8 w-8 lg:h-9 lg:w-9' : 'h-9 w-9',
         )}
-      >
-        C
-      </span>
+      />
       <span className="flex flex-col leading-none">
         <span
           className={cn(
