@@ -10,6 +10,8 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+  /* Tulisan tangan — dipakai untuk label kertas pada section Tentang Kelas. */
+  --font-hand: 'Caveat', 'Segoe Script', ui-serif, cursive;
 
   /* Radius sengaja tajam — bahasa visual editorial, bukan kartu SaaS. */
   --radius-xs: 1px;
@@ -52,6 +54,25 @@
   --line-warm: #d8d0c0;
   --ink-soft: #776f60;
 
+  /* Palet "Editorial Scrapbook" — hanya dipakai pada section Tentang Kelas. */
+  --parchment: #f7f2e8;
+  --parchment-alt: #fcf9f3;
+  --cream-card: #fffcf6;
+  --edge: #e5d8c9;
+  --maroon: #701f35;
+  --maroon-deep: #4e1728;
+  --maroon-soft: #8e4355;
+  --maroon-tint: rgba(112, 31, 53, 0.1);
+  --blush: #f2e3dd;
+  --blush-edge: #e7d3c9;
+  --pine: #214d3d;
+  --pine-deep: #163b30;
+  --sage: #8da58b;
+  --sage-soft: #dce5d5;
+  --sage-tint: rgba(33, 77, 61, 0.1);
+  --gold: #c9a56a;
+  --moss: #48544d;
+
   /* Grain halus untuk permukaan kertas (dipakai via .paper). */
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
 
@@ -83,6 +104,23 @@
   --color-terracotta: var(--terracotta);
   --color-line-warm: var(--line-warm);
   --color-ink-soft: var(--ink-soft);
+  --color-parchment: var(--parchment);
+  --color-parchment-alt: var(--parchment-alt);
+  --color-cream-card: var(--cream-card);
+  --color-edge: var(--edge);
+  --color-maroon: var(--maroon);
+  --color-maroon-deep: var(--maroon-deep);
+  --color-maroon-soft: var(--maroon-soft);
+  --color-maroon-tint: var(--maroon-tint);
+  --color-blush: var(--blush);
+  --color-blush-edge: var(--blush-edge);
+  --color-pine: var(--pine);
+  --color-pine-deep: var(--pine-deep);
+  --color-sage: var(--sage);
+  --color-sage-soft: var(--sage-soft);
+  --color-sage-tint: var(--sage-tint);
+  --color-gold: var(--gold);
+  --color-moss: var(--moss);
 }
 
 @layer base {
