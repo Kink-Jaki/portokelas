@@ -402,46 +402,58 @@
     color: var(--fg);
   }
 
-  /* Section Wali Kelas — palet cream/hijau tua/maroon yang terkunci.
-     Semua variabel dipetakan ulang di sini agar utilities bg-bg, text-fg,
-     border-line, text-maroon, bg-pine otomatis memakai palet ini. */
+  /* Section Wali Kelas — palet cream hangat / forest green / maroon yang
+     terkunci. Semua variabel dipetakan ulang di sini agar utilities bg-bg,
+     text-fg, border-line, text-maroon, bg-pine otomatis memakai palet ini.
+     Nilai --teacher-* diisolasi hanya untuk section ini. */
   .section-teacher {
-    --bg: #faf6ee;
-    --bg-subtle: #f5efe3;
-    --bg-elevated: #fffcf6;
-    --fg: #24372f;
-    --fg-muted: #66574c;
-    --line: #d9c9b0;
-    --line-strong: #b9a583;
-    --invert-bg: #183f32;
-    --invert-fg: #faf6ee;
-    --accent: #702b2d;
-    --accent-fg: #fffcf6;
-    --accent-soft: rgba(112, 43, 45, 0.1);
+    --teacher-cream: #f5f0e5;
+    --teacher-cream-light: #fbf8f0;
+    --teacher-maroon: #792f38;
+    --teacher-maroon-dark: #5e242c;
+    --teacher-forest: #204b3b;
+    --teacher-forest-dark: #16372d;
+    --teacher-muted-green: #65776d;
+    --teacher-body-text: #596a61;
+    --teacher-border: #e2d3b9;
+    --teacher-gold: #c9a76b;
+
+    --bg: var(--teacher-cream);
+    --bg-subtle: var(--teacher-cream-light);
+    --bg-elevated: #fffdf7;
+    --fg: var(--teacher-forest);
+    --fg-muted: var(--teacher-body-text);
+    --line: var(--teacher-border);
+    --line-strong: #d8c9ac;
+    --invert-bg: var(--teacher-forest);
+    --invert-fg: #fffdf7;
+    --accent: var(--teacher-maroon);
+    --accent-fg: #fffdf7;
+    --accent-soft: rgba(121, 47, 56, 0.1);
     --danger: #b42318;
-    --success: #285442;
+    --success: #2f6b3a;
 
     /* Alias token palet yang dipakai lintas section. */
-    --ivory: #faf6ee;
-    --ivory-alt: #f5efe3;
-    --ivory-warm: #fffcf6;
-    --forest: #183f32;
-    --forest-soft: #285442;
-    --parchment: #faf6ee;
-    --parchment-alt: #f5efe3;
-    --cream-card: #fffcf6;
-    --edge: #d9c9b0;
-    --pine: #285442;
-    --pine-deep: #183f32;
-    --maroon: #702b2d;
-    --maroon-deep: #5a2123;
-    --maroon-soft: #8a4141;
-    --maroon-tint: rgba(112, 43, 45, 0.1);
-    --burgundy: #702b2d;
-    --gold: #c9a56a;
-    --moss: #66574c;
+    --ivory: var(--teacher-cream);
+    --ivory-alt: var(--teacher-cream-light);
+    --ivory-warm: #fffdf7;
+    --forest: var(--teacher-forest);
+    --forest-soft: #35604c;
+    --parchment: var(--teacher-cream);
+    --parchment-alt: var(--teacher-cream-light);
+    --cream-card: #fffdf7;
+    --edge: var(--teacher-border);
+    --pine: var(--teacher-forest);
+    --pine-deep: var(--teacher-forest-dark);
+    --maroon: var(--teacher-maroon);
+    --maroon-deep: var(--teacher-maroon-dark);
+    --maroon-soft: #8e4a52;
+    --maroon-tint: rgba(121, 47, 56, 0.1);
+    --burgundy: var(--teacher-maroon);
+    --gold: var(--teacher-gold);
+    --moss: var(--teacher-body-text);
     --sage: #8da58b;
-    --sage-tint: rgba(40, 84, 66, 0.08);
+    --sage-tint: rgba(32, 75, 59, 0.08);
     background-color: var(--bg);
     color: var(--fg);
   }
