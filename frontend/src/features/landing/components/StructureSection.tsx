@@ -13,14 +13,14 @@ export function StructureSection() {
   const members = data?.items ?? [];
 
   return (
-    <section id="anggota" className="section-light paper border-b border-line">
+    <section id="kreator" className="section-light paper border-b border-line">
       <div className="container-page py-20 lg:py-28">
         <Reveal>
           <SectionHeader
             index="03"
-            eyebrow="Struktur Organisasi Kelas"
-            title="Anggota kelas"
-            description="Klik kartu untuk membuka portofolio anggota. Tombol Instagram dan GitHub langsung menuju media sosial masing-masing."
+            eyebrow="Direktori Kreator"
+            title="Kreator"
+            description="Klik kartu untuk membuka portofolio kreator. Tombol Instagram dan GitHub langsung menuju media sosial masing-masing."
             action={
               <Link to="/members" className={buttonClasses('ghost', 'sm')}>
                 Lihat semua
@@ -51,7 +51,7 @@ export function StructureSection() {
           ) : isError ? (
             <div className="border border-line">
               <EmptyState
-                title="Gagal memuat anggota"
+                title="Gagal memuat kreator"
                 description={error?.message}
                 action={
                   <button
@@ -67,8 +67,8 @@ export function StructureSection() {
           ) : members.length === 0 ? (
             <div className="border border-line">
               <EmptyState
-                title="Belum ada anggota"
-                description="Daftar anggota akan tampil setelah anggota pertama bergabung."
+                title="Belum ada kreator"
+                description="Daftar kreator akan tampil setelah kreator pertama bergabung."
                 action={
                   <Link to="/login" className={buttonClasses('primary', 'sm')}>
                     Masuk

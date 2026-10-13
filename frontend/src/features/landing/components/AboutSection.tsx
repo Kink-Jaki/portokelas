@@ -6,9 +6,9 @@ import { buttonClasses } from '@/components/ui/Button';
 import { useAbout } from '@/hooks/usePublic';
 import { assetUrl } from '@/lib/api';
 
-const FALLBACK_TITLE = 'Satu kelas, satu etalase karya.';
+const FALLBACK_TITLE = 'Satu ruang, seribu karya.';
 const FALLBACK_DESCRIPTION =
-  'Satu Kelas mengumpulkan karya para anggota kelas dalam satu halaman publik: deskripsi singkat tentang kelas, lalu portofolio tiap anggota yang bisa dibagikan ke siapa saja.';
+  'Craftly menghimpun karya para kreator dalam satu halaman publik: cerita singkat tentang komunitas, lalu portofolio tiap kreator yang bisa dibagikan ke siapa saja.';
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1588075592446-265fd1e6e76f?q=80&w=1472&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D';
 
@@ -22,7 +22,7 @@ function ImagePlaceholder() {
           <circle cx="31" cy="19" r="3" stroke="currentColor" strokeWidth="1.2" />
         </svg>
         <span className="font-mono text-[0.6875rem] uppercase tracking-[0.2em]">
-          Foto kelas belum tersedia
+          Foto belum tersedia
         </span>
       </div>
     </div>
@@ -54,7 +54,7 @@ export function AboutSection() {
 
             <div className="mt-9 flex flex-wrap gap-3">
               <Link to="/members" className={buttonClasses('primary')}>
-                Lihat anggota
+                Lihat kreator
               </Link>
               <Link to="/login" className={buttonClasses('outline')}>
                 Masuk
@@ -68,7 +68,7 @@ export function AboutSection() {
                 <>
                   <img
                     src={image}
-                    alt="Tentang Satu Kelas"
+                    alt="Tentang Craftly"
                     loading="lazy"
                     className="h-full w-full object-cover"
                   />
@@ -86,7 +86,7 @@ export function AboutSection() {
               )}
             </figure>
             <figcaption className="mt-3 flex items-center justify-between font-mono text-[0.6875rem] uppercase tracking-[0.2em] text-muted">
-              <span>Gambar / Kelas</span>
+              <span>Gambar / Craftly</span>
               <span className="index-num">01</span>
             </figcaption>
           </Reveal>

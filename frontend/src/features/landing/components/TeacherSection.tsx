@@ -151,11 +151,11 @@ export function TeacherSection() {
       >
         <div className="space-y-3 text-muted">
           <p className="font-display text-2xl text-fg">
-            {isLoading ? 'Memuat wali kelas…' : 'Belum ada data wali kelas'}
+            {isLoading ? 'Memuat mentor…' : 'Belum ada data mentor'}
           </p>
           {!isLoading ? (
             <p className="max-w-sm text-sm leading-relaxed">
-              Tambahkan wali kelas lewat panel admin agar carousel ini tampil.
+              Tambahkan mentor lewat panel admin agar carousel ini tampil.
             </p>
           ) : null}
         </div>
@@ -174,7 +174,7 @@ export function TeacherSection() {
           onScroll={handleScroll}
           className="flex w-full snap-x snap-mandatory items-start gap-3 overflow-x-auto"
           role="group"
-          aria-label="Carousel foto wali kelas"
+          aria-label="Carousel foto mentor"
         >
           {teachers.map((teacher) => (
             <div
@@ -196,7 +196,7 @@ export function TeacherSection() {
               type="button"
               onClick={() => goTo(active - 1)}
               disabled={active <= 0}
-              aria-label="Foto wali kelas sebelumnya"
+              aria-label="Foto mentor sebelumnya"
               className="grid h-10 w-10 place-items-center border border-line bg-bg/90 text-fg backdrop-blur transition-colors duration-200 hover:border-line-strong disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ArrowIcon direction="left" />
@@ -205,7 +205,7 @@ export function TeacherSection() {
               type="button"
               onClick={() => goTo(active + 1)}
               disabled={active >= maxIndex}
-              aria-label="Foto wali kelas berikutnya"
+              aria-label="Foto mentor berikutnya"
               className="grid h-10 w-10 place-items-center border border-line bg-bg/90 text-fg backdrop-blur transition-colors duration-200 hover:border-line-strong disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ArrowIcon direction="right" />
@@ -216,7 +216,7 @@ export function TeacherSection() {
     );
 
   return (
-    <section id="wali-kelas" className="section-dark border-b border-line">
+    <section id="mentor" className="section-dark border-b border-line">
       <div className="container-page grid items-center gap-10 py-16 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-16 lg:py-24">
         <Reveal>{carousel}</Reveal>
 
@@ -224,7 +224,7 @@ export function TeacherSection() {
           <p className="eyebrow flex items-center gap-3">
             <span className="index-num">02</span>
             <span aria-hidden className="h-px w-6 bg-line-strong" />
-            Wali Kelas
+            Mentor
           </p>
 
           <div className="mt-6 min-h-56 sm:min-h-52">
@@ -248,8 +248,8 @@ export function TeacherSection() {
             ) : (
               <p className="max-w-xl text-base leading-relaxed text-muted">
                 {isLoading
-                  ? 'Memuat data wali kelas…'
-                  : 'Nama dan deskripsi wali kelas akan tampil di sini setelah ditambahkan lewat panel admin.'}
+                  ? 'Memuat data mentor…'
+                  : 'Nama dan deskripsi mentor akan tampil di sini setelah ditambahkan lewat panel admin.'}
               </p>
             )}
           </div>
@@ -257,14 +257,14 @@ export function TeacherSection() {
           {total > 0 ? (
             <div className="mt-8 flex flex-wrap items-center gap-4">
               {positions > 1 ? (
-                <div className="flex items-center gap-2" role="tablist" aria-label="Pilih wali kelas">
+                <div className="flex items-center gap-2" role="tablist" aria-label="Pilih mentor">
                   {Array.from({ length: positions }).map((_, index) => (
                     <button
                       key={index}
                       type="button"
                       role="tab"
                       aria-selected={index === active}
-                      aria-label={`Tampilkan ${teachers[index]?.name ?? `wali kelas ${index + 1}`}`}
+                      aria-label={`Tampilkan ${teachers[index]?.name ?? `mentor ${index + 1}`}`}
                       onClick={() => goTo(index)}
                       className={cn(
                         'h-1.5 transition-all duration-300',

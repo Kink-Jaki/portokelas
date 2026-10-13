@@ -92,7 +92,7 @@ export function MemoriesSection() {
             >
               <img
                 src={assetUrl(current.imageUrl) ?? ''}
-                alt={current.caption ?? 'Kenangan kelas'}
+                alt={current.caption ?? 'Kenangan'}
                 loading="lazy"
                 className="h-full w-full object-cover"
               />
@@ -139,8 +139,8 @@ export function MemoriesSection() {
           <SectionHeader
             index="05"
             eyebrow="Memories"
-            title="Kenangan kelas"
-            description="Foto-foto kenangan dari seluruh anggota. Carousel menampilkan kiriman secara acak — setiap kunjungan urutannya bisa berbeda."
+            title="Kenangan komunitas"
+            description="Foto-foto kenangan dari seluruh kreator. Carousel menampilkan kiriman secara acak — setiap kunjungan urutannya bisa berbeda."
           />
         </Reveal>
 
@@ -222,7 +222,7 @@ export function MemoriesSection() {
                     </Link>
                   )}
                   <Link to="/members" className={buttonClasses('outline', 'lg')}>
-                    Lihat anggota
+                    Lihat kreator
                   </Link>
                 </div>
               </div>

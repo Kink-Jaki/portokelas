@@ -10,11 +10,11 @@ const headlineLines = ['Karya yang', 'dibangun', 'bersama'];
 const collageImages = [
   {
     src: 'https://plus.unsplash.com/premium_photo-1682284353484-4e16001c58eb?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
-    alt: 'Anggota kelas sedang menulis dan mengerjakan proyek di meja belajar',
+    alt: 'Kreator sedang menulis dan mengerjakan proyek di meja belajar',
   },
   {
     src: 'https://images.unsplash.com/photo-1581726707445-75cbe4efc586?q=80&w=1476&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
-    alt: 'Suasana lingkungan sekolah bersama beberapa siswa dari belakang',
+    alt: 'Suasana komunitas kreator dari belakang',
   },
   {
     src: 'https://plus.unsplash.com/premium_photo-1713296255442-e9338f42aad8?q=80&w=722&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
@@ -123,7 +123,7 @@ export function Hero() {
             <motion.p variants={staggerItem} className="flex items-center gap-4">
               <span aria-hidden className="h-px w-10 bg-burgundy" />
               <span className="text-[0.6875rem] font-medium uppercase tracking-[0.3em] text-forest-soft sm:text-xs">
-                Satu Kelas · Portofolio Anggota
+                Craftly · Platform Portofolio Kreator
               </span>
             </motion.p>
 
@@ -144,14 +144,14 @@ export function Hero() {
               variants={staggerItem}
               className="mt-7 max-w-[34rem] text-[1.0625rem] leading-[1.65] text-forest-soft sm:text-[1.125rem]"
             >
-              Setiap anggota kelas punya satu halaman portofolio pribadi. Daftar sekali, unggah
+              Setiap kreator punya satu halaman portofolio pribadi. Daftar sekali, unggah
               project, lalu karya kamu tampil di halaman publik yang bisa dibagikan ke siapa saja.
             </motion.p>
 
             <motion.div variants={staggerItem} className="mt-9 flex flex-wrap items-center gap-4">
               <Magnetic>
                 <Link to="/members" className={buttonClasses('burgundy', 'lg')}>
-                  Lihat anggota
+                  Lihat kreator
                   <svg
                     viewBox="0 0 24 24"
                     width="16"
@@ -165,7 +165,7 @@ export function Hero() {
                 </Link>
               </Magnetic>
               <a href="#tentang" className={buttonClasses('forest', 'lg')}>
-                Tentang kelas
+                Tentang Craftly
               </a>
             </motion.div>
           </div>
