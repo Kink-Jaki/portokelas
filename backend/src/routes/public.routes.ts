@@ -4,6 +4,7 @@ import { ok } from '../lib/http.js';
 import { zQuery } from '../lib/validate.js';
 import {
   getAbout,
+  getHero,
   getMemberBySlug,
   getPublicStats,
   listMemoriesRandom,
@@ -25,6 +26,10 @@ export const publicRoutes = new Hono()
   .get('/about', async (c) => {
     const about = await getAbout();
     return c.json(ok({ about }));
+  })
+  .get('/hero', async (c) => {
+    const hero = await getHero();
+    return c.json(ok({ hero }));
   })
   .get('/teachers', async (c) => {
     const teachers = await listTeachers();

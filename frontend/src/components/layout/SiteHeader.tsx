@@ -201,6 +201,12 @@ export function SiteHeader() {
           ) : null}
 
           <div className="flex items-center gap-2">
+            <Link
+              to="/docs"
+              className={buttonClasses('ghost', 'sm', 'hidden sm:inline-flex')}
+            >
+              Docs
+            </Link>
             {isLoading ? (
               <div className="h-9 w-24 animate-pulse rounded-sm bg-ivory-alt" />
             ) : user ? (
@@ -221,6 +227,7 @@ export function SiteHeader() {
 const footerNav = [
   { label: 'Beranda', to: '/' },
   { label: 'Direktori anggota', to: '/members' },
+  { label: 'Dokumentasi', to: '/docs' },
   { label: 'Masuk', to: '/login' },
 ];
 
