@@ -110,22 +110,36 @@ function ImagePlaceholder() {
 function AboutOrnaments() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-      {/* Bentuk organik sage + maroon kiri bawah */}
-      <span className="absolute -bottom-28 -left-24 h-80 w-80 rounded-[46%_54%_58%_42%/52%_44%_56%_48%] bg-sage-tint" />
-      <span className="absolute -left-10 bottom-28 hidden h-20 w-20 rounded-full bg-maroon-tint lg:block" />
-
-      {/* Daun tipis pojok kiri bawah */}
+      {/* Bidang maroon bergelombang di pojok kiri bawah + dua garis dekoratif
+          yang mengikuti kontur (gaya ilustrasi editorial). */}
       <svg
-        viewBox="0 0 80 80"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        className="absolute bottom-8 left-6 hidden h-24 w-24 text-sage sm:block"
+        viewBox="0 0 300 200"
+        preserveAspectRatio="xMidYMax meet"
+        className="absolute -bottom-2 -left-6 h-[134px] w-[200px] sm:h-[174px] sm:w-[260px] lg:h-[227px] lg:w-[340px]"
       >
-        <path d="M40 4C22 18 14 38 18 58c2 9 9 16 22 16" />
-        <path d="M40 4c12 16 16 36 12 56" />
-        <path d="M22 32c8 4 18 6 28 4" />
-        <path d="M20 46c8 3 17 4 25 2" />
+        {/* Bidang utama maroon */}
+        <path
+          d="M0 142 C45 132 90 124 130 118 C175 111 215 132 248 162 C268 181 284 192 294 198 L300 200 L0 200 Z"
+          fill="#701F35"
+        />
+        {/* Garis lengkung hijau lembut */}
+        <path
+          d="M0 130 C45 120 90 112 130 106 C175 99 215 120 252 152 C272 171 284 183 294 192"
+          fill="none"
+          stroke="#8DA58B"
+          strokeWidth="1.3"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+        />
+        {/* Garis lengkung cokelat hangat di luarnya */}
+        <path
+          d="M0 116 C45 106 90 98 130 92 C175 85 215 106 252 138 C270 155 282 167 290 176"
+          fill="none"
+          stroke="#765344"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+        />
       </svg>
 
       {/* Sambungan dari Hero di pojok kanan atas: separuh bawah lingkaran
@@ -191,8 +205,8 @@ function ScrapbookImage({ image }: { image: string | null }) {
         </div>
       </figure>
 
-      {/* Label kertas bertumpuk di sudut kiri bawah */}
-      <div className="pointer-events-none absolute bottom-3 left-5 z-20 -rotate-3 sm:left-8">
+      {/* Label kertas bertumpuk di sudut kiri bawah foto */}
+      <div className="pointer-events-none absolute bottom-5 left-8 z-20 -rotate-3 sm:left-10">
         <span
           aria-hidden
           className="absolute -top-2 left-6 h-4 w-11 -rotate-6 rounded-[2px] bg-maroon/70"
