@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 
 import { useAuth } from '@/providers/AuthProvider';
@@ -16,21 +17,95 @@ const landingSections = [
 
 /** Navigasi bagian halaman landing — dipindah dari panel indeks hero. */
 function SectionNav() {
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
+  const navRef = useRef<HTMLElement>(null);
+  const itemRefs = useRef(new Map<string, HTMLAnchorElement>());
+
+  useEffect(() => {
+    const sections = landingSections
+      .map((item) => document.getElementById(item.href.slice(1)))
+      .filter((section): section is HTMLElement => Boolean(section));
+
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        const top = visible[0];
+        setActiveId(top ? top.target.id : null);
+      },
+      { rootMargin: '-45% 0px -50% 0px', threshold: 0 },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    return () => observer.disconnect();
+  }, []);
+
+  const syncIndicator = useCallback(() => {
+    const nav = navRef.current;
+    const el = activeId ? itemRefs.current.get(activeId) : null;
+
+    if (!nav || !el) {
+      setIndicator(null);
+      return;
+    }
+
+    const navRect = nav.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    setIndicator({ left: elRect.left - navRect.left, width: elRect.width });
+  }, [activeId]);
+
+  useEffect(() => {
+    syncIndicator();
+    window.addEventListener('resize', syncIndicator);
+    return () => window.removeEventListener('resize', syncIndicator);
+  }, [syncIndicator]);
+
   return (
-    <nav className="hidden items-center gap-7 lg:flex" aria-label="Navigasi bagian halaman">
-      {landingSections.map((item) => (
-        <a
-          key={item.href}
-          href={item.href}
-          className="group relative text-[0.9375rem] text-forest transition-colors duration-200 hover:text-burgundy"
-        >
-          {item.label}
-          <span
-            aria-hidden
-            className="absolute -bottom-1.5 left-0 h-px w-full origin-left scale-x-0 bg-burgundy transition-transform duration-300 group-hover:scale-x-100"
-          />
-        </a>
-      ))}
+    <nav
+      ref={navRef}
+      className="relative hidden items-center gap-7 lg:flex"
+      aria-label="Navigasi bagian halaman"
+    >
+      {landingSections.map((item) => {
+        const isActive = activeId === item.href.slice(1);
+
+        return (
+          <a
+            key={item.href}
+            ref={(el) => {
+              if (el) itemRefs.current.set(item.href.slice(1), el);
+              else itemRefs.current.delete(item.href.slice(1));
+            }}
+            href={item.href}
+            aria-current={isActive ? 'true' : undefined}
+            className="group relative text-[0.9375rem] text-forest transition-colors duration-200 hover:text-burgundy"
+          >
+            {item.label}
+            <span
+              aria-hidden
+              className="absolute -bottom-1.5 left-0 h-px w-full origin-left scale-x-0 bg-burgundy transition-transform duration-300 group-hover:scale-x-100"
+            />
+          </a>
+        );
+      })}
+
+      <span
+        aria-hidden
+        style={{
+          transform: `translateX(${indicator?.left ?? 0}px)`,
+          width: indicator?.width ?? 0,
+        }}
+        className={cn(
+          'pointer-events-none absolute -bottom-1.5 left-0 h-px bg-burgundy transition-[transform,width,opacity] duration-300 ease-out',
+          indicator ? 'opacity-100' : 'opacity-0',
+        )}
+      />
     </nav>
   );
 }
@@ -103,7 +178,7 @@ export function SiteHeader() {
   const isLanding = pathname === '/';
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line-warm bg-ivory/90 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-line-warm bg-ivory/50 backdrop-blur-md">
       <div className="container-wide flex h-20 items-center justify-between gap-6 lg:h-[6.3rem]">
         <div className="flex items-center gap-3">
           <MobileSidebar />
