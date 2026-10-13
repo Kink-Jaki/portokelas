@@ -11,7 +11,6 @@ const landingSections = [
   { label: 'Tentang', href: '#tentang' },
   { label: 'Wali Kelas', href: '#wali-kelas' },
   { label: 'Anggota', href: '#anggota' },
-  { label: 'Statistik', href: '#statistik' },
   { label: 'Memories', href: '#memories' },
 ];
 

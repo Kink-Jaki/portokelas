@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 
-import { StatsSection } from './components/Sections';
 import { AboutSection } from './components/AboutSection';
 import { Hero } from './components/Hero';
 import { IntroOverlay } from './components/IntroOverlay';
@@ -26,7 +25,6 @@ export default function LandingPage() {
       <AboutSection />
       <TeacherSection />
       <StructureSection />
-      <StatsSection />
       <MemoriesSection />
     </>
   );
