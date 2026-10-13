@@ -9,8 +9,8 @@ import { cn } from '@/lib/utils';
 
 const landingSections = [
   { label: 'Tentang', href: '#tentang' },
-  { label: 'Wali Kelas', href: '#wali-kelas' },
-  { label: 'Anggota', href: '#anggota' },
+  { label: 'Mentor', href: '#mentor' },
+  { label: 'Kreator', href: '#kreator' },
   { label: 'Statistik', href: '#statistik' },
   { label: 'Memories', href: '#memories' },
 ];
@@ -133,7 +133,7 @@ export function Logo({
     <Link
       to="/"
       className={cn('group flex items-center gap-3', className)}
-      aria-label="Satu Kelas — beranda"
+      aria-label="Craftly — beranda"
     >
       <span
         aria-hidden
@@ -144,7 +144,7 @@ export function Logo({
             : 'h-9 w-9 border border-line-strong bg-invert text-sm text-invert-fg group-hover:border-accent group-hover:bg-accent group-hover:text-accent-fg',
         )}
       >
-        SK
+        C
       </span>
       <span className="flex flex-col leading-none">
         <span
@@ -153,8 +153,7 @@ export function Logo({
             editorial ? 'text-xl font-semibold text-forest lg:text-2xl' : 'text-lg',
           )}
         >
-          Satu Kelas
-        </span>
+          Craftly</span>
         {!compact ? (
           <span
             className={cn(
@@ -164,7 +163,7 @@ export function Logo({
                 : 'tracking-[0.24em] text-muted',
             )}
           >
-            Portofolio Anggota
+            Portofolio Kreator
           </span>
         ) : null}
       </span>
@@ -221,7 +220,7 @@ export function SiteHeader() {
 
 const footerNav = [
   { label: 'Beranda', to: '/' },
-  { label: 'Direktori anggota', to: '/members' },
+  { label: 'Direktori kreator', to: '/members' },
   { label: 'Masuk', to: '/login' },
 ];
 
@@ -241,8 +240,8 @@ export function SiteFooter() {
           <div className="lg:col-span-5">
             <Logo />
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted">
-              Kumpulan portofolio anggota kelas dalam satu etalase publik. Dibangun oleh dan untuk
-              anggota — setiap karya punya halamannya sendiri.
+              Kumpulan portofolio kreator dalam satu etalase publik. Dibangun oleh dan untuk
+              kreator — setiap karya punya halamannya sendiri.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/members" className={buttonClasses('primary', 'sm')}>
@@ -299,7 +298,7 @@ export function SiteFooter() {
 
         <div className="mt-16 flex flex-col gap-4 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between">
           <p className="font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-muted">
-            © {year} · Satu Kelas
+            © {year} · Craftly
           </p>
           <p className="font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-muted">
             Direktori publik · tanpa login
@@ -311,7 +310,7 @@ export function SiteFooter() {
         aria-hidden
         className="pointer-events-none absolute -bottom-4 left-0 select-none whitespace-nowrap font-display text-[clamp(4rem,17vw,13rem)] leading-[0.8] tracking-[-0.04em] text-fg/5"
       >
-        Satu Kelas
+        Craftly
       </p>
     </footer>
   );

@@ -130,7 +130,7 @@ function SidebarNav({
 
   const items: NavItem[] = [
     { key: 'home', to: '/', label: 'Beranda', icon: IconHome, end: true },
-    { key: 'members', to: '/members', label: 'Anggota', icon: IconUsers },
+    { key: 'members', to: '/members', label: 'Kreator', icon: IconUsers },
   ];
 
   if (user) {
