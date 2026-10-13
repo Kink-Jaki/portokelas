@@ -181,7 +181,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-line-warm bg-ivory/50 backdrop-blur-md">
       <div className="container-wide flex h-20 items-center justify-between gap-6 lg:h-[6.3rem]">
         <div className="flex items-center gap-3">
-          <MobileSidebar />
+          <MobileSidebar sections={isLanding ? landingSections : undefined} />
           <Logo variant="editorial" />
         </div>
 
@@ -235,7 +235,7 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="section-dark relative overflow-hidden border-t border-line">
+    <footer className="section-maroon relative overflow-hidden border-t border-line">
       <div className="container-page relative z-10 py-16 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-5">

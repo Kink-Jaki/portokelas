@@ -160,6 +160,17 @@
     -webkit-text-size-adjust: 100%;
   }
 
+  /* Offset anchor agar judul section tidak tertutup header sticky. */
+  section[id] {
+    scroll-margin-top: 5.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    section[id] {
+      scroll-margin-top: 6.75rem;
+    }
+  }
+
   body {
     background-color: var(--bg);
     background-image: var(--grain);
@@ -433,6 +444,54 @@
     --sage-tint: rgba(40, 84, 66, 0.08);
     background-color: var(--bg);
     color: var(--fg);
+  }
+
+  /* Section footer — campuran maroon dominan dengan semburat cream & hijau.
+     Palet gelap terkunci: utilities text-fg/border-line otomatis memakai
+     warna terang agar tetap kontras di atas gradasi. */
+  .section-maroon {
+    --bg: #5e1b29;
+    --bg-subtle: #6e2133;
+    --bg-elevated: #7a2739;
+    --fg: #f8f4ea;
+    --fg-muted: #e4c8c6;
+    --line: rgba(248, 244, 234, 0.16);
+    --line-strong: rgba(248, 244, 234, 0.38);
+    --invert-bg: #f8f4ea;
+    --invert-fg: #5e1b29;
+    --accent: #e0a45a;
+    --accent-fg: #40202a;
+    --accent-soft: rgba(224, 164, 90, 0.16);
+    --danger: #f2a59a;
+    --success: #8fd6a6;
+
+    /* Alias palet yang dipakai lintas komponen (mis. Logo, tautan). */
+    --ivory: #f8f4ea;
+    --ivory-alt: #efe6d6;
+    --ivory-warm: #fffcf4;
+    --forest: #f8f4ea;
+    --forest-soft: #e4c8c6;
+    --burgundy: #f8f4ea;
+    --parchment: #5e1b29;
+    --maroon: #701f35;
+    --pine: #2f5d48;
+    --sage: #8da58b;
+    --gold: #e0a45a;
+    --moss: #e4c8c6;
+
+    color: var(--fg);
+    background-color: #5e1b29;
+    background-image:
+      var(--grain),
+      radial-gradient(80% 130% at 100% 0%, rgba(141, 165, 139, 0.42) 0%, rgba(141, 165, 139, 0) 55%),
+      radial-gradient(115% 130% at 0% 100%, rgba(255, 252, 244, 0.26) 0%, rgba(255, 252, 244, 0) 58%),
+      linear-gradient(135deg, #7a2435 0%, #5e1b29 50%, #451a26 100%);
+    background-size:
+      160px 160px,
+      auto,
+      auto,
+      auto;
+    background-repeat: repeat, no-repeat, no-repeat, no-repeat;
   }
 }
 

@@ -206,13 +206,13 @@ function ScrapbookImage({ image }: { image: string | null }) {
       </figure>
 
       {/* Label kertas bertumpuk di sudut kiri bawah foto */}
-      <div className="pointer-events-none absolute bottom-5 left-8 z-20 -rotate-3 sm:left-10">
+      <div className="pointer-events-none absolute bottom-5 left-4 z-20 max-w-[calc(100%-2rem)] -rotate-3 sm:left-10">
         <span
           aria-hidden
           className="absolute -top-2 left-6 h-4 w-11 -rotate-6 rounded-[2px] bg-maroon/70"
         />
-        <span className="relative block rounded-[14px] border border-blush-edge bg-parchment-alt px-4 py-2 shadow-[0_18px_32px_-20px_rgba(78,23,40,0.5)]">
-          <span className="font-hand text-[1.25rem] leading-none text-pine">
+        <span className="relative block rounded-[14px] border border-blush-edge bg-parchment-alt px-3.5 py-2 shadow-[0_18px_32px_-20px_rgba(78,23,40,0.5)] sm:px-4">
+          <span className="font-hand text-[1.05rem] leading-none text-pine sm:text-[1.25rem]">
             Kreativitas tumbuh bersama
           </span>
         </span>
@@ -314,8 +314,8 @@ function InfoCard({
   accent?: boolean;
 }) {
   return (
-    <div className="flex h-full flex-col gap-3 rounded-[22px] border border-blush-edge bg-blush/45 p-3.5 sm:p-4">
-      <span className="grid h-9 w-9 place-items-center rounded-full bg-maroon text-ivory-warm sm:h-10 sm:w-10">
+    <div className="flex h-full flex-row items-center gap-3 rounded-[22px] border border-blush-edge bg-blush/45 p-3.5 sm:flex-col sm:items-start sm:gap-3 sm:p-4">
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-maroon text-ivory-warm sm:h-10 sm:w-10">
         {icon}
       </span>
       <div className="min-w-0">
@@ -381,7 +381,7 @@ export function AboutSection() {
             </Reveal>
 
             <Reveal delay={0.12} className="mt-10">
-              <div className="grid grid-cols-3 gap-2.5 sm:gap-4">
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 sm:gap-4">
                 <InfoCard icon={<UsersIcon />} value={memberLabel} label="Anggota" accent />
                 <InfoCard icon={<ImageIcon />} value="Portofolio" label="Personal" />
                 <InfoCard icon={<FileTextIcon />} value="Karya &" label="Dokumentasi" />
