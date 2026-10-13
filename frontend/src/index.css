@@ -446,6 +446,49 @@
     color: var(--fg);
   }
 
+  /* Section Struktur Organisasi — palette editorial maroon–forest–cream.
+     Warna kunci mengikuti pedoman redesign: cream dominan (#f5f0e6), forest
+     untuk elemen interaktif (#244536), dan maroon sebagai aksen (#762d35).
+     Utilities bg-bg/text-fg/border-line/maroon/forest otomatis ikut palet ini. */
+  .section-members {
+    --bg: #f5f0e6;
+    --bg-subtle: #efe9db;
+    --bg-elevated: #fbf8f1;
+    --fg: #25241f;
+    --fg-muted: #6d7067;
+    --line: #ded4c2;
+    --line-strong: #c7bba2;
+    --invert-bg: #183328;
+    --invert-fg: #f5f0e6;
+    --accent: #762d35;
+    --accent-fg: #fbf8f1;
+    --accent-soft: rgba(118, 45, 53, 0.1);
+    --danger: #b42318;
+    --success: #2f6b3a;
+
+    /* Alias token palet editorial yang dipakai lintas section. */
+    --ivory: #f5f0e6;
+    --ivory-alt: #efe9db;
+    --ivory-warm: #fbf8f1;
+    --cream-card: #fbf8f1;
+    --edge: #ded4c2;
+    --forest: #244536;
+    --forest-soft: #35604c;
+    --pine: #244536;
+    --pine-deep: #183328;
+    --maroon: #762d35;
+    --maroon-deep: #542129;
+    --maroon-soft: #8e4a52;
+    --maroon-tint: rgba(118, 45, 53, 0.1);
+    --sage: #8da58b;
+    --sage-tint: rgba(36, 69, 54, 0.08);
+    --gold: #c9a56a;
+    --moss: #6d7067;
+    --blush-edge: #e2d8c8;
+    background-color: var(--bg);
+    color: var(--fg);
+  }
+
   /* Section footer — campuran maroon dominan dengan semburat cream & hijau.
      Palet gelap terkunci: utilities text-fg/border-line otomatis memakai
      warna terang agar tetap kontras di atas gradasi. */
