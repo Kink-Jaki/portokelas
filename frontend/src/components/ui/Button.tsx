@@ -1,7 +1,14 @@
 import { cn } from '@/lib/utils';
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 
-type Variant = 'primary' | 'outline' | 'ghost' | 'danger' | 'subtle';
+type Variant =
+  | 'primary'
+  | 'outline'
+  | 'ghost'
+  | 'danger'
+  | 'subtle'
+  | 'burgundy'
+  | 'forest';
 type Size = 'sm' | 'md' | 'lg' | 'icon';
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -24,6 +31,10 @@ const variantClasses: Record<Variant, string> = {
   ghost: 'text-fg hover:bg-subtle',
   danger: 'border border-danger text-danger hover:bg-danger hover:text-bg',
   subtle: 'bg-subtle text-fg border border-line hover:border-line-strong',
+  burgundy:
+    'border border-burgundy bg-burgundy text-ivory-warm shadow-[0_18px_32px_-22px_rgba(122,36,53,0.75)] hover:border-burgundy-dark hover:bg-burgundy-dark hover:text-ivory-warm',
+  forest:
+    'border border-forest-soft bg-transparent text-forest hover:border-forest hover:bg-ivory-alt',
 };
 
 const sizeClasses: Record<Size, string> = {

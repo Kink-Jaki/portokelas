@@ -9,6 +9,8 @@ import { assetUrl } from '@/lib/api';
 const FALLBACK_TITLE = 'Satu kelas, satu etalase karya.';
 const FALLBACK_DESCRIPTION =
   'Satu Kelas mengumpulkan karya para anggota kelas dalam satu halaman publik: deskripsi singkat tentang kelas, lalu portofolio tiap anggota yang bisa dibagikan ke siapa saja.';
+const FALLBACK_IMAGE =
+  'https://images.unsplash.com/photo-1588075592446-265fd1e6e76f?q=80&w=1472&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D';
 
 function ImagePlaceholder() {
   return (
@@ -33,7 +35,7 @@ export function AboutSection() {
 
   const title = about?.title?.trim() || FALLBACK_TITLE;
   const description = about?.description?.trim() || FALLBACK_DESCRIPTION;
-  const image = assetUrl(about?.imageUrl);
+  const image = about?.imageUrl ? assetUrl(about.imageUrl) : FALLBACK_IMAGE;
 
   return (
     <section id="tentang" className="section-light paper border-b border-line">
@@ -63,12 +65,22 @@ export function AboutSection() {
           <Reveal delay={0.08} className="lg:col-span-5">
             <figure className="relative aspect-[4/3] overflow-hidden border border-line bg-subtle lg:aspect-[4/5]">
               {image ? (
-                <img
-                  src={image}
-                  alt="Tentang Satu Kelas"
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
+                <>
+                  <img
+                    src={image}
+                    alt="Tentang Satu Kelas"
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                      background:
+                        'linear-gradient(90deg, rgba(23, 20, 15, 0.52) 0%, rgba(23, 20, 15, 0.22) 45%, rgba(23, 20, 15, 0) 100%), linear-gradient(0deg, rgba(15, 13, 12, 0.46) 0%, rgba(15, 13, 12, 0) 55%)',
+                    }}
+                  />
+                </>
               ) : (
                 <ImagePlaceholder />
               )}
