@@ -51,9 +51,12 @@ function EdgeOrnaments() {
         ))}
       </div>
 
-      {/* Kanan bawah: lingkaran maroon + outline hijau (mirror kiri atas) */}
-      <span className="absolute -bottom-28 -right-24 h-60 w-60 rounded-full bg-burgundy" />
-      <span className="absolute -bottom-[8.5rem] -right-[7.5rem] h-72 w-72 rounded-full border border-forest/40" />
+      {/* Sambungan ke section Tentang di pojok kanan bawah: separuh atas
+          lingkaran maroon + garis hijau. Separuh bawah digambar oleh
+          AboutSection dengan geometri yang sama. */}
+      <span aria-hidden className="seam-circle seam-circle--maroon seam--hero" />
+      <span aria-hidden className="seam-circle seam-circle--ring seam--hero" />
+      <span aria-hidden className="seam-circle seam-circle--dash seam--hero" />
     </div>
   );
 }
@@ -108,7 +111,7 @@ function ImageCollage() {
 
 export function Hero() {
   return (
-    <section className="paper relative isolate overflow-hidden border-b border-line-warm bg-ivory text-forest">
+    <section className="paper relative isolate overflow-hidden bg-ivory text-forest">
       <EdgeOrnaments />
 
       <div className="container-wide relative z-10 py-20 lg:py-24">

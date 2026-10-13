@@ -110,27 +110,6 @@ function ImagePlaceholder() {
 function AboutOrnaments() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-      {/* Lengkung tipis pojok kiri atas */}
-      <svg
-        viewBox="0 0 400 400"
-        fill="none"
-        className="absolute -left-24 -top-24 hidden h-96 w-96 text-gold/40 sm:block"
-      >
-        <circle cx="200" cy="200" r="150" stroke="currentColor" strokeWidth="1.2" />
-        <circle
-          cx="200"
-          cy="200"
-          r="190"
-          stroke="currentColor"
-          strokeWidth="1"
-          strokeDasharray="2 9"
-        />
-      </svg>
-
-      {/* Bentuk organik sage kanan atas */}
-      <span className="absolute -right-24 -top-24 h-72 w-72 rounded-[58%_42%_47%_53%/46%_56%_44%_54%] bg-sage-tint" />
-      <span className="absolute -right-8 top-28 hidden h-24 w-24 rounded-full border border-sage/40 lg:block" />
-
       {/* Bentuk organik sage + maroon kiri bawah */}
       <span className="absolute -bottom-28 -left-24 h-80 w-80 rounded-[46%_54%_58%_42%/52%_44%_56%_48%] bg-sage-tint" />
       <span className="absolute -left-10 bottom-28 hidden h-20 w-20 rounded-full bg-maroon-tint lg:block" />
@@ -149,8 +128,15 @@ function AboutOrnaments() {
         <path d="M20 46c8 3 17 4 25 2" />
       </svg>
 
-      <Sparkle className="absolute right-[12%] top-[14%] h-4 w-4 text-maroon/60" />
+      {/* Sambungan dari Hero di pojok kanan atas: separuh bawah lingkaran
+          maroon + garis hijau. Geometri dikunci lewat kelas .seam-* agar
+          kurva bertemu mulus di batas section. */}
+      <span aria-hidden className="seam-circle seam-circle--maroon seam--about" />
+      <span aria-hidden className="seam-circle seam-circle--ring seam--about" />
+      <span aria-hidden className="seam-circle seam-circle--dash seam--about" />
+
       <Sparkle className="absolute bottom-[16%] right-[7%] hidden h-3 w-3 text-pine/50 sm:block" />
+      <Sparkle className="absolute left-[12%] top-[14%] h-4 w-4 text-maroon/60" />
     </div>
   );
 }

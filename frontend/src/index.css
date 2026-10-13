@@ -73,10 +73,41 @@
   --gold: #c9a56a;
   --moss: #48544d;
 
+  /* Geometri ornamen sambungan Hero ↔ About — satu lingkaran maroon dengan
+     garis hijau yang melintasi batas kedua section (pojok kanan bawah).
+     Nilai dibagi antar-section agar potongan atas (Hero) dan bawah (About)
+     menyatu tanpa patah. */
+  --seam-size: 300px;
+  --seam-right: -165px;
+  --seam-e: 20px;
+  --seam-gap: 14px;
+  --seam-dash: 62px;
+
   /* Grain halus untuk permukaan kertas (dipakai via .paper). */
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
 
   color-scheme: light;
+}
+
+/* Skala ornamen sambungan mengikuti breakpoint proyek (lg / sm). */
+@media (max-width: 1023px) {
+  :root {
+    --seam-size: 220px;
+    --seam-right: -122px;
+    --seam-e: 16px;
+    --seam-gap: 12px;
+    --seam-dash: 46px;
+  }
+}
+
+@media (max-width: 639px) {
+  :root {
+    --seam-size: 160px;
+    --seam-right: -90px;
+    --seam-e: 12px;
+    --seam-gap: 10px;
+    --seam-dash: 34px;
+  }
 }
 
 @theme inline {
@@ -237,6 +268,66 @@
     background-size: 140px 140px;
   }
 
+  /* Ornamen sambungan Hero ↔ About.
+     Satu lingkaran maroon + garis hijau yang dipotong oleh batas section:
+     `--hero` menggambar potongan atas, `--about` potongan bawah. Karena
+     keduanya memakai geometri yang sama, kurva bertemu tepat di batas. */
+  .seam-circle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .seam-circle--maroon {
+    right: var(--seam-right);
+    width: var(--seam-size);
+    height: var(--seam-size);
+    background: var(--maroon);
+  }
+
+  .seam-circle--ring {
+    right: calc(var(--seam-right) - var(--seam-gap));
+    width: calc(var(--seam-size) + var(--seam-gap) * 2);
+    height: calc(var(--seam-size) + var(--seam-gap) * 2);
+    border: 1.2px solid var(--sage);
+    opacity: 0.8;
+  }
+
+  .seam-circle--dash {
+    right: calc(var(--seam-right) - var(--seam-dash));
+    width: calc(var(--seam-size) + var(--seam-dash) * 2);
+    height: calc(var(--seam-size) + var(--seam-dash) * 2);
+    border: 1px dashed var(--sage);
+    opacity: 0.4;
+  }
+
+  /* Potongan atas — ditempel ke dasar Hero. */
+  .seam--hero.seam-circle--maroon {
+    bottom: calc(-1 * (var(--seam-e) + var(--seam-size) / 2));
+  }
+
+  .seam--hero.seam-circle--ring {
+    bottom: calc(-1 * (var(--seam-e) + var(--seam-size) / 2 + var(--seam-gap)));
+  }
+
+  .seam--hero.seam-circle--dash {
+    bottom: calc(-1 * (var(--seam-e) + var(--seam-size) / 2 + var(--seam-dash)));
+  }
+
+  /* Potongan bawah — ditempel ke puncak About. */
+  .seam--about.seam-circle--maroon {
+    top: calc(var(--seam-e) - var(--seam-size) / 2);
+  }
+
+  .seam--about.seam-circle--ring {
+    top: calc(var(--seam-e) - var(--seam-size) / 2 - var(--seam-gap));
+  }
+
+  .seam--about.seam-circle--dash {
+    top: calc(var(--seam-e) - var(--seam-size) / 2 - var(--seam-dash));
+  }
+
   /* Tautan dengan garis bawah yang tumbuh dari kiri. */
   .link-underline {
     position: relative;
@@ -296,6 +387,50 @@
     --accent-soft: rgba(205, 69, 32, 0.1);
     --danger: #b42318;
     --success: #2f6b3a;
+    background-color: var(--bg);
+    color: var(--fg);
+  }
+
+  /* Section Wali Kelas — palet cream/hijau tua/maroon yang terkunci.
+     Semua variabel dipetakan ulang di sini agar utilities bg-bg, text-fg,
+     border-line, text-maroon, bg-pine otomatis memakai palet ini. */
+  .section-teacher {
+    --bg: #faf6ee;
+    --bg-subtle: #f5efe3;
+    --bg-elevated: #fffcf6;
+    --fg: #24372f;
+    --fg-muted: #66574c;
+    --line: #d9c9b0;
+    --line-strong: #b9a583;
+    --invert-bg: #183f32;
+    --invert-fg: #faf6ee;
+    --accent: #702b2d;
+    --accent-fg: #fffcf6;
+    --accent-soft: rgba(112, 43, 45, 0.1);
+    --danger: #b42318;
+    --success: #285442;
+
+    /* Alias token palet yang dipakai lintas section. */
+    --ivory: #faf6ee;
+    --ivory-alt: #f5efe3;
+    --ivory-warm: #fffcf6;
+    --forest: #183f32;
+    --forest-soft: #285442;
+    --parchment: #faf6ee;
+    --parchment-alt: #f5efe3;
+    --cream-card: #fffcf6;
+    --edge: #d9c9b0;
+    --pine: #285442;
+    --pine-deep: #183f32;
+    --maroon: #702b2d;
+    --maroon-deep: #5a2123;
+    --maroon-soft: #8a4141;
+    --maroon-tint: rgba(112, 43, 45, 0.1);
+    --burgundy: #702b2d;
+    --gold: #c9a56a;
+    --moss: #66574c;
+    --sage: #8da58b;
+    --sage-tint: rgba(40, 84, 66, 0.08);
     background-color: var(--bg);
     color: var(--fg);
   }
