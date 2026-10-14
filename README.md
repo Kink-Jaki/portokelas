@@ -254,9 +254,9 @@ Frontend bisa juga di-deploy ke Vercel. `frontend/vercel.json` sudah memuat
 seperti Pages) plus SPA fallback ke `/index.html`.
 
 1. Import repo di Vercel, lalu set **Root Directory** = `frontend`.
-2. Karena dependensi dikelola sebagai workspace Bun di root repo, set
-   **Install Command** = `cd .. && bun install` (Build Command & Output diambil
-   dari `frontend/vercel.json`: `bun run build` → `dist`).
+2. Biarkan install/build default Vercel (preset Vite: `npm install` + `npm run build`
+   → `dist`; `frontend/vercel.json` juga menetapkan `buildCommand`/`outputDirectory`).
+   `frontend/package.json` mandiri sehingga tidak perlu lockfile workspace Bun.
 3. Biarkan `VITE_API_URL` **kosong** — request memakai path relatif dan diproxy
    oleh `rewrites`.
 4. Bila URL Worker berubah, perbarui `destination` di `frontend/vercel.json`.
