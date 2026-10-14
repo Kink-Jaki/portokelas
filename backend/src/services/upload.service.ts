@@ -1,10 +1,13 @@
-import { mkdir, unlink, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { env } from '../env.js';
 import { AppError } from '../lib/errors.js';
+import { getBindings, type KVNamespaceBinding, type R2BucketBinding } from '../runtime.js';
 
 export type UploadKind = 'avatars' | 'projects' | 'content' | 'memories';
+
+const CACHE_CONTROL = 'public, max-age=31536000, immutable';
 
 const ALLOWED_MIME = new Map<string, string>([
   ['image/jpeg', 'jpg'],
@@ -12,10 +15,39 @@ const ALLOWED_MIME = new Map<string, string>([
   ['image/webp', 'webp'],
 ]);
 
-export const uploadRoot = path.resolve(process.cwd(), env.UPLOAD_DIR);
+const MIME_BY_EXTENSION: Record<string, string> = {
+  jpg: 'image/jpeg',
+  png: 'image/png',
+  webp: 'image/webp',
+};
 
-/** `serveStatic` hanya menerima path relatif terhadap cwd proses. */
-export const uploadRootRelative = path.relative(process.cwd(), uploadRoot) || '.';
+/** Binding R2 bila tersedia (produksi); null untuk penyimpanan lokal. */
+function getBucket(): R2BucketBinding | null {
+  return getBindings()?.UPLOADS_BUCKET ?? null;
+}
+
+/** Binding Workers KV bila tersedia (alternatif R2). */
+function getKv(): KVNamespaceBinding | null {
+  return getBindings()?.UPLOADS_KV ?? null;
+}
+
+/** Content type dari ekstensi key objek (mis. `projects/<uuid>.png`). */
+function mimeFromKey(key: string): string {
+  const extension = key.split('.').pop()?.toLowerCase() ?? '';
+  return MIME_BY_EXTENSION[extension] ?? 'application/octet-stream';
+}
+
+function uploadRoot(): string {
+  return path.resolve(process.cwd(), env.UPLOAD_DIR);
+}
+
+/** Resolve path relatif di dalam folder upload; null bila keluar folder (traversal). */
+function resolveWithinRoot(relative: string): string | null {
+  const root = uploadRoot();
+  const target = path.resolve(root, relative);
+  const rootWithSep = root.endsWith(path.sep) ? root : root + path.sep;
+  return target.startsWith(rootWithSep) ? target : null;
+}
 
 /** Deteksi tipe file asli lewat magic bytes (bukan ekstensi/header kiriman). */
 export function detectImageMime(bytes: Uint8Array): string | null {
@@ -74,15 +106,14 @@ function assertUploadShape(file: File): void {
 }
 
 /**
- * Simpan file gambar di storage lokal server dengan nama acak (uuid).
- * Mengembalikan path relatif yang bisa langsung dipakai sebagai URL publik.
+ * Simpan file gambar (R2 bila tersedia, jika tidak ke disk lokal) dengan nama
+ * acak. Mengembalikan path relatif `/uploads/...` yang siap dipakai sebagai URL.
  */
 export async function saveImage(file: File, kind: UploadKind): Promise<string> {
   assertUploadShape(file);
 
   const bytes = new Uint8Array(await file.arrayBuffer());
-  const header = bytes.subarray(0, 16);
-  const realMime = detectImageMime(header);
+  const realMime = detectImageMime(bytes.subarray(0, 16));
 
   if (!realMime) {
     throw AppError.badRequest('Isi file bukan gambar JPG/PNG/WEBP yang valid.');
@@ -102,16 +133,71 @@ export async function saveImage(file: File, kind: UploadKind): Promise<string> {
   const extension = ALLOWED_MIME.get(realMime);
   if (!extension) throw AppError.badRequest('Format file tidak didukung.');
 
-  const relativeDir = kind;
-  const directory = path.join(uploadRoot, relativeDir);
-  await mkdir(directory, { recursive: true });
+  const key = `${kind}/${crypto.randomUUID()}.${extension}`;
+  const bucket = getBucket();
+  const kv = getKv();
 
-  const fileName = `${crypto.randomUUID()}.${extension}`;
-  const absolutePath = path.join(directory, fileName);
+  if (bucket) {
+    await bucket.put(key, bytes, {
+      httpMetadata: { contentType: realMime, cacheControl: CACHE_CONTROL },
+    });
+  } else if (kv) {
+    await kv.put(key, bytes);
+  } else {
+    const absolutePath = resolveWithinRoot(key);
+    if (!absolutePath) throw AppError.internal('Path unggahan tidak valid.');
+    await mkdir(path.dirname(absolutePath), { recursive: true });
+    await writeFile(absolutePath, bytes, { flag: 'wx' });
+  }
 
-  await writeFile(absolutePath, bytes, { flag: 'wx' });
+  return `/uploads/${key}`;
+}
 
-  return `/uploads/${relativeDir}/${fileName}`;
+export type StoredUpload = {
+  body: ReadableStream | Uint8Array;
+  contentType: string;
+};
+
+/** Baca objek unggahan berdasarkan path tersimpan (`/uploads/...`). */
+export async function readUpload(storedPath: string): Promise<StoredUpload | null> {
+  const normalized = normalizeStoredImage(storedPath);
+  if (!normalized) return null;
+
+  const key = normalized.replace(/^\/uploads\//, '');
+  const bucket = getBucket();
+  const kv = getKv();
+
+  if (bucket) {
+    const object = await bucket.get(key);
+    if (!object) return null;
+    return {
+      body: object.body,
+      contentType: object.httpMetadata?.contentType ?? 'application/octet-stream',
+    };
+  }
+
+  if (kv) {
+    const arrayBuffer = await kv.get(key, { type: 'arrayBuffer' });
+    if (!arrayBuffer) return null;
+    return {
+      body: new Uint8Array(arrayBuffer),
+      contentType: mimeFromKey(key),
+    };
+  }
+
+  const absolutePath = resolveWithinRoot(key);
+  if (!absolutePath) return null;
+
+  try {
+    const data = await readFile(absolutePath);
+    const extension = path.extname(absolutePath).slice(1).toLowerCase();
+    return {
+      body: new Uint8Array(data),
+      contentType: MIME_BY_EXTENSION[extension] ?? 'application/octet-stream',
+    };
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -139,14 +225,25 @@ export async function deleteStoredFile(storedPath: string | null | undefined): P
   const normalized = storedPath ? normalizeStoredImage(storedPath) : null;
   if (!normalized) return;
 
-  const relative = normalized.replace(/^\/uploads\//, '');
-  const target = path.resolve(uploadRoot, relative);
-  const root = uploadRoot.endsWith(path.sep) ? uploadRoot : uploadRoot + path.sep;
+  const key = normalized.replace(/^\/uploads\//, '');
+  const bucket = getBucket();
+  const kv = getKv();
 
-  if (!target.startsWith(root)) return;
+  if (bucket) {
+    await bucket.delete(key).catch(() => undefined);
+    return;
+  }
+
+  if (kv) {
+    await kv.delete(key).catch(() => undefined);
+    return;
+  }
+
+  const absolutePath = resolveWithinRoot(key);
+  if (!absolutePath) return;
 
   try {
-    await unlink(target);
+    await unlink(absolutePath);
   } catch {
     // File sudah tidak ada — abaikan.
   }

@@ -1,17 +1,16 @@
-import { serveStatic } from '@hono/node-server/serve-static';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 
 import { env } from './env.js';
-import { ok } from './lib/http.js';
+import { fail, ok } from './lib/http.js';
 import { type AppEnv } from './middleware/auth.js';
 import { notFound, onError } from './middleware/error-handler.js';
 import { adminRoutes } from './routes/admin.routes.js';
 import { authRoutes } from './routes/auth.routes.js';
 import { meRoutes } from './routes/me.routes.js';
 import { publicRoutes } from './routes/public.routes.js';
-import { uploadRootRelative } from './services/upload.service.js';
+import { readUpload } from './services/upload.service.js';
 
 export const app = new Hono<AppEnv>();
 
@@ -28,17 +27,20 @@ app.use(
   }),
 );
 
-// Penyimpanan file lokal.
-app.use(
-  '/uploads/*',
-  serveStatic({
-    root: uploadRootRelative,
-    rewriteRequestPath: (requestPath) => requestPath.replace(/^\/uploads/, ''),
-    onFound: (_path, c) => {
-      c.header('Cache-Control', 'public, max-age=31536000, immutable');
+// Penyimpanan file (R2 di Workers, filesystem saat dev lokal).
+app.get('/uploads/*', async (c) => {
+  const object = await readUpload(c.req.path);
+  if (!object) {
+    return c.json(fail('NOT_FOUND', 'Berkas tidak ditemukan.'), 404);
+  }
+
+  return new Response(object.body, {
+    headers: {
+      'Content-Type': object.contentType,
+      'Cache-Control': 'public, max-age=31536000, immutable',
     },
-  }),
-);
+  });
+});
 
 app.get('/api/health', (c) =>
   c.json(ok({ status: 'ok', env: env.NODE_ENV, time: new Date().toISOString() })),

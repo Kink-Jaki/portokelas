@@ -7,7 +7,13 @@ import prettierConfig from 'eslint-config-prettier';
 
 export default tseslint.config(
   {
-    ignores: ['**/dist/**', '**/node_modules/**', 'backend/uploads/**', 'backend/drizzle/**'],
+    ignores: [
+      '**/dist/**',
+      '**/node_modules/**',
+      '**/.wrangler/**',
+      'backend/uploads/**',
+      'backend/drizzle/**',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

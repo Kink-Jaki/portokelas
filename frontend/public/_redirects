@@ -1,0 +1,2 @@
+# SPA fallback: semua rute non-aset diarahkan ke index.html (status 200).
+/* /index.html 200

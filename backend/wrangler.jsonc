@@ -1,0 +1,46 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "portofolio-kelas-api",
+	"main": "src/worker.ts",
+	"compatibility_date": "2026-10-14",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	// Variable non-rahasia. Secret (JWT_SECRET, dll) di-set lewat:
+	//   wrangler secret put JWT_SECRET
+	"vars": {
+		"NODE_ENV": "production",
+		"COOKIE_NAME": "pk_session",
+		"JWT_EXPIRES_IN": "7d",
+		"CORS_ORIGIN": "https://portofolio-kelas.pages.dev,https://portokelas.vercel.app",
+		"MAX_UPLOAD_SIZE_MB": "2"
+	},
+	// Database: Neon (PostgreSQL). Hyperdrive = cara yang direkomendasikan Cloudflare.
+	// 1) Di Neon Console: buat role khusus (mis. `hyperdrive-user`), lalu ambil
+	//    connection string dengan "Connection pooling" DIMATIKAN (host tanpa "-pooler"):
+	//    postgres://hyperdrive-user:PASSWORD@ep-xxx.<region>.aws.neon.tech/<db>?sslmode=require
+	// 2) Buat Hyperdrive:
+	//    wrangler hyperdrive create portofolio-kelas-db --connection-string="<string di atas>"
+	// 3) Tempel `id` output-nya di bawah.
+	//
+	// Jangan pakai Neon serverless driver di sini — Hyperdrive memakai native pg.
+	// Untuk `wrangler dev` lokal, set connection string lewat file .env (gitignored):
+	//    CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE="postgres://...neon.tech/db?sslmode=require"
+	"hyperdrive": [
+		{
+			"binding": "HYPERDRIVE",
+			"id": "a734feed8ed147edbd334e495b2a4f43"
+		}
+	],
+	// Penyimpanan gambar unggahan.
+	// Default: Workers KV (gratis, tanpa perlu enable R2/billing).
+	//   wrangler kv namespace create UPLOADS_KV
+	// Alternatif R2 (bila nanti diaktifkan): ganti blok ini dengan
+	//   "r2_buckets": [{ "binding": "UPLOADS_BUCKET", "bucket_name": "portofolio-kelas-uploads" }]
+	"kv_namespaces": [
+		{
+			"binding": "UPLOADS_KV",
+			"id": "a5e1c0a537df43cd8222f576b3bc2684"
+		}
+	]
+}
