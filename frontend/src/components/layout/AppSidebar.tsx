@@ -108,6 +108,12 @@ type NavItem = {
   end?: boolean;
 };
 
+/** Tautan anchor ke bagian halaman landing (ditampilkan di drawer mobile). */
+export type SectionLink = {
+  label: string;
+  href: string;
+};
+
 const itemClass = (collapsed: boolean) =>
   ({ isActive }: { isActive: boolean }) =>
     cn(
@@ -121,9 +127,11 @@ const itemClass = (collapsed: boolean) =>
 function SidebarNav({
   onNavigate,
   collapsed = false,
+  sections = [],
 }: {
   onNavigate?: () => void;
   collapsed?: boolean;
+  sections?: SectionLink[];
 }) {
   const { user, isLoading, logout } = useAuth();
   const navigate = useNavigate();
@@ -135,10 +143,6 @@ function SidebarNav({
 
   if (user) {
     items.push({ key: 'profile', to: '/profile', label: 'Profil', icon: IconUser });
-  }
-  if (user?.role === 'admin') {
-    items.push({ key: 'admin', to: '/admin', label: 'Panel admin', icon: IconShield });
-  } else if (user) {
     if (user.slug) {
       items.push({
         key: 'porto',
@@ -154,6 +158,9 @@ function SidebarNav({
       icon: IconGrid,
       end: true,
     });
+  }
+  if (user?.role === 'admin') {
+    items.push({ key: 'admin', to: '/admin', label: 'Panel admin', icon: IconShield });
   }
 
   const linkClass = itemClass(collapsed);
@@ -189,6 +196,26 @@ function SidebarNav({
             {items.slice(0, 2).map(renderLink)}
           </nav>
         </div>
+
+        {!collapsed && sections.length > 0 ? (
+          <div>
+            <p className="px-3 font-mono text-[0.625rem] uppercase tracking-[0.22em] text-muted">
+              Di halaman ini
+            </p>
+            <nav className="mt-3 space-y-0.5" aria-label="Bagian halaman">
+              {sections.map((section) => (
+                <a
+                  key={section.href}
+                  href={section.href}
+                  onClick={onNavigate}
+                  className="flex items-center border-l-2 border-transparent px-3 py-2.5 text-sm text-muted transition-colors duration-200 hover:border-line-strong hover:bg-bg hover:text-fg"
+                >
+                  {section.label}
+                </a>
+              ))}
+            </nav>
+          </div>
+        ) : null}
 
         {items.length > 2 ? (
           <div>
@@ -268,7 +295,7 @@ function SidebarNav({
   );
 }
 
-/** Rail sidebar fixed di kiri layar — hanya tampil setelah login. */
+/** Rail sidebar fixed di kiri layar — sumber tunggal navigasi aplikasi. */
 export function AppSidebar({
   collapsed = false,
   onToggle,
@@ -276,9 +303,6 @@ export function AppSidebar({
   collapsed?: boolean;
   onToggle?: () => void;
 }) {
-  const { user } = useAuth();
-  if (!user) return null;
-
   return (
     <aside
       className={cn(
@@ -317,11 +341,10 @@ export function AppSidebar({
   );
 }
 
-/** Drawer navigasi untuk layar kecil, dipanggil dari header — hanya setelah login. */
-export function MobileSidebar() {
+/** Drawer navigasi untuk layar kecil, dipanggil dari header — semua pengunjung. */
+export function MobileSidebar({ sections }: { sections?: SectionLink[] }) {
   const [open, setOpen] = useState(false);
   const location = useLocation();
-  const { user } = useAuth();
 
   useEffect(() => {
     setOpen(false);
@@ -341,7 +364,6 @@ export function MobileSidebar() {
     };
   }, [open]);
 
-  if (!user) return null;
   if (typeof document === 'undefined') return null;
 
   return (
@@ -361,7 +383,7 @@ export function MobileSidebar() {
       {createPortal(
         <AnimatePresence>
           {open ? (
-            <div className="fixed inset-0 z-50 lg:hidden">
+            <div className={cn('fixed inset-0 z-50 lg:hidden', sections && 'page-landing')}>
               <motion.div
                 className="absolute inset-0 bg-fg/45 backdrop-blur-[2px]"
                 initial={{ opacity: 0 }}
@@ -395,7 +417,7 @@ export function MobileSidebar() {
                   </button>
                 </div>
                 <div className="flex-1 overflow-y-auto px-5 py-6">
-                  <SidebarNav onNavigate={() => setOpen(false)} />
+                  <SidebarNav onNavigate={() => setOpen(false)} sections={sections} />
                 </div>
               </motion.div>
             </div>

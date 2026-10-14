@@ -3,6 +3,7 @@ import {
   boolean,
   index,
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   text,
@@ -12,6 +13,33 @@ import {
 } from 'drizzle-orm/pg-core';
 
 export const userRole = pgEnum('user_role', ['member', 'admin']);
+
+/** Preset tema tampilan card & portofolio anggota. */
+export const THEME_PRESETS = [
+  'editorial',
+  'midnight',
+  'forest',
+  'burgundy',
+  'mono',
+  'ocean',
+  'sunset',
+  'sakura',
+] as const;
+
+export type ThemePreset = (typeof THEME_PRESETS)[number];
+
+/** Kustomisasi tampilan card & portofolio anggota. */
+export type MemberTheme = {
+  preset: ThemePreset;
+  /** Warna aksen (hex #rrggbb), menimpa preset bila diisi. */
+  accent?: string;
+  /** Warna latar halaman (hex #rrggbb). */
+  bg?: string;
+  /** Warna permukaan card (hex #rrggbb). */
+  surface?: string;
+  /** Warna teks utama (hex #rrggbb). */
+  fg?: string;
+};
 
 export const users = pgTable(
   'users',
@@ -33,6 +61,8 @@ export const users = pgTable(
     instagramUrl: text('instagram_url'),
     websiteUrl: text('website_url'),
     cvUrl: text('cv_url'),
+    theme: jsonb('theme').$type<MemberTheme>(),
+    cardHtml: text('card_html'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
@@ -92,6 +122,26 @@ export const projectImages = pgTable(
   ],
 );
 
+/** Kolaborator project — anggota lain yang ikut mengerjakan project bersama. */
+export const projectCollaborators = pgTable(
+  'project_collaborators',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    projectId: uuid('project_id')
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('project_collaborators_project_user_unique').on(table.projectId, table.userId),
+    index('project_collaborators_project_id_idx').on(table.projectId),
+    index('project_collaborators_user_id_idx').on(table.userId),
+  ],
+);
+
 /** Konten statis halaman landing — baris "Tentang" (single row). */
 export const abouts = pgTable('abouts', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -101,7 +151,16 @@ export const abouts = pgTable('abouts', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
-/** Mentor yang tampil di carousel landing page. */
+/** Konten statis hero landing — kolase tiga gambar (single row). */
+export const heroes = pgTable('heroes', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  image1Url: text('image1_url'),
+  image2Url: text('image2_url'),
+  image3Url: text('image3_url'),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Wali kelas yang tampil di carousel landing page. */
 export const teachers = pgTable(
   'teachers',
   {
@@ -137,15 +196,22 @@ export const memories = pgTable(
 export const usersRelations = relations(users, ({ many }) => ({
   projects: many(projects),
   memories: many(memories),
+  collaborations: many(projectCollaborators),
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
   author: one(users, { fields: [projects.userId], references: [users.id] }),
   images: many(projectImages),
+  collaborators: many(projectCollaborators),
 }));
 
 export const projectImagesRelations = relations(projectImages, ({ one }) => ({
   project: one(projects, { fields: [projectImages.projectId], references: [projects.id] }),
+}));
+
+export const projectCollaboratorsRelations = relations(projectCollaborators, ({ one }) => ({
+  project: one(projects, { fields: [projectCollaborators.projectId], references: [projects.id] }),
+  user: one(users, { fields: [projectCollaborators.userId], references: [users.id] }),
 }));
 
 export const memoriesRelations = relations(memories, ({ one }) => ({
@@ -158,8 +224,12 @@ export type Project = typeof projects.$inferSelect;
 export type NewProject = typeof projects.$inferInsert;
 export type ProjectImage = typeof projectImages.$inferSelect;
 export type NewProjectImage = typeof projectImages.$inferInsert;
+export type ProjectCollaborator = typeof projectCollaborators.$inferSelect;
+export type NewProjectCollaborator = typeof projectCollaborators.$inferInsert;
 export type About = typeof abouts.$inferSelect;
 export type NewAbout = typeof abouts.$inferInsert;
+export type Hero = typeof heroes.$inferSelect;
+export type NewHero = typeof heroes.$inferInsert;
 export type Teacher = typeof teachers.$inferSelect;
 export type NewTeacher = typeof teachers.$inferInsert;
 export type Memory = typeof memories.$inferSelect;
@@ -183,6 +253,8 @@ export const publicUserColumns = {
   instagramUrl: users.instagramUrl,
   websiteUrl: users.websiteUrl,
   cvUrl: users.cvUrl,
+  theme: users.theme,
+  cardHtml: users.cardHtml,
   createdAt: users.createdAt,
 } as const;
 
@@ -203,6 +275,8 @@ export type PublicUser = Pick<
   | 'instagramUrl'
   | 'websiteUrl'
   | 'cvUrl'
+  | 'theme'
+  | 'cardHtml'
   | 'createdAt'
 >;
 

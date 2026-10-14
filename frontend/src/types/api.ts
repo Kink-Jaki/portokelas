@@ -1,5 +1,18 @@
 export type UserRole = 'member' | 'admin';
 
+/** Preset tema tampilan card & portofolio anggota. */
+export type MemberThemePreset =
+  'editorial' | 'midnight' | 'forest' | 'burgundy' | 'mono' | 'ocean' | 'sunset' | 'sakura';
+
+/** Kustomisasi tampilan card & portofolio anggota. */
+export type MemberTheme = {
+  preset: MemberThemePreset;
+  accent?: string;
+  bg?: string;
+  surface?: string;
+  fg?: string;
+};
+
 export type PublicUser = {
   id: string;
   name: string;
@@ -15,6 +28,8 @@ export type PublicUser = {
   instagramUrl: string | null;
   websiteUrl: string | null;
   cvUrl: string | null;
+  theme: MemberTheme | null;
+  cardHtml: string | null;
   createdAt: string;
 };
 
@@ -47,6 +62,12 @@ export type ProjectImage = {
   sortOrder: number;
 };
 
+/** Anggota yang ikut mengerjakan sebuah project (tanpa kredensial). */
+export type CollaboratorUser = Pick<
+  PublicUser,
+  'id' | 'name' | 'alias' | 'slug' | 'avatarUrl' | 'headline' | 'role'
+>;
+
 export type Project = {
   id: string;
   userId: string;
@@ -62,6 +83,7 @@ export type Project = {
   createdAt: string;
   updatedAt: string;
   images: ProjectImage[];
+  collaborators: CollaboratorUser[];
 };
 
 export type ProjectWithAuthor = Project & {
@@ -94,7 +116,16 @@ export type About = {
   updatedAt: string;
 };
 
-/** Satu entri mentor pada carousel landing. */
+/** Gambar kolase hero di halaman landing (tiga slot, opsional). */
+export type Hero = {
+  id: string;
+  image1Url: string | null;
+  image2Url: string | null;
+  image3Url: string | null;
+  updatedAt: string;
+};
+
+/** Satu entri wali kelas pada carousel landing. */
 export type Teacher = {
   id: string;
   name: string;
@@ -132,6 +163,8 @@ export type ProfilePayload = {
   instagramUrl?: string | null;
   websiteUrl?: string | null;
   cvUrl?: string | null;
+  theme?: MemberTheme | null;
+  cardHtml?: string | null;
 };
 
 export type ProjectPayload = {
@@ -142,6 +175,7 @@ export type ProjectPayload = {
   demoUrl?: string | null;
   repoUrl?: string | null;
   coverImageUrl?: string | null;
+  collaboratorIds?: string[];
 };
 
 export type ProjectPatchPayload = Partial<ProjectPayload>;
@@ -161,13 +195,7 @@ export type UpdatePasswordPayload = {
 
 export type ValidationIssue = { path: string; message: string };
 
-export type SpotifyEntityType =
-  | 'track'
-  | 'playlist'
-  | 'album'
-  | 'artist'
-  | 'episode'
-  | 'show';
+export type SpotifyEntityType = 'track' | 'playlist' | 'album' | 'artist' | 'episode' | 'show';
 
 /** Info embed Spotify (lagu, playlist, album, artis, atau episode) dari backend. */
 export type SpotifyEmbed = {

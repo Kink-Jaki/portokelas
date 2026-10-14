@@ -11,7 +11,7 @@ import 'dotenv/config';
 
 import { eq } from 'drizzle-orm';
 
-import { db, pool } from './index.js';
+import { closePool, db } from './index.js';
 import { users } from './schema.js';
 import { env } from '../env.js';
 import { hashPassword } from '../lib/password.js';
@@ -59,11 +59,11 @@ async function main() {
 
 main()
   .then(async () => {
-    await pool.end();
+    await closePool();
     process.exit(0);
   })
   .catch(async (error: unknown) => {
     console.error('✖ Gagal menjalankan seed admin:', error);
-    await pool.end().catch(() => undefined);
+    await closePool();
     process.exit(1);
   });

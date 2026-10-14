@@ -4,8 +4,14 @@ import { Button } from '@/components/ui/Button';
 import { Input, Textarea } from '@/components/ui/Field';
 import { ConfirmDialog } from '@/components/ui/Modal';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { useCreateTeacher, useDeleteTeacher, useSaveAbout, useUpdateTeacher } from '@/hooks/useApi';
-import { useAbout, useTeachers } from '@/hooks/usePublic';
+import {
+  useCreateTeacher,
+  useDeleteTeacher,
+  useSaveAbout,
+  useSaveHero,
+  useUpdateTeacher,
+} from '@/hooks/useApi';
+import { useAbout, useHero, useTeachers } from '@/hooks/usePublic';
 import { ApiError, assetUrl } from '@/lib/api';
 import { initials } from '@/lib/utils';
 import type { Teacher } from '@/types/api';
@@ -22,6 +28,201 @@ const fileInputClasses =
   'block w-full text-xs text-muted file:mr-3 file:rounded-sm file:border file:border-line ' +
   'file:bg-bg file:px-3 file:py-2 file:text-xs file:font-medium file:text-fg ' +
   'hover:file:border-line-strong';
+
+/* --------------------------------- Hero ---------------------------------- */
+
+type HeroSlotKey = 'image1' | 'image2' | 'image3';
+
+const HERO_SLOTS = [
+  {
+    field: 'image1',
+    urlKey: 'image1Url',
+    label: 'Gambar 1 · Meja belajar',
+    hint: 'Tampil di posisi atas kolase.',
+  },
+  {
+    field: 'image2',
+    urlKey: 'image2Url',
+    label: 'Gambar 2 · Suasana sekolah',
+    hint: 'Tampil di posisi tengah kolase.',
+  },
+  {
+    field: 'image3',
+    urlKey: 'image3Url',
+    label: 'Gambar 3 · Detail meja',
+    hint: 'Tampil di posisi kanan bawah kolase.',
+  },
+] as const satisfies readonly {
+  field: HeroSlotKey;
+  urlKey: 'image1Url' | 'image2Url' | 'image3Url';
+  label: string;
+  hint: string;
+}[];
+
+const emptyHeroFiles = (): Record<HeroSlotKey, File | null> => ({
+  image1: null,
+  image2: null,
+  image3: null,
+});
+
+const emptyHeroRemoved = (): Record<HeroSlotKey, boolean> => ({
+  image1: false,
+  image2: false,
+  image3: false,
+});
+
+function HeroImageField({
+  label,
+  hint,
+  preview,
+  canRemove,
+  onSelect,
+  onRemove,
+}: {
+  label: string;
+  hint: string;
+  preview: string | null;
+  canRemove: boolean;
+  onSelect: (file: File | null) => void;
+  onRemove: () => void;
+}) {
+  return (
+    <div className="space-y-3">
+      <div>
+        <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted">{label}</p>
+        <p className="mt-1 text-xs text-muted">{hint}</p>
+      </div>
+
+      <div className="aspect-[4/3] overflow-hidden border border-line bg-subtle">
+        {preview ? (
+          <img src={preview} alt={`Pratinjau ${label}`} className="h-full w-full object-cover" />
+        ) : (
+          <div className="grid h-full w-full place-items-center text-center text-xs text-muted">
+            Belum ada gambar
+          </div>
+        )}
+      </div>
+
+      <input
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className={fileInputClasses}
+        onChange={(event) => onSelect(event.target.files?.[0] ?? null)}
+      />
+
+      {canRemove ? (
+        <button
+          type="button"
+          onClick={onRemove}
+          className="text-xs text-danger underline underline-offset-4"
+        >
+          Hapus gambar ini
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+function HeroEditor() {
+  const { data, isLoading } = useHero();
+  const hero = data?.hero ?? null;
+  const saveHero = useSaveHero();
+
+  const [files, setFiles] = useState<Record<HeroSlotKey, File | null>>(emptyHeroFiles);
+  const [removed, setRemoved] = useState<Record<HeroSlotKey, boolean>>(emptyHeroRemoved);
+
+  const previews = useMemo<Record<HeroSlotKey, string | null>>(() => {
+    const map: Record<HeroSlotKey, string | null> = { image1: null, image2: null, image3: null };
+    for (const slot of HERO_SLOTS) {
+      const file = files[slot.field];
+      map[slot.field] = file ? URL.createObjectURL(file) : null;
+    }
+    return map;
+  }, [files]);
+
+  useEffect(
+    () => () => {
+      for (const url of Object.values(previews)) {
+        if (url) URL.revokeObjectURL(url);
+      }
+    },
+    [previews],
+  );
+
+  useEffect(() => {
+    setFiles(emptyHeroFiles());
+    setRemoved(emptyHeroRemoved());
+  }, [hero]);
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+
+    try {
+      await saveHero.mutateAsync({
+        image1: files.image1,
+        image2: files.image2,
+        image3: files.image3,
+        removeImage1: !files.image1 && removed.image1,
+        removeImage2: !files.image2 && removed.image2,
+        removeImage3: !files.image3 && removed.image3,
+      });
+      setFiles(emptyHeroFiles());
+      setRemoved(emptyHeroRemoved());
+    } catch {
+      // Error sudah ditampilkan lewat toast.
+    }
+  };
+
+  return (
+    <section className="space-y-6 border border-line p-6">
+      <header className="space-y-2">
+        <p className="eyebrow">Section Hero</p>
+        <h2 className="font-display text-2xl">Kolase gambar hero</h2>
+        <p className="max-w-2xl text-sm leading-relaxed text-muted">
+          Tiga gambar yang tersusun jadi kolase di bagian paling atas landing page. Biarkan kosong
+          untuk memakai gambar bawaan.
+        </p>
+      </header>
+
+      {isLoading ? (
+        <div className="grid gap-6 sm:grid-cols-3">
+          {HERO_SLOTS.map((slot) => (
+            <Skeleton key={slot.field} className="h-56 w-full" />
+          ))}
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid gap-6 sm:grid-cols-3">
+            {HERO_SLOTS.map((slot) => {
+              const current = hero?.[slot.urlKey] ?? null;
+              return (
+                <HeroImageField
+                  key={slot.field}
+                  label={slot.label}
+                  hint={slot.hint}
+                  preview={previews[slot.field]}
+                  canRemove={Boolean(!files[slot.field] && !removed[slot.field] && current)}
+                  onSelect={(file) => {
+                    setFiles((state) => ({ ...state, [slot.field]: file }));
+                    setRemoved((state) => ({ ...state, [slot.field]: false }));
+                  }}
+                  onRemove={() => {
+                    setFiles((state) => ({ ...state, [slot.field]: null }));
+                    setRemoved((state) => ({ ...state, [slot.field]: true }));
+                  }}
+                />
+              );
+            })}
+          </div>
+
+          <Button type="submit" variant="primary" size="sm" isLoading={saveHero.isPending}>
+            Simpan gambar hero
+          </Button>
+        </form>
+      )}
+    </section>
+  );
+}
 
 /* ------------------------------ Section Tentang ------------------------------ */
 
@@ -437,6 +638,7 @@ function TeacherEditor() {
 export function ContentPanel() {
   return (
     <div className="space-y-8">
+      <HeroEditor />
       <AboutEditor />
       <TeacherEditor />
     </div>

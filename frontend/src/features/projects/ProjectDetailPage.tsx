@@ -170,6 +170,29 @@ export default function ProjectDetailPage() {
               </div>
             </Link>
           ) : null}
+          {project.collaborators.length > 0 ? (
+            <div className="flex items-center gap-3">
+              <p className="eyebrow">Bersama</p>
+              <div className="flex flex-wrap items-center gap-3">
+                {project.collaborators.map((member) => (
+                  <Link
+                    key={member.id}
+                    to={`/m/${member.slug}`}
+                    className="group flex items-center gap-2 text-sm text-muted transition-colors hover:text-fg"
+                  >
+                    <Avatar
+                      name={member.name}
+                      src={member.avatarUrl}
+                      size="sm"
+                      muted
+                      className="h-6 w-6"
+                    />
+                    {member.alias || member.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : null}
           <div>
             <p className="eyebrow">Diperbarui</p>
             <p className="mt-1 text-sm text-muted">{formatDate(project.updatedAt)}</p>

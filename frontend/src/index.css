@@ -10,6 +10,8 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+  /* Tulisan tangan — dipakai untuk label kertas pada section Tentang Kelas. */
+  --font-hand: 'Caveat', 'Segoe Script', ui-serif, cursive;
 
   /* Radius sengaja tajam — bahasa visual editorial, bukan kartu SaaS. */
   --radius-xs: 1px;
@@ -22,6 +24,28 @@
   /* Kurva gerak. */
   --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-quart: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Marquee kenangan — gulir horizontal mulus, dua arah berlawanan. */
+  --animate-marquee-left: marquee-left var(--marquee-duration, 48s) linear infinite;
+  --animate-marquee-right: marquee-right var(--marquee-duration, 48s) linear infinite;
+
+  @keyframes marquee-left {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes marquee-right {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
 }
 
 :root {
@@ -52,10 +76,60 @@
   --line-warm: #d8d0c0;
   --ink-soft: #776f60;
 
+  /* Palet "Editorial Scrapbook" — hanya dipakai pada section Tentang Kelas. */
+  --parchment: #f7f2e8;
+  --parchment-alt: #fcf9f3;
+  --cream-card: #fffcf6;
+  --edge: #e5d8c9;
+  --maroon: #701f35;
+  --maroon-deep: #4e1728;
+  --maroon-soft: #8e4355;
+  --maroon-tint: rgba(112, 31, 53, 0.1);
+  --blush: #f2e3dd;
+  --blush-edge: #e7d3c9;
+  --pine: #214d3d;
+  --pine-deep: #163b30;
+  --sage: #8da58b;
+  --sage-soft: #dce5d5;
+  --sage-tint: rgba(33, 77, 61, 0.1);
+  --gold: #c9a56a;
+  --moss: #48544d;
+
+  /* Geometri ornamen sambungan Hero ↔ About — satu lingkaran maroon dengan
+     garis hijau yang melintasi batas kedua section (pojok kanan bawah).
+     Nilai dibagi antar-section agar potongan atas (Hero) dan bawah (About)
+     menyatu tanpa patah. */
+  --seam-size: 300px;
+  --seam-right: -165px;
+  --seam-e: 20px;
+  --seam-gap: 14px;
+  --seam-dash: 62px;
+
   /* Grain halus untuk permukaan kertas (dipakai via .paper). */
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
 
   color-scheme: light;
+}
+
+/* Skala ornamen sambungan mengikuti breakpoint proyek (lg / sm). */
+@media (max-width: 1023px) {
+  :root {
+    --seam-size: 220px;
+    --seam-right: -122px;
+    --seam-e: 16px;
+    --seam-gap: 12px;
+    --seam-dash: 46px;
+  }
+}
+
+@media (max-width: 639px) {
+  :root {
+    --seam-size: 160px;
+    --seam-right: -90px;
+    --seam-e: 12px;
+    --seam-gap: 10px;
+    --seam-dash: 34px;
+  }
 }
 
 @theme inline {
@@ -83,12 +157,40 @@
   --color-terracotta: var(--terracotta);
   --color-line-warm: var(--line-warm);
   --color-ink-soft: var(--ink-soft);
+  --color-parchment: var(--parchment);
+  --color-parchment-alt: var(--parchment-alt);
+  --color-cream-card: var(--cream-card);
+  --color-edge: var(--edge);
+  --color-maroon: var(--maroon);
+  --color-maroon-deep: var(--maroon-deep);
+  --color-maroon-soft: var(--maroon-soft);
+  --color-maroon-tint: var(--maroon-tint);
+  --color-blush: var(--blush);
+  --color-blush-edge: var(--blush-edge);
+  --color-pine: var(--pine);
+  --color-pine-deep: var(--pine-deep);
+  --color-sage: var(--sage);
+  --color-sage-soft: var(--sage-soft);
+  --color-sage-tint: var(--sage-tint);
+  --color-gold: var(--gold);
+  --color-moss: var(--moss);
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+  }
+
+  /* Offset anchor agar judul section tidak tertutup header sticky. */
+  section[id] {
+    scroll-margin-top: 5.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    section[id] {
+      scroll-margin-top: 6.75rem;
+    }
   }
 
   body {
@@ -199,6 +301,66 @@
     background-size: 140px 140px;
   }
 
+  /* Ornamen sambungan Hero ↔ About.
+     Satu lingkaran maroon + garis hijau yang dipotong oleh batas section:
+     `--hero` menggambar potongan atas, `--about` potongan bawah. Karena
+     keduanya memakai geometri yang sama, kurva bertemu tepat di batas. */
+  .seam-circle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .seam-circle--maroon {
+    right: var(--seam-right);
+    width: var(--seam-size);
+    height: var(--seam-size);
+    background: var(--maroon);
+  }
+
+  .seam-circle--ring {
+    right: calc(var(--seam-right) - var(--seam-gap));
+    width: calc(var(--seam-size) + var(--seam-gap) * 2);
+    height: calc(var(--seam-size) + var(--seam-gap) * 2);
+    border: 1.2px solid var(--sage);
+    opacity: 0.8;
+  }
+
+  .seam-circle--dash {
+    right: calc(var(--seam-right) - var(--seam-dash));
+    width: calc(var(--seam-size) + var(--seam-dash) * 2);
+    height: calc(var(--seam-size) + var(--seam-dash) * 2);
+    border: 1px dashed var(--sage);
+    opacity: 0.4;
+  }
+
+  /* Potongan atas — ditempel ke dasar Hero. */
+  .seam--hero.seam-circle--maroon {
+    bottom: calc(-1 * (var(--seam-e) + var(--seam-size) / 2));
+  }
+
+  .seam--hero.seam-circle--ring {
+    bottom: calc(-1 * (var(--seam-e) + var(--seam-size) / 2 + var(--seam-gap)));
+  }
+
+  .seam--hero.seam-circle--dash {
+    bottom: calc(-1 * (var(--seam-e) + var(--seam-size) / 2 + var(--seam-dash)));
+  }
+
+  /* Potongan bawah — ditempel ke puncak About. */
+  .seam--about.seam-circle--maroon {
+    top: calc(var(--seam-e) - var(--seam-size) / 2);
+  }
+
+  .seam--about.seam-circle--ring {
+    top: calc(var(--seam-e) - var(--seam-size) / 2 - var(--seam-gap));
+  }
+
+  .seam--about.seam-circle--dash {
+    top: calc(var(--seam-e) - var(--seam-size) / 2 - var(--seam-dash));
+  }
+
   /* Tautan dengan garis bawah yang tumbuh dari kiri. */
   .link-underline {
     position: relative;
@@ -260,6 +422,235 @@
     --success: #2f6b3a;
     background-color: var(--bg);
     color: var(--fg);
+  }
+
+  /* Section Kenangan — palet "vintage scrapbook": cream hangat sebagai dasar,
+      hijau forest untuk panel video, maroon sebagai aksen kuat, mustard untuk
+      garis & selotip, sage untuk ornamen organik. Ditambah tekstur kertas
+      halus + gradasi tipis agar terasa seperti album fisik.
+      Proporsi dijaga sekitar 60% cream, 25% forest, 15% maroon. */
+  .section-memories {
+    --mem-cream: #f5f0e5;
+    --mem-paper: #fff9ef;
+    --mem-cream-2: #ece4d3;
+    --mem-border: #e3d9c4;
+    --mem-forest: #174638;
+    --mem-forest-2: #214f40;
+    --mem-sage: #a1b29a;
+    --mem-sage-light: #dfe6d4;
+    --mem-maroon: #76263d;
+    --mem-maroon-deep: #5a1b2d;
+    --mem-maroon-muted: #93485a;
+    --mem-mustard: #d7ad5d;
+    --mem-beige: #d8c6a2;
+    --mem-blush: #efdcda;
+    --mem-ink: #3c4b43;
+
+    --bg: var(--mem-cream);
+    --bg-subtle: var(--mem-cream-2);
+    --bg-elevated: var(--mem-paper);
+    --fg: var(--mem-forest);
+    --fg-muted: var(--mem-ink);
+    --line: var(--mem-border);
+    --line-strong: var(--mem-beige);
+    --invert-bg: var(--mem-forest);
+    --invert-fg: var(--mem-paper);
+    --accent: var(--mem-maroon);
+    --accent-fg: var(--mem-paper);
+    --accent-soft: rgba(118, 38, 61, 0.1);
+    --danger: #b42318;
+    --success: #2f6b3a;
+
+    /* Alias token palet yang dipakai lintas section. */
+    --ivory: var(--mem-cream);
+    --ivory-alt: var(--mem-cream-2);
+    --ivory-warm: var(--mem-paper);
+    --cream-card: var(--mem-paper);
+    --edge: var(--mem-border);
+    --forest: var(--mem-forest);
+    --forest-soft: var(--mem-forest-2);
+    --pine: var(--mem-forest);
+    --pine-deep: var(--mem-forest-2);
+    --maroon: var(--mem-maroon);
+    --maroon-deep: var(--mem-maroon-deep);
+    --maroon-soft: var(--mem-maroon-muted);
+    --maroon-tint: rgba(118, 38, 61, 0.1);
+    --sage: var(--mem-sage);
+    --sage-soft: var(--mem-sage-light);
+    --sage-tint: rgba(161, 178, 154, 0.2);
+    --gold: var(--mem-mustard);
+    --moss: var(--fg-muted);
+    --blush: var(--mem-blush);
+    --blush-edge: #e6d3ce;
+
+    color: var(--fg);
+    background-color: var(--mem-cream);
+    background-image:
+      var(--grain),
+      linear-gradient(135deg, rgba(223, 230, 212, 0.55) 0%, rgba(223, 230, 212, 0) 55%),
+      linear-gradient(315deg, rgba(239, 220, 218, 0.5) 0%, rgba(239, 220, 218, 0) 55%);
+    background-size:
+      140px 140px,
+      auto,
+      auto;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+
+  /* Section Wali Kelas — palet cream hangat / forest green / maroon yang
+     terkunci. Semua variabel dipetakan ulang di sini agar utilities bg-bg,
+     text-fg, border-line, text-maroon, bg-pine otomatis memakai palet ini.
+     Nilai --teacher-* diisolasi hanya untuk section ini. */
+  .section-teacher {
+    --teacher-cream: #f5f0e5;
+    --teacher-cream-light: #fbf8f0;
+    --teacher-maroon: #792f38;
+    --teacher-maroon-dark: #5e242c;
+    --teacher-forest: #204b3b;
+    --teacher-forest-dark: #16372d;
+    --teacher-muted-green: #65776d;
+    --teacher-body-text: #596a61;
+    --teacher-border: #e2d3b9;
+    --teacher-gold: #c9a76b;
+
+    --bg: var(--teacher-cream);
+    --bg-subtle: var(--teacher-cream-light);
+    --bg-elevated: #fffdf7;
+    --fg: var(--teacher-forest);
+    --fg-muted: var(--teacher-body-text);
+    --line: var(--teacher-border);
+    --line-strong: #d8c9ac;
+    --invert-bg: var(--teacher-forest);
+    --invert-fg: #fffdf7;
+    --accent: var(--teacher-maroon);
+    --accent-fg: #fffdf7;
+    --accent-soft: rgba(121, 47, 56, 0.1);
+    --danger: #b42318;
+    --success: #2f6b3a;
+
+    /* Alias token palet yang dipakai lintas section. */
+    --ivory: var(--teacher-cream);
+    --ivory-alt: var(--teacher-cream-light);
+    --ivory-warm: #fffdf7;
+    --forest: var(--teacher-forest);
+    --forest-soft: #35604c;
+    --parchment: var(--teacher-cream);
+    --parchment-alt: var(--teacher-cream-light);
+    --cream-card: #fffdf7;
+    --edge: var(--teacher-border);
+    --pine: var(--teacher-forest);
+    --pine-deep: var(--teacher-forest-dark);
+    --maroon: var(--teacher-maroon);
+    --maroon-deep: var(--teacher-maroon-dark);
+    --maroon-soft: #8e4a52;
+    --maroon-tint: rgba(121, 47, 56, 0.1);
+    --burgundy: var(--teacher-maroon);
+    --gold: var(--teacher-gold);
+    --moss: var(--teacher-body-text);
+    --sage: #8da58b;
+    --sage-tint: rgba(32, 75, 59, 0.08);
+    background-color: var(--bg);
+    color: var(--fg);
+  }
+
+  /* Section Struktur Organisasi — palette editorial maroon–forest–cream.
+     Warna kunci mengikuti pedoman redesign: cream dominan (#f5f0e6), forest
+     untuk elemen interaktif (#244536), dan maroon sebagai aksen (#762d35).
+     Utilities bg-bg/text-fg/border-line/maroon/forest otomatis ikut palet ini. */
+  .section-members {
+    --bg: #f5f0e6;
+    --bg-subtle: #efe9db;
+    --bg-elevated: #fbf8f1;
+    --fg: #25241f;
+    --fg-muted: #6d7067;
+    --line: #ded4c2;
+    --line-strong: #c7bba2;
+    --invert-bg: #183328;
+    --invert-fg: #f5f0e6;
+    --accent: #762d35;
+    --accent-fg: #fbf8f1;
+    --accent-soft: rgba(118, 45, 53, 0.1);
+    --danger: #b42318;
+    --success: #2f6b3a;
+
+    /* Alias token palet editorial yang dipakai lintas section. */
+    --ivory: #f5f0e6;
+    --ivory-alt: #efe9db;
+    --ivory-warm: #fbf8f1;
+    --cream-card: #fbf8f1;
+    --edge: #ded4c2;
+    --forest: #244536;
+    --forest-soft: #35604c;
+    --pine: #244536;
+    --pine-deep: #183328;
+    --maroon: #762d35;
+    --maroon-deep: #542129;
+    --maroon-soft: #8e4a52;
+    --maroon-tint: rgba(118, 45, 53, 0.1);
+    --sage: #8da58b;
+    --sage-tint: rgba(36, 69, 54, 0.08);
+    --gold: #c9a56a;
+    --moss: #6d7067;
+    --blush-edge: #e2d8c8;
+    background-color: var(--bg);
+    color: var(--fg);
+  }
+
+  /* Palet aksen halaman landing — sisa aksen vermilion/terracotta dipetakan ke
+     maroon agar seluruh section (Hero, header, tombol, cincin fokus, dan
+     sorotan teks) selaras dengan identitas hijau–cream–maroon. Hanya warna
+     aksen yang berubah; tata letak dan tampilan section tetap sama. */
+  .page-landing {
+    --accent: #701f35;
+    --accent-soft: rgba(112, 31, 53, 0.1);
+    --terracotta: #701f35;
+  }
+
+  /* Section footer — campuran maroon dominan dengan semburat cream & hijau.
+     Palet gelap terkunci: utilities text-fg/border-line otomatis memakai
+     warna terang agar tetap kontras di atas gradasi. */
+  .section-maroon {
+    --bg: #5e1b29;
+    --bg-subtle: #6e2133;
+    --bg-elevated: #7a2739;
+    --fg: #f8f4ea;
+    --fg-muted: #e4c8c6;
+    --line: rgba(248, 244, 234, 0.16);
+    --line-strong: rgba(248, 244, 234, 0.38);
+    --invert-bg: #f8f4ea;
+    --invert-fg: #5e1b29;
+    --accent: #e0a45a;
+    --accent-fg: #40202a;
+    --accent-soft: rgba(224, 164, 90, 0.16);
+    --danger: #f2a59a;
+    --success: #8fd6a6;
+
+    /* Alias palet yang dipakai lintas komponen (mis. Logo, tautan). */
+    --ivory: #f8f4ea;
+    --ivory-alt: #efe6d6;
+    --ivory-warm: #fffcf4;
+    --forest: #f8f4ea;
+    --forest-soft: #e4c8c6;
+    --burgundy: #f8f4ea;
+    --parchment: #5e1b29;
+    --maroon: #701f35;
+    --pine: #2f5d48;
+    --sage: #8da58b;
+    --gold: #e0a45a;
+    --moss: #e4c8c6;
+
+    color: var(--fg);
+    background-color: #5e1b29;
+    background-image:
+      var(--grain),
+      radial-gradient(80% 130% at 100% 0%, rgba(141, 165, 139, 0.42) 0%, rgba(141, 165, 139, 0) 55%),
+      radial-gradient(115% 130% at 0% 100%, rgba(255, 252, 244, 0.26) 0%, rgba(255, 252, 244, 0) 58%),
+      linear-gradient(135deg, #7a2435 0%, #5e1b29 50%, #451a26 100%);
+    background-size:
+      160px 160px,
+      auto,
+      auto,
+      auto;
+    background-repeat: repeat, no-repeat, no-repeat, no-repeat;
   }
 }
 

@@ -4,6 +4,7 @@ import { api, buildQuery } from '@/lib/api';
 import { queryKeys } from '@/lib/query-client';
 import type {
   About,
+  Hero,
   MemberWithSpotify,
   MemoryWithAuthor,
   Paginated,
@@ -25,6 +26,14 @@ export function useAbout() {
   return useQuery({
     queryKey: queryKeys.about,
     queryFn: () => api.get<{ about: About | null }>('/about'),
+    staleTime: 60_000,
+  });
+}
+
+export function useHero() {
+  return useQuery({
+    queryKey: queryKeys.hero,
+    queryFn: () => api.get<{ hero: Hero | null }>('/hero'),
     staleTime: 60_000,
   });
 }

@@ -12,7 +12,7 @@
  */
 import 'dotenv/config';
 
-import { db, pool } from './index.js';
+import { closePool, db } from './index.js';
 import { users } from './schema.js';
 import { hashPassword } from '../lib/password.js';
 import { slugify } from '../lib/slug.js';
@@ -126,11 +126,11 @@ async function main() {
 
 main()
   .then(async () => {
-    await pool.end();
+    await closePool();
     process.exit(0);
   })
   .catch(async (error: unknown) => {
     console.error('✖ Gagal menjalankan seed Craftly:', error);
-    await pool.end().catch(() => undefined);
+    await closePool();
     process.exit(1);
   });

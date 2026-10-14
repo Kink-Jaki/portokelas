@@ -1,7 +1,7 @@
 import { serve } from '@hono/node-server';
 
 import { app } from './app.js';
-import { pool } from './db/index.js';
+import { closePool } from './db/index.js';
 import { env } from './env.js';
 
 const server = serve({ fetch: app.fetch, port: env.PORT }, (info) => {
@@ -14,7 +14,7 @@ const server = serve({ fetch: app.fetch, port: env.PORT }, (info) => {
 const shutdown = async (signal: string) => {
   console.info(`\n[server] ${signal} diterima, menutup server...`);
   server.close();
-  await pool.end().catch(() => undefined);
+  await closePool();
   process.exit(0);
 };
 

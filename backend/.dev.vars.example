@@ -1,0 +1,24 @@
+# ---------------------------------------------------------------------------
+# Secret untuk `wrangler dev` (backend). Salin menjadi `.dev.vars`.
+# Nilai ini TIDAK di-commit (lihat .gitignore). Saat deploy, set via:
+#   wrangler secret put JWT_SECRET
+#   wrangler secret put DATABASE_URL   (opsional bila memakai Hyperdrive)
+# ---------------------------------------------------------------------------
+
+# WAJIB. Minimal 32 karakter acak. Generate: openssl rand -base64 48
+JWT_SECRET="ganti-dengan-secret-acak-minimal-32-karakter-panjang"
+
+# Opsional: hanya dipakai bila TIDAK memakai binding Hyperdrive.
+# Untuk Neon, sertakan `?sslmode=require` dan set DATABASE_SSL="true".
+# DATABASE_URL="postgresql://USER:PASSWORD@ep-xxx.<region>.aws.neon.tech/<db>?sslmode=require"
+# DATABASE_SSL="true"
+
+# Connection string Hyperdrive untuk `wrangler dev` lokal (Neon, non-pooled).
+# Variabel ini dibaca Wrangler untuk emulasi binding HYPERDRIVE, bukan runtime
+# secret, jadi letakkan di file `.env` (bukan `.dev.vars`):
+#   CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE="postgresql://USER:PASSWORD@ep-xxx.<region>.aws.neon.tech/<db>?sslmode=require"
+
+# Akun admin (dipakai `bun run seed:admin`).
+ADMIN_NAME="Admin Kelas"
+ADMIN_EMAIL="admin@portofolio.test"
+ADMIN_PASSWORD="Admin12345"

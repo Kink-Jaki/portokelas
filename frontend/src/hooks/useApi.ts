@@ -6,6 +6,7 @@ import { queryKeys } from '@/lib/query-client';
 import type {
   About,
   AdminUpdateUserPayload,
+  Hero,
   MemberProfile,
   Memory,
   MemoryWithAuthor,
@@ -350,6 +351,15 @@ export type AboutPayload = {
   removeImage?: boolean;
 };
 
+export type HeroPayload = {
+  image1?: File | null;
+  image2?: File | null;
+  image3?: File | null;
+  removeImage1?: boolean;
+  removeImage2?: boolean;
+  removeImage3?: boolean;
+};
+
 export type TeacherPayload = {
   name: string;
   description: string;
@@ -364,6 +374,17 @@ function toAboutForm(payload: AboutPayload): FormData {
   form.append('description', payload.description);
   if (payload.image) form.append('image', payload.image);
   if (payload.removeImage) form.append('removeImage', 'true');
+  return form;
+}
+
+function toHeroForm(payload: HeroPayload): FormData {
+  const form = new FormData();
+  if (payload.image1) form.append('image1', payload.image1);
+  if (payload.image2) form.append('image2', payload.image2);
+  if (payload.image3) form.append('image3', payload.image3);
+  if (payload.removeImage1) form.append('removeImage1', 'true');
+  if (payload.removeImage2) form.append('removeImage2', 'true');
+  if (payload.removeImage3) form.append('removeImage3', 'true');
   return form;
 }
 
@@ -392,6 +413,20 @@ export function useSaveAbout() {
       toast.success('Konten Tentang berhasil disimpan.');
     },
     onError: (error) => toastApiError(error, 'Gagal menyimpan konten Tentang.'),
+  });
+}
+
+export function useSaveHero() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: HeroPayload) =>
+      api.patch<{ hero: Hero }>('/admin/hero', toHeroForm(payload)),
+    onSuccess: () => {
+      invalidateContent(queryClient);
+      toast.success('Gambar hero berhasil disimpan.');
+    },
+    onError: (error) => toastApiError(error, 'Gagal menyimpan gambar hero.'),
   });
 }
 

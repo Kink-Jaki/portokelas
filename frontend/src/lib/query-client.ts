@@ -22,6 +22,7 @@ export const queryKeys = {
   me: ['auth', 'me'] as const,
   stats: ['public', 'stats'] as const,
   about: ['public', 'about'] as const,
+  hero: ['public', 'hero'] as const,
   teachers: ['public', 'teachers'] as const,
   members: (search: string, page: number) => ['public', 'members', { search, page }] as const,
   member: (slug: string) => ['public', 'member', slug] as const,

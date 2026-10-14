@@ -53,6 +53,10 @@ export const createProjectSchema = z
     demoUrl: urlField.optional(),
     repoUrl: urlField.optional(),
     coverImageUrl: storedImageField.optional(),
+    collaboratorIds: z
+      .array(z.string().uuid('ID kolaborator tidak valid'))
+      .max(20, 'Maksimal 20 kolaborator')
+      .default([]),
   })
   .strict();
 
@@ -67,6 +71,10 @@ export const updateProjectSchema = z
     demoUrl: urlField.optional(),
     repoUrl: urlField.optional(),
     coverImageUrl: storedImageField.optional(),
+    collaboratorIds: z
+      .array(z.string().uuid('ID kolaborator tidak valid'))
+      .max(20, 'Maksimal 20 kolaborator')
+      .optional(),
   })
   .strict()
   .refine((value) => Object.keys(value).length > 0, 'Tidak ada perubahan yang dikirim');

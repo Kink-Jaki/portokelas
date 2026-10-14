@@ -3,10 +3,11 @@ import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
 import { ProjectCover, TechStack } from './shared';
+import { Avatar } from '@/components/ui/Avatar';
 import { buttonClasses } from '@/components/ui/Button';
 import { Stagger } from '@/components/ui/Reveal';
 import { staggerItem } from '@/lib/motion';
-import { formatDate } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import type { Project } from '@/types/api';
 
 export function projectHref(project: Project, ownerSlug?: string): string {
@@ -69,7 +70,10 @@ export function ProjectCard({
   index?: number;
 }) {
   return (
-    <motion.article variants={staggerItem} className="group flex h-full flex-col bg-bg">
+    <motion.article
+      variants={staggerItem}
+      className="portfolio-card group flex h-full flex-col bg-bg"
+    >
       <Link to={href ?? projectHref(project)} className="flex flex-1 flex-col">
         <div className="relative aspect-[16/10] overflow-hidden border-b border-line bg-subtle">
           <div className="absolute inset-0 transition-transform duration-700 ease-editorial group-hover:scale-[1.04] [&>img]:opacity-90 [&>img]:grayscale group-hover:[&>img]:opacity-100 group-hover:[&>img]:grayscale-0">
@@ -98,6 +102,26 @@ export function ProjectCard({
 
           <TechStack items={project.techStack ?? []} className="mt-5" />
 
+          {project.collaborators.length > 0 ? (
+            <div className="mt-4 flex items-center gap-2">
+              <div className="flex items-center">
+                {project.collaborators.slice(0, 3).map((member, collaboratorIndex) => (
+                  <Avatar
+                    key={member.id}
+                    name={member.name}
+                    src={member.avatarUrl}
+                    size="sm"
+                    muted
+                    className={cn('h-6 w-6', collaboratorIndex > 0 && '-ml-2')}
+                  />
+                ))}
+              </div>
+              <span className="font-mono text-[0.625rem] uppercase tracking-[0.14em] text-muted">
+                Bersama {project.collaborators.length}
+              </span>
+            </div>
+          ) : null}
+
           <div className="mt-auto pt-6">
             <ProjectMeta project={project} meta={meta} />
           </div>
@@ -118,13 +142,7 @@ export function ProjectCard({
 }
 
 /** Sorotan project pertama: komposisi dua kolom asimetris, lebih besar. */
-export function ProjectSpotlight({
-  project,
-  href,
-}: {
-  project: Project;
-  href?: string;
-}) {
+export function ProjectSpotlight({ project, href }: { project: Project; href?: string }) {
   const target = href ?? projectHref(project);
 
   return (
@@ -133,7 +151,7 @@ export function ProjectSpotlight({
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, margin: '-10% 0px' }}
-      className="group grid overflow-hidden border border-line bg-bg lg:grid-cols-2"
+      className="portfolio-card group grid overflow-hidden border border-line bg-bg lg:grid-cols-2"
     >
       <Link
         to={target}

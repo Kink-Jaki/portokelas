@@ -10,7 +10,7 @@ import 'dotenv/config';
 
 import { and, eq } from 'drizzle-orm';
 
-import { db, pool } from './index.js';
+import { closePool, db } from './index.js';
 import { projects, users } from './schema.js';
 import { hashPassword } from '../lib/password.js';
 import { slugify } from '../lib/slug.js';
@@ -124,11 +124,11 @@ async function main() {
 
 main()
   .then(async () => {
-    await pool.end();
+    await closePool();
     process.exit(0);
   })
   .catch(async (error: unknown) => {
     console.error('✖ Gagal menjalankan seed dummy:', error);
-    await pool.end().catch(() => undefined);
+    await closePool();
     process.exit(1);
   });
