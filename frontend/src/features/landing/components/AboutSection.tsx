@@ -110,37 +110,7 @@ function ImagePlaceholder() {
 function AboutOrnaments() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-      {/* Bidang maroon bergelombang di pojok kiri bawah + dua garis dekoratif
-          yang mengikuti kontur (gaya ilustrasi editorial). */}
-      <svg
-        viewBox="0 0 300 200"
-        preserveAspectRatio="xMidYMax meet"
-        className="absolute -bottom-2 -left-6 h-[134px] w-[200px] sm:h-[174px] sm:w-[260px] lg:h-[227px] lg:w-[340px]"
-      >
-        {/* Bidang utama maroon */}
-        <path
-          d="M0 142 C45 132 90 124 130 118 C175 111 215 132 248 162 C268 181 284 192 294 198 L300 200 L0 200 Z"
-          fill="#701F35"
-        />
-        {/* Garis lengkung hijau lembut */}
-        <path
-          d="M0 130 C45 120 90 112 130 106 C175 99 215 120 252 152 C272 171 284 183 294 192"
-          fill="none"
-          stroke="#8DA58B"
-          strokeWidth="1.3"
-          strokeLinecap="round"
-          vectorEffect="non-scaling-stroke"
-        />
-        {/* Garis lengkung cokelat hangat di luarnya */}
-        <path
-          d="M0 116 C45 106 90 98 130 92 C175 85 215 106 252 138 C270 155 282 167 290 176"
-          fill="none"
-          stroke="#765344"
-          strokeWidth="1.2"
-          strokeLinecap="round"
-          vectorEffect="non-scaling-stroke"
-        />
-      </svg>
+      {/* Hiasan sudut kiri bawah dihapus sesuai permintaan */}
 
       {/* Sambungan dari Hero di pojok kanan atas: separuh bawah lingkaran
           maroon + garis hijau. Geometri dikunci lewat kelas .seam-* agar
@@ -352,7 +322,7 @@ export function AboutSection() {
   return (
     <section
       id="tentang"
-      className="paper relative isolate overflow-hidden border-b border-edge bg-parchment text-pine"
+      className="paper relative isolate overflow-hidden bg-parchment text-pine"
     >
       <AboutOrnaments />
 

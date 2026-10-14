@@ -115,8 +115,7 @@ function TeacherOrnaments() {
         <path d="M6 150C58 128 118 96 176 42" stroke="currentColor" strokeWidth="1" />
       </svg>
 
-      {/* Kiri atas — ranting daun forest green */}
-      <LeafSprig className="absolute -left-6 top-2 hidden h-40 w-40 -rotate-6 text-pine opacity-30 sm:block" />
+      {/* Kiri atas — ranting daun forest green (dihapus sesuai permintaan) */}
 
       {/* Titik dekoratif gold & maroon */}
       <span className="absolute left-[12%] top-24 hidden h-1.5 w-1.5 rounded-full bg-gold/80 lg:block" />
@@ -351,7 +350,7 @@ export function TeacherSection() {
   return (
     <section
       id="wali-kelas"
-      className="section-teacher relative isolate overflow-hidden border-b border-line"
+      className="section-teacher relative isolate overflow-hidden"
     >
       <TeacherOrnaments />
 
