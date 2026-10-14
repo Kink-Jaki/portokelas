@@ -4,6 +4,8 @@ import { Reveal } from '@/components/ui/Reveal';
 import { useAbout, usePublicStats } from '@/hooks/usePublic';
 import { assetUrl } from '@/lib/api';
 
+import { PaperPlane, Sparkle } from './ornaments';
+
 const FALLBACK_TITLE = 'Satu kelas, banyak cerita. Semua karya, satu ruang.';
 const FALLBACK_DESCRIPTION =
   'Satu Kelas adalah etalase digital yang merangkum cerita, kreativitas, dan karya 31 anggota kelas. Kenali kami lewat profil singkat, jelajahi portofolio setiap anggota, dan temukan perjalanan di balik setiap karya—semuanya dalam satu halaman yang mudah diakses dan dibagikan.';
@@ -11,17 +13,6 @@ const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1588075592446-265fd1e6e76f?q=80&w=1472&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D';
 
 /* -------------------------------- Ikon kecil ------------------------------- */
-
-function Sparkle({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
-      <path
-        d="M12 1.5l2.3 8.2L22.5 12l-8.2 2.3L12 22.5l-2.3-8.2L1.5 12l8.2-2.3z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
 
 function UsersIcon() {
   return (
@@ -189,22 +180,7 @@ function ScrapbookImage({ image }: { image: string | null }) {
       </div>
 
       {/* Pesawat kertas dengan lintasan putus-putus */}
-      <svg
-        viewBox="0 0 140 120"
-        aria-hidden="true"
-        className="absolute -right-2 -top-4 z-20 h-20 w-20 sm:-right-6 sm:h-24 sm:w-24"
-      >
-        <path
-          d="M6 112C34 98 52 74 62 44"
-          fill="none"
-          stroke="var(--color-sage)"
-          strokeWidth="1.8"
-          strokeDasharray="4 7"
-          strokeLinecap="round"
-        />
-        <path d="M62 40 108 16 92 62 78 50 62 40Z" fill="var(--color-pine)" />
-        <path d="M62 40 78 50 72 66 62 40Z" fill="var(--color-maroon)" />
-      </svg>
+      <PaperPlane className="absolute -right-2 -top-4 z-20 h-20 w-20 sm:-right-6 sm:h-24 sm:w-24" />
 
       <Sparkle className="absolute -left-1 top-[24%] h-4 w-4 text-maroon/60" />
       <Sparkle className="absolute -right-1 bottom-[16%] h-3.5 w-3.5 text-pine/50" />

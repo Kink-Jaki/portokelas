@@ -6,6 +6,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useMembers } from '@/hooks/usePublic';
 import { ClassMemberCard } from './ClassMemberCard';
+import { LeafSprig, Sparkle } from './ornaments';
 
 /* ------------------------------ Ikon kecil ------------------------------ */
 
@@ -13,53 +14,6 @@ function ArrowIcon() {
   return (
     <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden>
       <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.6" />
-    </svg>
-  );
-}
-
-function Sparkle({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
-      <path d="M12 1.5l2.3 8.2L22.5 12l-8.2 2.3L12 22.5l-2.3-8.2L1.5 12l8.2-2.3z" />
-    </svg>
-  );
-}
-
-/** Ranting botanical line-art — ornamen ringan di sudut section. */
-function BotanicalBranch({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 120 120"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M12 108 C 46 92, 78 70, 102 34" strokeWidth="1.4" />
-      <g strokeWidth="1.1">
-        <g transform="translate(26 94) rotate(-38)">
-          <path d="M0 0c-8 9-6 24 0 32 6-8 8-23 0-32Z" />
-          <path d="M0 4v26" />
-        </g>
-        <g transform="translate(48 78) rotate(24)">
-          <path d="M0 0c-7 8-5 21 0 28 5-7 7-20 0-28Z" />
-          <path d="M0 3v23" />
-        </g>
-        <g transform="translate(66 58) rotate(-30)">
-          <path d="M0 0c-7 8-5 21 0 28 5-7 7-20 0-28Z" />
-          <path d="M0 3v23" />
-        </g>
-        <g transform="translate(84 42) rotate(18)">
-          <path d="M0 0c-5 6-4 16 0 21 4-5 5-15 0-21Z" />
-          <path d="M0 2v17" />
-        </g>
-        <g transform="translate(98 28) rotate(-12)">
-          <path d="M0 0c-4 5-3 13 0 17 3-4 4-12 0-17Z" />
-          <path d="M0 2v13" />
-        </g>
-      </g>
     </svg>
   );
 }
@@ -76,7 +30,7 @@ function StructureOrnaments() {
       <span className="absolute -bottom-24 -left-20 h-64 w-64 rounded-full bg-maroon/[0.05]" />
 
       {/* Ranting botanical kiri bawah */}
-      <BotanicalBranch className="absolute -bottom-8 -left-8 hidden h-36 w-36 -rotate-6 text-forest opacity-20 sm:block" />
+      <LeafSprig className="absolute -bottom-8 -left-8 hidden h-36 w-36 -rotate-6 text-forest opacity-25 sm:block" />
 
       {/* Garis lengkung maroon tipis kanan bawah */}
       <svg

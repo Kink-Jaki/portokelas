@@ -8,6 +8,8 @@ import { ease } from '@/lib/motion';
 import { cn, initials } from '@/lib/utils';
 import type { Teacher } from '@/types/api';
 
+import { LeafSprig } from './ornaments';
+
 function TeacherPhoto({ teacher }: { teacher: Teacher }) {
   const src = assetUrl(teacher.photoUrl);
 
@@ -54,41 +56,6 @@ function TeacherName({ name }: { name: string }) {
       <span className="text-maroon">{name.slice(0, commaIndex + 1)}</span>
       <span className="text-pine">{name.slice(commaIndex + 1)}</span>
     </>
-  );
-}
-
-/** Ranting botanical line-art — ornamen latar section. */
-function LeafSprig({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 120 120"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M14 106C46 92 76 66 104 30" strokeWidth="1.3" />
-      <g strokeWidth="1">
-        <g transform="translate(28 90) rotate(-40)">
-          <path d="M0 0c-7 8-5 22 0 30 5-8 7-22 0-30Z" />
-          <path d="M0 4v24" />
-        </g>
-        <g transform="translate(50 74) rotate(20)">
-          <path d="M0 0c-6 7-4 19 0 26 4-7 6-19 0-26Z" />
-          <path d="M0 3v21" />
-        </g>
-        <g transform="translate(70 54) rotate(-28)">
-          <path d="M0 0c-6 7-4 19 0 26 4-7 6-19 0-26Z" />
-          <path d="M0 3v21" />
-        </g>
-        <g transform="translate(88 36) rotate(16)">
-          <path d="M0 0c-4 5-3 15 0 19 3-4 4-14 0-19Z" />
-          <path d="M0 2v15" />
-        </g>
-      </g>
-    </svg>
   );
 }
 
