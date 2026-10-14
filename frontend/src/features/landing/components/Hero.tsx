@@ -50,8 +50,8 @@ function EdgeOrnaments() {
         <path d="M32 8v48" stroke="#f7f3e8" strokeWidth="1.4" />
       </svg>
 
-      {/* Kanan atas: susunan titik terracotta */}
-      <div className="absolute right-8 top-10 hidden grid-cols-4 gap-3 text-terracotta/50 sm:grid">
+      {/* Kanan atas: susunan titik maroon */}
+      <div className="absolute right-8 top-10 hidden grid-cols-4 gap-3 text-burgundy/45 sm:grid">
         {Array.from({ length: 16 }).map((_, index) => (
           <span key={index} className="h-1 w-1 rounded-full bg-current" />
         ))}
@@ -112,7 +112,7 @@ function ImageCollage({ images }: { images: Collage }) {
       >
         <path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z" fill="currentColor" />
       </svg>
-      <span className="absolute right-[4%] top-[18%] h-2 w-2 rounded-full bg-terracotta" />
+      <span className="absolute right-[4%] top-[18%] h-2 w-2 rounded-full bg-burgundy" />
     </div>
   );
 }

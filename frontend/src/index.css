@@ -595,6 +595,16 @@
     color: var(--fg);
   }
 
+  /* Palet aksen halaman landing — sisa aksen vermilion/terracotta dipetakan ke
+     maroon agar seluruh section (Hero, header, tombol, cincin fokus, dan
+     sorotan teks) selaras dengan identitas hijau–cream–maroon. Hanya warna
+     aksen yang berubah; tata letak dan tampilan section tetap sama. */
+  .page-landing {
+    --accent: #701f35;
+    --accent-soft: rgba(112, 31, 53, 0.1);
+    --terracotta: #701f35;
+  }
+
   /* Section footer — campuran maroon dominan dengan semburat cream & hijau.
      Palet gelap terkunci: utilities text-fg/border-line otomatis memakai
      warna terang agar tetap kontras di atas gradasi. */
