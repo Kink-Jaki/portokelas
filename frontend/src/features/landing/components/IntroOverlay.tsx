@@ -75,9 +75,11 @@ export function IntroOverlay({ onDone }: { onDone: () => void }) {
       >
         {/* Logo */}
         <motion.div variants={logoVariant}>
-          <span className="grid h-20 w-20 place-items-center rounded-[6px] bg-forest font-display text-3xl font-semibold leading-none text-ivory shadow-[0_24px_50px_-24px_rgba(25,61,50,0.55)]">
-            SK
-          </span>
+          <img
+            src="/craftly-mark.png"
+            alt=""
+            className="h-20 w-20 object-contain drop-shadow-[0_18px_30px_rgba(25,61,50,0.35)]"
+          />
         </motion.div>
 
         {/* Wordmark */}
@@ -85,7 +87,7 @@ export function IntroOverlay({ onDone }: { onDone: () => void }) {
           variants={item}
           className="mt-8 font-display text-[clamp(2.5rem,9vw,5rem)] font-semibold leading-none tracking-[-0.03em] text-forest"
         >
-          Satu Kelas
+          Craftly
         </motion.h1>
 
         {/* Garis animasi */}
@@ -103,7 +105,7 @@ export function IntroOverlay({ onDone }: { onDone: () => void }) {
           variants={item}
           className="mt-7 max-w-xl text-sm leading-[1.7] text-forest-soft sm:text-base"
         >
-          Satu Kelas, Beragam Cerita, Sejuta Makna.
+          Craftly, Beragam Kreator, Sejuta Karya.
         </motion.p>
       </motion.div>
     </motion.div>
