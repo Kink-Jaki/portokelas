@@ -73,16 +73,19 @@ function sanitizeCustomHtml(value: string): string {
     .replace(/javascript:/gi, '');
 }
 
-const customHtmlField = z
-  .string()
-  .trim()
-  .max(12000, 'Kode HTML/CSS maksimal 12000 karakter')
-  .nullable()
-  .transform((value) => {
-    if (!value) return null;
-    const cleaned = sanitizeCustomHtml(value).trim();
-    return cleaned.length === 0 ? null : cleaned;
-  });
+const htmlField = (label: string) =>
+  z
+    .string()
+    .trim()
+    .max(12000, `${label} maksimal 12000 karakter`)
+    .nullable()
+    .transform((value) => {
+      if (!value) return null;
+      const cleaned = sanitizeCustomHtml(value).trim();
+      return cleaned.length === 0 ? null : cleaned;
+    });
+
+const cardHtmlField = htmlField('Kode HTML kartu');
 
 const profileFields = {
   name: z.string().trim().min(3, 'Nama minimal 3 karakter').max(80).optional(),
@@ -96,7 +99,7 @@ const profileFields = {
   websiteUrl: urlField.optional(),
   cvUrl: urlField.optional(),
   theme: themeSchema.nullable().optional(),
-  customHtml: customHtmlField.optional(),
+  cardHtml: cardHtmlField.optional(),
 };
 
 export const updateProfileSchema = z

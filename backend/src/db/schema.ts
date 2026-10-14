@@ -62,7 +62,7 @@ export const users = pgTable(
     websiteUrl: text('website_url'),
     cvUrl: text('cv_url'),
     theme: jsonb('theme').$type<MemberTheme>(),
-    customHtml: text('custom_html'),
+    cardHtml: text('card_html'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
@@ -254,7 +254,7 @@ export const publicUserColumns = {
   websiteUrl: users.websiteUrl,
   cvUrl: users.cvUrl,
   theme: users.theme,
-  customHtml: users.customHtml,
+  cardHtml: users.cardHtml,
   createdAt: users.createdAt,
 } as const;
 
@@ -276,7 +276,7 @@ export type PublicUser = Pick<
   | 'websiteUrl'
   | 'cvUrl'
   | 'theme'
-  | 'customHtml'
+  | 'cardHtml'
   | 'createdAt'
 >;
 

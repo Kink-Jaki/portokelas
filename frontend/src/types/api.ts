@@ -29,7 +29,7 @@ export type PublicUser = {
   websiteUrl: string | null;
   cvUrl: string | null;
   theme: MemberTheme | null;
-  customHtml: string | null;
+  cardHtml: string | null;
   createdAt: string;
 };
 
@@ -164,7 +164,7 @@ export type ProfilePayload = {
   websiteUrl?: string | null;
   cvUrl?: string | null;
   theme?: MemberTheme | null;
-  customHtml?: string | null;
+  cardHtml?: string | null;
 };
 
 export type ProjectPayload = {

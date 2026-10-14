@@ -10,7 +10,6 @@ import { CardSkeletonGrid, Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { buttonClasses } from '@/components/ui/Button';
-import { MemberCustomHtml } from '@/components/ui/MemberCustomHtml';
 import { ProjectCardGrid } from '@/components/domain/ProjectCard';
 import { SpotifyPlayer } from '@/components/domain/SpotifyPlayer';
 import { useMember, useMemberProjects } from '@/hooks/usePublic';
@@ -239,25 +238,6 @@ export default function MemberPortfolioPage() {
               <p className="whitespace-pre-line text-base leading-relaxed text-muted lg:col-span-10 lg:max-w-3xl lg:text-lg lg:leading-[1.75]">
                 {member.bio}
               </p>
-            </div>
-          </Reveal>
-        ) : null}
-
-        {member.customHtml ? (
-          <Reveal className="mt-12">
-            <div className="overflow-hidden border border-line">
-              <div className="flex items-center justify-between gap-4 border-b border-line px-5 py-3">
-                <p className="eyebrow flex items-center gap-2.5">
-                  <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
-                  Kustom
-                </p>
-                <p className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-muted">
-                  HTML · CSS
-                </p>
-              </div>
-              <div className="bg-bg p-3 sm:p-4">
-                <MemberCustomHtml html={member.customHtml} theme={member.theme} />
-              </div>
             </div>
           </Reveal>
         ) : null}

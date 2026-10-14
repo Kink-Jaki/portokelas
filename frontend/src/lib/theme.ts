@@ -350,53 +350,6 @@ export function sanitizeCustomHtml(value: string): string {
     .replace(/javascript:/gi, '');
 }
 
-/** Kode contoh HTML + CSS siap tempel pada opsi lanjutan. */
-export const CUSTOM_HTML_EXAMPLE = `<div class="kartu">
-  <span class="label">Kartu kustom</span>
-  <h2>Halo, saya <em>Nama Kamu</em>!</h2>
-  <p>Bagian ini dirender di iframe sandbox. HTML &amp; CSS saja, tanpa JavaScript.</p>
-  <a class="tombol" href="https://example.com" target="_blank" rel="noreferrer">Lihat project</a>
-</div>
-
-<style>
-  .kartu {
-    border: 1px solid var(--line);
-    background: var(--bg-elevated);
-    padding: 2rem;
-    border-radius: 16px;
-  }
-  .label {
-    font: 600 0.7rem/1 ui-monospace, monospace;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--accent);
-  }
-  h2 {
-    margin: 0.75rem 0 0;
-    font-size: 1.75rem;
-    line-height: 1.15;
-  }
-  em {
-    color: var(--accent);
-    font-style: normal;
-  }
-  p {
-    margin: 0.75rem 0 0;
-    color: var(--fg-muted);
-    line-height: 1.7;
-  }
-  .tombol {
-    display: inline-block;
-    margin-top: 1.25rem;
-    padding: 0.6rem 1.2rem;
-    border-radius: 999px;
-    background: var(--accent);
-    color: var(--accent-fg);
-    text-decoration: none;
-    font-weight: 600;
-  }
-</style>`;
-
 /**
  * Bungkus HTML anggota menjadi dokumen mandiri untuk iframe sandbox.
  * Variabel warna tema disuntikkan agar kode kustom bisa memakai `var(--accent)`
