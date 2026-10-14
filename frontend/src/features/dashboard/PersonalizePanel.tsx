@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/Field';
 import { MemberCustomHtml } from '@/components/ui/MemberCustomHtml';
 import { useUpdateProfile } from '@/hooks/useApi';
 import { cn } from '@/lib/utils';
-import { CARD_HTML_EXAMPLE, fillCardTemplate } from '@/lib/card-template';
+import { fillCardTemplate } from '@/lib/card-template';
 import {
   DEFAULT_THEME,
   THEME_PRESETS,
@@ -250,13 +250,6 @@ export function PersonalizePanel() {
                   <code className="font-mono text-fg">{'{{url}}'}</code> — otomatis diisi datamu.
                 </p>
                 <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => update('cardHtml', CARD_HTML_EXAMPLE)}
-                    className="rounded-sm border border-line px-3 py-1.5 text-xs transition-colors hover:border-line-strong hover:bg-subtle"
-                  >
-                    Isi contoh petir
-                  </button>
                   {draft.cardHtml ? (
                     <button
                       type="button"
@@ -371,7 +364,7 @@ export function PersonalizePanel() {
               />
             ) : (
               <p className="py-6 text-center text-xs text-muted">
-                Belum ada kode. Buka Kartu direktori lalu klik “Isi contoh petir”.
+                Belum ada kode. Buka Kartu direktori lalu tempel HTML kartumu.
               </p>
             )}
           </div>
