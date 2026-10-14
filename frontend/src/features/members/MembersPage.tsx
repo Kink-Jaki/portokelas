@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useDeferredValue, useEffect, useState } from 'react';
 
-import { ClassMemberCard } from '@/features/landing/components/ClassMemberCard';
+import { MemberDirectoryCard } from '@/components/domain/MemberDirectoryCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { buttonClasses } from '@/components/ui/Button';
@@ -192,7 +192,7 @@ export default function MembersPage() {
             <Stagger className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
               {members.map((member, index) => (
                 <StaggerItem key={member.id} className="h-full">
-                  <ClassMemberCard member={member} index={index + 1} />
+                  <MemberDirectoryCard member={member} index={index + 1} />
                 </StaggerItem>
               ))}
             </Stagger>

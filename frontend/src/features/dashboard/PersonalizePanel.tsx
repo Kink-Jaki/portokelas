@@ -5,8 +5,8 @@ import { Textarea } from '@/components/ui/Field';
 import { MemberCustomHtml } from '@/components/ui/MemberCustomHtml';
 import { useUpdateProfile } from '@/hooks/useApi';
 import { cn } from '@/lib/utils';
+import { CARD_HTML_EXAMPLE, fillCardTemplate } from '@/lib/card-template';
 import {
-  CUSTOM_HTML_EXAMPLE,
   DEFAULT_THEME,
   THEME_PRESETS,
   resolveTheme,
@@ -31,7 +31,7 @@ type ThemeDraft = {
   bg: string;
   surface: string;
   fg: string;
-  customHtml: string;
+  cardHtml: string;
 };
 
 const EMPTY_DRAFT: ThemeDraft = {
@@ -40,17 +40,17 @@ const EMPTY_DRAFT: ThemeDraft = {
   bg: '',
   surface: '',
   fg: '',
-  customHtml: '',
+  cardHtml: '',
 };
 
-function draftFromUser(theme: MemberTheme | null, customHtml: string | null): ThemeDraft {
+function draftFromUser(theme: MemberTheme | null, cardHtml: string | null): ThemeDraft {
   return {
     preset: theme?.preset ?? 'editorial',
     accent: theme?.accent ?? '',
     bg: theme?.bg ?? '',
     surface: theme?.surface ?? '',
     fg: theme?.fg ?? '',
-    customHtml: customHtml ?? '',
+    cardHtml: cardHtml ?? '',
   };
 }
 
@@ -128,21 +128,21 @@ export function PersonalizePanel() {
   const { user } = useAuth();
   const updateProfile = useUpdateProfile();
   const [draft, setDraft] = useState<ThemeDraft>(EMPTY_DRAFT);
-  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [cardOpen, setCardOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
-    setDraft(draftFromUser(user.theme, user.customHtml));
+    setDraft(draftFromUser(user.theme, user.cardHtml));
   }, [user]);
 
   const presetVars = useMemo(() => resolveTheme({ preset: draft.preset }), [draft.preset]);
   const theme = useMemo(() => toTheme(draft), [draft]);
   const previewVars = useMemo(() => themeToCssVars(theme), [theme]);
-  const safeHtml = useMemo(() => sanitizeCustomHtml(draft.customHtml), [draft.customHtml]);
+  const safeCardHtml = useMemo(() => sanitizeCustomHtml(draft.cardHtml), [draft.cardHtml]);
 
   const isDirty = useMemo(() => {
     if (!user) return false;
-    const saved = draftFromUser(user.theme, user.customHtml);
+    const saved = draftFromUser(user.theme, user.cardHtml);
     return JSON.stringify(saved) !== JSON.stringify(draft);
   }, [draft, user]);
 
@@ -150,10 +150,10 @@ export function PersonalizePanel() {
     setDraft((current) => ({ ...current, [key]: value }));
 
   const onSave = async () => {
-    const cleaned = sanitizeCustomHtml(draft.customHtml).trim();
+    const cleanedCard = sanitizeCustomHtml(draft.cardHtml).trim();
     await updateProfile.mutateAsync({
       theme: toTheme(draft),
-      customHtml: cleaned.length > 0 ? cleaned : null,
+      cardHtml: cleanedCard.length > 0 ? cleanedCard : null,
     });
   };
 
@@ -219,39 +219,48 @@ export function PersonalizePanel() {
         <div className="border border-line">
           <button
             type="button"
-            onClick={() => setAdvancedOpen((open) => !open)}
-            aria-expanded={advancedOpen}
+            onClick={() => setCardOpen((open) => !open)}
+            aria-expanded={cardOpen}
             className="flex w-full items-center justify-between gap-4 px-6 py-4 text-left transition-colors hover:bg-subtle"
           >
             <span>
-              <span className="block font-display text-xl">Opsi lanjutan</span>
+              <span className="block font-display text-xl">Kartu direktori</span>
               <span className="mt-1 block text-sm text-muted">
-                Tulis HTML + CSS sendiri, dirender di sandbox tanpa JavaScript.
+                Tempel HTML + CSS untuk kartumu di landing page & halaman members. Kosongkan
+                untuk memakai kartu standar.
               </span>
             </span>
             <span className="font-mono text-xs uppercase tracking-[0.16em] text-muted">
-              {advancedOpen ? 'Tutup' : 'Buka'}
+              {cardOpen ? 'Tutup' : 'Buka'}
             </span>
           </button>
 
-          {advancedOpen ? (
+          {cardOpen ? (
             <div className="space-y-4 border-t border-line p-6">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <p className="text-xs text-muted">
                   Tempel HTML dengan blok <code className="font-mono text-fg">&lt;style&gt;</code>.
+                  Pakai token <code className="font-mono text-fg">{'{{name}}'}</code>,{' '}
+                  <code className="font-mono text-fg">{'{{photo}}'}</code>,{' '}
+                  <code className="font-mono text-fg">{'{{headline}}'}</code>,{' '}
+                  <code className="font-mono text-fg">{'{{bio}}'}</code>,{' '}
+                  <code className="font-mono text-fg">{'{{github}}'}</code>,{' '}
+                  <code className="font-mono text-fg">{'{{instagram}}'}</code>,{' '}
+                  <code className="font-mono text-fg">{'{{website}}'}</code>,{' '}
+                  <code className="font-mono text-fg">{'{{url}}'}</code> — otomatis diisi datamu.
                 </p>
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={() => update('customHtml', CUSTOM_HTML_EXAMPLE)}
+                    onClick={() => update('cardHtml', CARD_HTML_EXAMPLE)}
                     className="rounded-sm border border-line px-3 py-1.5 text-xs transition-colors hover:border-line-strong hover:bg-subtle"
                   >
-                    Isi contoh
+                    Isi contoh petir
                   </button>
-                  {draft.customHtml ? (
+                  {draft.cardHtml ? (
                     <button
                       type="button"
-                      onClick={() => update('customHtml', '')}
+                      onClick={() => update('cardHtml', '')}
                       className="rounded-sm border border-line px-3 py-1.5 text-xs transition-colors hover:border-line-strong hover:bg-subtle"
                     >
                       Kosongkan
@@ -261,14 +270,14 @@ export function PersonalizePanel() {
               </div>
 
               <Textarea
-                label="HTML + CSS"
+                label="HTML kartu + CSS"
                 rows={14}
                 spellCheck={false}
                 placeholder={
-                  '<div class="kartu">Halo!</div>\n\n<style>\n  .kartu { padding: 2rem; color: var(--accent); }\n</style>'
+                  '<div class="kartu">\n  <img src="{{photo}}" alt="{{name}}" />\n  <h2>{{name}}</h2>\n</div>\n\n<style>\n  .kartu { border: 2px solid var(--accent); }\n</style>'
                 }
-                value={draft.customHtml}
-                onChange={(event) => update('customHtml', event.target.value)}
+                value={draft.cardHtml}
+                onChange={(event) => update('cardHtml', event.target.value)}
                 className="font-mono text-xs"
               />
 
@@ -279,15 +288,6 @@ export function PersonalizePanel() {
                   <code className="font-mono text-fg">onclick</code>,{' '}
                   <code className="font-mono text-fg">@import</code>, serta{' '}
                   <code className="font-mono text-fg">&lt;iframe&gt;</code> otomatis dihapus.
-                </p>
-                <p>
-                  Pakai variabel tema agar ikut warna pilihanmu:{' '}
-                  <code className="font-mono text-fg">var(--accent)</code>,{' '}
-                  <code className="font-mono text-fg">var(--accent-fg)</code>,{' '}
-                  <code className="font-mono text-fg">var(--bg-elevated)</code>,{' '}
-                  <code className="font-mono text-fg">var(--fg)</code>,{' '}
-                  <code className="font-mono text-fg">var(--fg-muted)</code>,{' '}
-                  <code className="font-mono text-fg">var(--line)</code>.
                 </p>
               </div>
             </div>
@@ -361,16 +361,23 @@ export function PersonalizePanel() {
         </div>
 
         <div>
-          <p className="eyebrow">Pratinjau HTML sandbox</p>
+          <p className="eyebrow">Pratinjau kartu direktori</p>
           <div className="mt-3 overflow-hidden rounded-2xl border border-line bg-bg p-4">
-            {safeHtml.trim() ? (
-              <MemberCustomHtml html={safeHtml} theme={theme} title="Pratinjau konten kustom" />
+            {safeCardHtml.trim() ? (
+              <MemberCustomHtml
+                html={fillCardTemplate(safeCardHtml, user)}
+                theme={theme}
+                title="Pratinjau kartu direktori"
+              />
             ) : (
               <p className="py-6 text-center text-xs text-muted">
-                Belum ada kode. Buka Opsi lanjutan lalu klik “Isi contoh”.
+                Belum ada kode. Buka Kartu direktori lalu klik “Isi contoh petir”.
               </p>
             )}
           </div>
+          <p className="mt-3 text-xs text-muted">
+            Kartu ini yang tampil sebagai kartumu di landing page & halaman members.
+          </p>
         </div>
       </aside>
     </div>

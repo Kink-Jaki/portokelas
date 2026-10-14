@@ -4,8 +4,8 @@ import { AnimatedRule, Reveal, Stagger, StaggerItem } from '@/components/ui/Reve
 import { buttonClasses } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { MemberDirectoryCard } from '@/components/domain/MemberDirectoryCard';
 import { useMembers } from '@/hooks/usePublic';
-import { ClassMemberCard } from './ClassMemberCard';
 
 /* ------------------------------ Ikon kecil ------------------------------ */
 
@@ -235,7 +235,7 @@ export function StructureSection() {
             <Stagger className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
               {members.slice(0, 8).map((member, index) => (
                 <StaggerItem key={member.id} className="h-full">
-                  <ClassMemberCard member={member} index={index + 1} />
+                  <MemberDirectoryCard member={member} index={index + 1} />
                 </StaggerItem>
               ))}
             </Stagger>
