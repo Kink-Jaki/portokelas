@@ -229,7 +229,7 @@ export function TeacherSection() {
       >
         <div className="space-y-3 text-muted">
           <p className="font-display text-2xl text-pine">
-            {isLoading ? 'Memuat wali kelas…' : 'Belum ada data wali kelas'}
+            {isLoading ? 'Memuat mentor…' : 'Belum ada data mentor'}
           </p>
           {!isLoading ? (
             <p className="max-w-sm text-sm leading-relaxed">
@@ -295,7 +295,7 @@ export function TeacherSection() {
               type="button"
               onClick={() => goTo(active - 1)}
               disabled={active <= 0}
-              aria-label="Foto wali kelas sebelumnya"
+              aria-label="Foto mentor sebelumnya"
               className="grid h-10 w-10 place-items-center rounded-[3px] border border-line bg-bg text-maroon transition-colors duration-200 hover:border-maroon hover:bg-maroon hover:text-ivory-warm disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ArrowIcon direction="left" />
@@ -304,7 +304,7 @@ export function TeacherSection() {
               type="button"
               onClick={() => goTo(active + 1)}
               disabled={active >= maxIndex}
-              aria-label="Foto wali kelas berikutnya"
+              aria-label="Foto mentor berikutnya"
               className="grid h-10 w-10 place-items-center rounded-[3px] border border-pine bg-pine text-ivory-warm transition-colors duration-200 hover:border-pine-deep hover:bg-pine-deep disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ArrowIcon direction="right" />
@@ -316,7 +316,7 @@ export function TeacherSection() {
 
   return (
     <section
-      id="wali-kelas"
+      id="mentor"
       className="section-teacher relative isolate overflow-hidden"
     >
       <TeacherOrnaments />
@@ -328,7 +328,7 @@ export function TeacherSection() {
           <p className="eyebrow flex items-center gap-3 text-pine">
             <span className="index-num">02</span>
             <span aria-hidden className="h-px w-6 bg-gold" />
-            Wali Kelas
+            Mentor
           </p>
 
           <div className="mt-6 min-h-56 sm:min-h-52">

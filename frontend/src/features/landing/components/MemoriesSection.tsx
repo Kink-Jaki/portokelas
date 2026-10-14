@@ -325,8 +325,8 @@ function MemoriesHeading() {
 
       {/* Deskripsi hangat agar section terasa personal, bukan teknis */}
       <p className="mt-6 max-w-xl text-[0.9375rem] leading-[1.75] text-[#3c4b43] sm:text-base">
-        Setiap foto menyimpan cerita, setiap momen punya arti. Dari tawa di dalam kelas hingga
-        kebersamaan yang tak terlupakan, semuanya menjadi bagian dari perjalanan kita.
+        Setiap foto menyimpan cerita, setiap momen punya arti. Dari tawa dalam kebersamaan hingga
+        momen yang tak terlupakan, semuanya menjadi bagian dari perjalanan kita.
       </p>
 
       {/* Tagline: potongan kertas bertuliskan tulisan tangan */}
@@ -334,7 +334,7 @@ function MemoriesHeading() {
         <div className="inline-block -rotate-2">
           <p className="relative rounded-[6px] border border-[#e6d6c9] bg-[#f6ebdd] px-4 py-2.5 shadow-[0_18px_30px_-24px_rgba(84,32,42,0.6)] paper">
             <span className="font-hand text-[1.35rem] leading-none text-maroon sm:text-[1.55rem]">
-              Satu kelas,
+              Satu komunitas,
             </span>{' '}
             <span className="font-hand text-[1.35rem] leading-none text-forest sm:text-[1.55rem]">
               sejuta cerita

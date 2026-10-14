@@ -142,7 +142,7 @@ export function StructureSection() {
 
   return (
     <section
-      id="anggota"
+      id="kreator"
       className="section-members paper relative isolate overflow-hidden border-b border-line"
     >
       <StructureOrnaments />

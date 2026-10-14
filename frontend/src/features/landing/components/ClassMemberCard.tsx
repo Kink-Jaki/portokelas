@@ -84,7 +84,7 @@ function SocialButton({
 }
 
 /**
- * Kartu anggota bernuansa editorial — foto portrait dominan, nomor urut,
+ * Kartu kreator bernuansa editorial — foto portrait dominan, nomor urut,
  * badge posisi/keahlian, deskripsi singkat, dan tombol media sosial.
  * Seluruh kartu dapat diklik menuju portofolio tanpa mengganggu tombol sosial.
  */
@@ -92,7 +92,7 @@ export function ClassMemberCard({ member, index }: { member: PublicUser; index?:
   const name = member.alias || member.name;
   const photo = assetUrl(member.avatarUrl);
   const roleLabel =
-    member.headline?.trim() || (member.role === 'admin' ? 'Developer' : 'Anggota Kelas');
+    member.headline?.trim() || (member.role === 'admin' ? 'Developer' : 'Kreator');
   const description =
     member.bio?.trim() || member.headline?.trim() || 'Belum menambahkan deskripsi singkat.';
 

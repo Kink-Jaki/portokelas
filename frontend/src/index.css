@@ -496,7 +496,7 @@
     background-repeat: repeat, no-repeat, no-repeat;
   }
 
-  /* Section Wali Kelas — palet cream hangat / forest green / maroon yang
+  /* Section Mentor — palet cream hangat / forest green / maroon yang
      terkunci. Semua variabel dipetakan ulang di sini agar utilities bg-bg,
      text-fg, border-line, text-maroon, bg-pine otomatis memakai palet ini.
      Nilai --teacher-* diisolasi hanya untuk section ini. */

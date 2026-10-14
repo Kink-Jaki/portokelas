@@ -13,7 +13,7 @@ export default function DocsPage() {
               Dokumentasi
             </p>
             <h1 className="mt-4 text-4xl font-display tracking-tight lg:text-5xl xl:text-6xl">
-              Panduan Penggunaan <span className="text-burgundy">Satu Kelas</span>
+              Panduan Penggunaan <span className="text-burgundy">Craftly</span>
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-muted">
               Panduan lengkap cara menggunakan platform untuk mendaftar, mengelola project, mengatur profil, hingga
@@ -80,7 +80,7 @@ export default function DocsPage() {
               <section id="pendahuluan" className="rounded-xl border border-line bg-ivory p-8 shadow-sm">
                 <h2 className="text-2xl font-display text-forest">Pendahuluan</h2>
                 <p className="mt-4 leading-relaxed text-muted">
-                  Platform ini memudahkan anggota kelas untuk membagikan portofolio karya mereka secara terstruktur dan
+                  Platform ini memudahkan kreator untuk membagikan portofolio karya mereka secara terstruktur dan
                   menarik. Melalui halaman Dokumentasi ini, kamu bisa belajar cara mengelola project, mengatur profil,
                   hingga menampilkan elemen interaktif seperti Spotify Embed.
                 </p>
@@ -111,7 +111,7 @@ export default function DocsPage() {
                   </li>
                   <li className="leading-relaxed">
                     <span className="font-medium text-forest">4. Simpan</span> – Tekan tombol Simpan. Project-mu akan
-                    langsung tampil di halaman portofoliomu dan bisa dilihat oleh anggota kelas lainnya.
+                    langsung tampil di halaman portofoliomu dan bisa dilihat oleh kreator lainnya.
                   </li>
                 </ol>
 

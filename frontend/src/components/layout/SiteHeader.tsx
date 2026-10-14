@@ -9,8 +9,8 @@ import { cn } from '@/lib/utils';
 
 const landingSections = [
   { label: 'Tentang', href: '#tentang' },
-  { label: 'Wali Kelas', href: '#wali-kelas' },
-  { label: 'Anggota', href: '#anggota' },
+  { label: 'Mentor', href: '#mentor' },
+  { label: 'Kreator', href: '#kreator' },
   { label: 'Memories', href: '#memories' },
 ];
 
