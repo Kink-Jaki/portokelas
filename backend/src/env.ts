@@ -39,7 +39,7 @@ const envSchema = z
       .string()
       .min(32, 'JWT_SECRET minimal 32 karakter. Generate dengan: openssl rand -base64 48'),
     JWT_EXPIRES_IN: z.string().default('7d'),
-    COOKIE_NAME: z.string().min(1).default('pk_session'),
+    COOKIE_NAME: z.string().min(1).default('craftly_session'),
 
     CORS_ORIGIN: z.string().default('http://localhost:5173'),
 
@@ -47,8 +47,8 @@ const envSchema = z
     PUBLIC_URL: z.string().url().default('http://localhost:8787'),
     MAX_UPLOAD_SIZE_MB: z.coerce.number().positive().max(20).default(2),
 
-    ADMIN_NAME: z.string().min(2).default('Admin Kelas'),
-    ADMIN_EMAIL: z.string().email().default('admin@portofolio.test'),
+    ADMIN_NAME: z.string().min(2).default('Admin Craftly'),
+    ADMIN_EMAIL: z.string().email().default('admin@craftly.test'),
     ADMIN_PASSWORD: z.string().min(8, 'ADMIN_PASSWORD minimal 8 karakter').default('Admin12345'),
   })
   .superRefine((value, ctx) => {

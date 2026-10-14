@@ -61,7 +61,7 @@ const themeSchema = z
   })
   .strict();
 
-/** Buang konstruksi berbahaya dari HTML/CSS kustom anggota (sandbox, tanpa JS). */
+/** Buang konstruksi berbahaya dari HTML/CSS kustom kreator (sandbox, tanpa JS). */
 function sanitizeCustomHtml(value: string): string {
   return value
     .replace(/<script[\s\S]*?<\/script>/gi, '')

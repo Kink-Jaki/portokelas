@@ -16,10 +16,10 @@ import { hashPassword } from '../lib/password.js';
 import { slugify } from '../lib/slug.js';
 
 async function main() {
-  const dummyEmail = 'dummy@kelas.local';
-  const dummyName = 'Dummy Anggota';
+  const dummyEmail = 'dummy@craftly.local';
+  const dummyName = 'Dummy Kreator';
   const dummyPassword = 'Dummy1234';
-  const dummySlug = slugify(dummyName) || 'dummy-anggota';
+  const dummySlug = slugify(dummyName) || 'dummy-kreator';
 
   const passwordHash = await hashPassword(dummyPassword);
 
@@ -43,7 +43,7 @@ async function main() {
         slug: dummySlug,
         avatarUrl: null,
         headline: 'Frontend Developer · Mahasiswa',
-        bio: 'User dummy untuk keperluan testing tampilan portofolio kelas.',
+        bio: 'User dummy untuk keperluan testing tampilan portofolio Craftly.',
         githubUrl: 'https://github.com/octocat',
         instagramUrl: 'https://instagram.com/github',
         websiteUrl: null,
@@ -62,7 +62,7 @@ async function main() {
         role: 'member',
         slug: dummySlug,
         headline: 'Frontend Developer · Mahasiswa',
-        bio: 'User dummy untuk keperluan testing tampilan portofolio kelas.',
+        bio: 'User dummy untuk keperluan testing tampilan portofolio Craftly.',
         githubUrl: 'https://github.com/octocat',
         instagramUrl: 'https://instagram.com/github',
         websiteUrl: null,
@@ -92,7 +92,7 @@ async function main() {
       .update(projects)
       .set({
         title: projectTitle,
-        shortDescription: 'Contoh project dummy untuk testing card anggota.',
+        shortDescription: 'Contoh project dummy untuk testing card kreator.',
         description:
           '# Project Dummy\n\nIni adalah project contoh untuk melihat tampilan portofolio.',
         techStack: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],
@@ -109,7 +109,7 @@ async function main() {
       userId,
       title: projectTitle,
       slug: projectSlug,
-      shortDescription: 'Contoh project dummy untuk testing card anggota.',
+        shortDescription: 'Contoh project dummy untuk testing card kreator.',
       description:
         '# Project Dummy\n\nIni adalah project contoh untuk melihat tampilan portofolio.',
       techStack: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],

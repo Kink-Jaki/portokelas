@@ -71,11 +71,11 @@ function StructureHeader() {
         <p className="flex items-center gap-3 font-mono text-[0.6875rem] uppercase tracking-[0.3em] text-forest sm:text-xs">
           <span className="tnum font-medium text-maroon">03</span>
           <span aria-hidden className="h-px w-10 bg-maroon/50" />
-          <span>Struktur Organisasi Kelas</span>
+          <span>Direktori Kreator</span>
         </p>
 
         <h2 className="mt-6 font-display text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.02em] sm:text-[3rem] lg:text-[3.5rem]">
-          <span className="text-maroon">Anggota</span> <span className="text-forest">Kelas</span>
+          <span className="text-maroon">Kreator</span> <span className="text-forest">Craftly</span>
         </h2>
 
         <p className="mt-5 max-w-xl text-[0.9375rem] leading-[1.7] text-muted sm:text-base">
@@ -142,7 +142,7 @@ export function StructureSection() {
 
   return (
     <section
-      id="anggota"
+      id="kreator"
       className="section-members paper relative isolate overflow-hidden border-b border-line"
     >
       <StructureOrnaments />
@@ -160,7 +160,7 @@ export function StructureSection() {
           ) : isError ? (
             <div className="rounded-2xl border border-line bg-elevated">
               <EmptyState
-                title="Gagal memuat anggota"
+                title="Gagal memuat kreator"
                 description={error?.message}
                 action={
                   <button
@@ -176,8 +176,8 @@ export function StructureSection() {
           ) : members.length === 0 ? (
             <div className="rounded-2xl border border-line bg-elevated">
               <EmptyState
-                title="Belum ada anggota"
-                description="Daftar anggota akan tampil setelah anggota pertama bergabung."
+                title="Belum ada kreator"
+                description="Daftar kreator akan tampil setelah kreator pertama bergabung."
                 action={
                   <Link to="/login" className={buttonClasses('primary', 'sm')}>
                     Masuk

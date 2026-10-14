@@ -104,7 +104,7 @@ export function ProjectDialog({ open, onClose, project = null }: ProjectDialogPr
       <form onSubmit={onSubmit} className="space-y-5" noValidate>
         <Input
           label="Judul project"
-          placeholder="Sistem Reservasi Ruang Kelas"
+          placeholder="Sistem Reservasi Ruangan"
           error={errors.title?.message}
           {...register('title')}
           ref={firstFieldRef}

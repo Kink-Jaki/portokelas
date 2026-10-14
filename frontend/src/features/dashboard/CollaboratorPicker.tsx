@@ -147,7 +147,7 @@ export function CollaboratorPicker({ open, onClose, selected, onChange }: Collab
                           ) : null}
                         </span>
                         <span className="block truncate text-xs text-muted">
-                          {member.headline || 'Anggota kelas'}
+                          {member.headline || 'Kreator'}
                         </span>
                       </span>
                       <span

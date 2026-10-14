@@ -14,7 +14,7 @@ import {
 
 export const userRole = pgEnum('user_role', ['member', 'admin']);
 
-/** Preset tema tampilan card & portofolio anggota. */
+/** Preset tema tampilan card & portofolio kreator. */
 export const THEME_PRESETS = [
   'editorial',
   'midnight',
@@ -28,7 +28,7 @@ export const THEME_PRESETS = [
 
 export type ThemePreset = (typeof THEME_PRESETS)[number];
 
-/** Kustomisasi tampilan card & portofolio anggota. */
+/** Kustomisasi tampilan card & portofolio kreator. */
 export type MemberTheme = {
   preset: ThemePreset;
   /** Warna aksen (hex #rrggbb), menimpa preset bila diisi. */
@@ -122,7 +122,7 @@ export const projectImages = pgTable(
   ],
 );
 
-/** Kolaborator project — anggota lain yang ikut mengerjakan project bersama. */
+/** Kolaborator project — kreator lain yang ikut mengerjakan project bersama. */
 export const projectCollaborators = pgTable(
   'project_collaborators',
   {
@@ -160,7 +160,7 @@ export const heroes = pgTable('heroes', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
-/** Wali kelas yang tampil di carousel landing page. */
+/** Mentor yang tampil di carousel landing page. */
 export const teachers = pgTable(
   'teachers',
   {
@@ -175,7 +175,7 @@ export const teachers = pgTable(
   (table) => [index('teachers_sort_order_idx').on(table.sortOrder)],
 );
 
-/** Kenangan/album foto yang diunggah anggota untuk carousel landing page. */
+/** Kenangan/album foto yang diunggah kreator untuk carousel landing page. */
 export const memories = pgTable(
   'memories',
   {

@@ -13,7 +13,7 @@ export default function ProfilePage() {
         <p className="eyebrow">Profil akun</p>
         <h1 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">Edit profil.</h1>
         <p className="mt-4 text-sm leading-relaxed text-muted">
-          Data berikut yang tampil di halaman portofolio publik Anda. Lengkapi agar anggota lain
+          Data berikut yang tampil di halaman portofolio publik Anda. Lengkapi agar kreator lain
           lebih mudah mengenal Anda — perubahan langsung tersimpan di dashboard.
         </p>
       </motion.header>

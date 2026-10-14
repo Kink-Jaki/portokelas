@@ -1,9 +1,9 @@
 /**
- * Seed akun kelas.
+ * Seed akun awal Craftly.
  *
  *   bun run seed:class
  *
- * Menghapus SELURUH akun yang ada lalu membuat ulang 31 akun anggota kelas.
+ * Menghapus SELURUH akun yang ada lalu membuat ulang 31 akun kreator awal.
  * Login memakai NIS (kolom `nim`) dengan password default "password".
  * Akun MUHAMMAD FAIRUZ ZAKY dibuat dengan role `admin` (badge "Dev").
  *
@@ -81,7 +81,7 @@ const MEMBERS: ClassMember[] = [
 
 /** Slug unik dari nama; tambah suffix angka bila bentrok. */
 function uniqueSlug(name: string, used: Set<string>): string {
-  const base = slugify(name) || 'anggota';
+  const base = slugify(name) || 'kreator';
   let candidate = base;
   let attempt = 2;
   while (used.has(candidate)) {
@@ -101,7 +101,7 @@ async function main() {
   const usedSlugs = new Set<string>();
   const values = MEMBERS.map((member) => ({
     name: member.name,
-    email: `${member.nim}@kelas.local`,
+    email: `${member.nim}@craftly.local`,
     nim: member.nim,
     passwordHash,
     role: member.admin ? ('admin' as const) : ('member' as const),
@@ -119,7 +119,7 @@ async function main() {
 
   await db.insert(users).values(values);
 
-  console.info(`✔ Membuat ${values.length} akun kelas (password: ${DEFAULT_PASSWORD})`);
+  console.info(`✔ Membuat ${values.length} akun Craftly (password: ${DEFAULT_PASSWORD})`);
   console.info('  Login memakai NIS, contoh: 17858');
   console.info('  Dev/admin: MUHAMMAD FAIRUZ ZAKY (NIS 17865)');
 }
@@ -130,7 +130,7 @@ main()
     process.exit(0);
   })
   .catch(async (error: unknown) => {
-    console.error('✖ Gagal menjalankan seed kelas:', error);
+    console.error('✖ Gagal menjalankan seed Craftly:', error);
     await closePool();
     process.exit(1);
   });

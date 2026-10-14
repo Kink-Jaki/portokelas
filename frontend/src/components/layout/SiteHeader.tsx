@@ -9,8 +9,8 @@ import { cn } from '@/lib/utils';
 
 const landingSections = [
   { label: 'Tentang', href: '#tentang' },
-  { label: 'Wali Kelas', href: '#wali-kelas' },
-  { label: 'Anggota', href: '#anggota' },
+  { label: 'Mentor', href: '#mentor' },
+  { label: 'Kreator', href: '#kreator' },
   { label: 'Memories', href: '#memories' },
 ];
 
@@ -132,19 +132,16 @@ export function Logo({
     <Link
       to="/"
       className={cn('group flex items-center gap-3', className)}
-      aria-label="Satu Kelas — beranda"
+      aria-label="Craftly — beranda"
     >
-      <span
-        aria-hidden
+      <img
+        src="/craftly-mark.png"
+        alt=""
         className={cn(
-          'grid shrink-0 place-items-center font-display leading-none transition-colors duration-300',
-          editorial
-            ? 'h-12 w-12 rounded-[3px] bg-forest text-lg text-ivory group-hover:bg-burgundy lg:h-14 lg:w-14 lg:text-xl'
-            : 'h-9 w-9 border border-line-strong bg-invert text-sm text-invert-fg group-hover:border-accent group-hover:bg-accent group-hover:text-accent-fg',
+          'shrink-0 object-contain',
+          editorial ? 'h-8 w-8 lg:h-9 lg:w-9' : 'h-9 w-9',
         )}
-      >
-        SK
-      </span>
+      />
       <span className="flex flex-col leading-none">
         <span
           className={cn(
@@ -152,8 +149,7 @@ export function Logo({
             editorial ? 'text-xl font-semibold text-forest lg:text-2xl' : 'text-lg',
           )}
         >
-          Satu Kelas
-        </span>
+          Craftly</span>
         {!compact ? (
           <span
             className={cn(
@@ -163,7 +159,7 @@ export function Logo({
                 : 'tracking-[0.24em] text-muted',
             )}
           >
-            Portofolio Anggota
+            Portofolio Kreator
           </span>
         ) : null}
       </span>
@@ -177,7 +173,12 @@ export function SiteHeader() {
   const isLanding = pathname === '/';
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line-warm bg-ivory/50 backdrop-blur-md">
+    <header
+      className={cn(
+        'sticky top-0 z-40 border-b border-line-warm bg-ivory',
+        isLanding && 'page-landing',
+      )}
+    >
       <div className="container-wide flex h-20 items-center justify-between gap-6 lg:h-[6.3rem]">
         <div className="flex items-center gap-3">
           <MobileSidebar sections={isLanding ? landingSections : undefined} />
@@ -226,7 +227,7 @@ export function SiteHeader() {
 
 const footerNav = [
   { label: 'Beranda', to: '/' },
-  { label: 'Direktori anggota', to: '/members' },
+  { label: 'Direktori kreator', to: '/members' },
   { label: 'Dokumentasi', to: '/docs' },
   { label: 'Masuk', to: '/login' },
 ];
@@ -247,8 +248,8 @@ export function SiteFooter() {
           <div className="lg:col-span-5">
             <Logo />
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted">
-              Kumpulan portofolio anggota kelas dalam satu etalase publik. Dibangun oleh dan untuk
-              anggota — setiap karya punya halamannya sendiri.
+              Kumpulan portofolio kreator dalam satu etalase publik. Dibangun oleh dan untuk
+              kreator — setiap karya punya halamannya sendiri.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/members" className={buttonClasses('primary', 'sm')}>
@@ -305,7 +306,7 @@ export function SiteFooter() {
 
         <div className="mt-16 flex flex-col gap-4 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between">
           <p className="font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-muted">
-            © {year} · Satu Kelas
+            © {year} · Craftly
           </p>
           <p className="font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-muted">
             Direktori publik · tanpa login
@@ -317,7 +318,7 @@ export function SiteFooter() {
         aria-hidden
         className="pointer-events-none absolute -bottom-4 left-0 select-none whitespace-nowrap font-display text-[clamp(4rem,17vw,13rem)] leading-[0.8] tracking-[-0.04em] text-fg/5"
       >
-        Satu Kelas
+        Craftly
       </p>
     </footer>
   );

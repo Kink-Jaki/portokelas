@@ -35,7 +35,7 @@ function UserManagement() {
             setPage(1);
           }}
           placeholder="Cari nama, email, atau NIM…"
-          aria-label="Cari anggota"
+          aria-label="Cari kreator"
           className="w-full rounded-sm border border-line bg-bg py-2.5 pl-3.5 pr-3 text-sm placeholder:text-muted/70 focus:border-line-strong focus:outline-none focus:ring-1 focus:ring-line-strong lg:max-w-xs"
         />
       </div>
@@ -45,7 +45,7 @@ function UserManagement() {
       ) : usersQuery.isError ? (
         <div className="border border-line">
           <EmptyState
-            title="Gagal memuat data anggota"
+            title="Gagal memuat data kreator"
             description={usersQuery.error?.message}
             action={
               <Button variant="outline" onClick={() => void usersQuery.refetch()}>
@@ -56,7 +56,7 @@ function UserManagement() {
         </div>
       ) : users.length === 0 ? (
         <div className="border border-line">
-          <EmptyState title="Tidak ada anggota" description="Belum ada anggota pada filter ini." />
+          <EmptyState title="Tidak ada kreator" description="Belum ada kreator pada filter ini." />
         </div>
       ) : (
         <div className="overflow-x-auto border border-line">
@@ -64,7 +64,7 @@ function UserManagement() {
             <thead>
               <tr className="border-b border-line">
                 <th className="px-4 py-3 text-left font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">
-                  Anggota
+                  Kreator
                 </th>
                 <th className="px-4 py-3 text-left font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">
                   Status
@@ -89,7 +89,7 @@ function UserManagement() {
       {meta && meta.totalPages > 1 ? (
         <nav
           className="flex items-center justify-between gap-4"
-          aria-label="Navigasi halaman anggota"
+          aria-label="Navigasi halaman kreator"
         >
           <Button
             variant="outline"
@@ -122,7 +122,7 @@ export default function AdminPage() {
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'projects', label: 'Moderasi project' },
-    { id: 'users', label: 'Anggota' },
+    { id: 'users', label: 'Kreator' },
     { id: 'content', label: 'Landing page' },
     { id: 'memories', label: 'Kenangan' },
   ];
@@ -132,10 +132,10 @@ export default function AdminPage() {
       <motion.header variants={fadeUp} initial="hidden" animate="show" className="max-w-2xl">
         <p className="eyebrow">Panel admin</p>
         <h1 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">
-          Moderasi kelas.
+          Moderasi Craftly.
         </h1>
         <p className="mt-4 text-sm leading-relaxed text-muted">
-          Kelola anggota dan rolenya, moderasi project yang tayang, serta kelola konten landing page.
+          Kelola kreator dan perannya, moderasi project yang tayang, serta kelola konten landing page.
         </p>
       </motion.header>
 

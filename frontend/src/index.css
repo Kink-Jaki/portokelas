@@ -496,7 +496,7 @@
     background-repeat: repeat, no-repeat, no-repeat;
   }
 
-  /* Section Wali Kelas — palet cream hangat / forest green / maroon yang
+  /* Section Mentor — palet cream hangat / forest green / maroon yang
      terkunci. Semua variabel dipetakan ulang di sini agar utilities bg-bg,
      text-fg, border-line, text-maroon, bg-pine otomatis memakai palet ini.
      Nilai --teacher-* diisolasi hanya untuk section ini. */
@@ -593,6 +593,16 @@
     --blush-edge: #e2d8c8;
     background-color: var(--bg);
     color: var(--fg);
+  }
+
+  /* Palet aksen halaman landing — sisa aksen vermilion/terracotta dipetakan ke
+     maroon agar seluruh section (Hero, header, tombol, cincin fokus, dan
+     sorotan teks) selaras dengan identitas hijau–cream–maroon. Hanya warna
+     aksen yang berubah; tata letak dan tampilan section tetap sama. */
+  .page-landing {
+    --accent: #701f35;
+    --accent-soft: rgba(112, 31, 53, 0.1);
+    --terracotta: #701f35;
   }
 
   /* Section footer — campuran maroon dominan dengan semburat cream & hijau.

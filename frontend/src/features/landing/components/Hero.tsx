@@ -16,11 +16,11 @@ type Collage = [CollageImage, CollageImage, CollageImage];
 const DEFAULT_COLLAGE: Collage = [
   {
     src: 'https://plus.unsplash.com/premium_photo-1682284353484-4e16001c58eb?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
-    alt: 'Anggota kelas sedang menulis dan mengerjakan proyek di meja belajar',
+    alt: 'Kreator sedang menulis dan mengerjakan proyek di meja belajar',
   },
   {
     src: 'https://images.unsplash.com/photo-1581726707445-75cbe4efc586?q=80&w=1476&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
-    alt: 'Suasana lingkungan sekolah bersama beberapa siswa dari belakang',
+    alt: 'Suasana komunitas kreator dari belakang',
   },
   {
     src: 'https://plus.unsplash.com/premium_photo-1713296255442-e9338f42aad8?q=80&w=722&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
@@ -50,8 +50,8 @@ function EdgeOrnaments() {
         <path d="M32 8v48" stroke="#f7f3e8" strokeWidth="1.4" />
       </svg>
 
-      {/* Kanan atas: susunan titik terracotta */}
-      <div className="absolute right-8 top-10 hidden grid-cols-4 gap-3 text-terracotta/50 sm:grid">
+      {/* Kanan atas: susunan titik maroon */}
+      <div className="absolute right-8 top-10 hidden grid-cols-4 gap-3 text-burgundy/45 sm:grid">
         {Array.from({ length: 16 }).map((_, index) => (
           <span key={index} className="h-1 w-1 rounded-full bg-current" />
         ))}
@@ -112,7 +112,7 @@ function ImageCollage({ images }: { images: Collage }) {
       >
         <path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z" fill="currentColor" />
       </svg>
-      <span className="absolute right-[4%] top-[18%] h-2 w-2 rounded-full bg-terracotta" />
+      <span className="absolute right-[4%] top-[18%] h-2 w-2 rounded-full bg-burgundy" />
     </div>
   );
 }
@@ -155,7 +155,7 @@ export function Hero() {
             >
               <span aria-hidden className="h-px w-8 shrink-0 bg-burgundy sm:w-10" />
               <span className="text-[0.625rem] font-medium uppercase tracking-[0.2em] text-forest-soft sm:text-xs sm:tracking-[0.3em]">
-                Satu Kelas · Portofolio Anggota
+                Craftly · Platform Portofolio Kreator
               </span>
             </motion.p>
 
@@ -176,14 +176,14 @@ export function Hero() {
               variants={staggerItem}
               className="mt-7 max-w-[34rem] text-[1.0625rem] leading-[1.65] text-forest-soft sm:text-[1.125rem]"
             >
-              Setiap anggota kelas punya satu halaman portofolio pribadi. Daftar sekali, unggah
+              Setiap kreator punya satu halaman portofolio pribadi. Daftar sekali, unggah
               project, lalu karya kamu tampil di halaman publik yang bisa dibagikan ke siapa saja.
             </motion.p>
 
             <motion.div variants={staggerItem} className="mt-9 flex flex-wrap items-center gap-4">
               <Magnetic>
                 <Link to="/members" className={buttonClasses('burgundy', 'lg')}>
-                  Lihat anggota
+                  Lihat kreator
                   <svg
                     viewBox="0 0 24 24"
                     width="16"
@@ -197,7 +197,7 @@ export function Hero() {
                 </Link>
               </Magnetic>
               <a href="#tentang" className={buttonClasses('forest', 'lg')}>
-                Tentang kelas
+                Tentang Craftly
               </a>
             </motion.div>
           </div>

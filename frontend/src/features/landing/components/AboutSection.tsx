@@ -6,9 +6,9 @@ import { assetUrl } from '@/lib/api';
 
 import { PaperPlane, Sparkle } from './ornaments';
 
-const FALLBACK_TITLE = 'Satu kelas, banyak cerita. Semua karya, satu ruang.';
+const FALLBACK_TITLE = 'Satu ruang, seribu karya.';
 const FALLBACK_DESCRIPTION =
-  'Satu Kelas adalah etalase digital yang merangkum cerita, kreativitas, dan karya 31 anggota kelas. Kenali kami lewat profil singkat, jelajahi portofolio setiap anggota, dan temukan perjalanan di balik setiap karya—semuanya dalam satu halaman yang mudah diakses dan dibagikan.';
+  'Craftly menghimpun karya para kreator dalam satu halaman publik: cerita singkat tentang komunitas, lalu portofolio tiap kreator yang bisa dibagikan ke siapa saja.';
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1588075592446-265fd1e6e76f?q=80&w=1472&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D';
 
@@ -89,7 +89,7 @@ function ImagePlaceholder() {
           <circle cx="31" cy="19" r="3" stroke="currentColor" strokeWidth="1.2" />
         </svg>
         <span className="font-mono text-[0.6875rem] uppercase tracking-[0.2em]">
-          Foto kelas belum tersedia
+          Foto belum tersedia
         </span>
       </div>
     </div>
@@ -210,11 +210,9 @@ function AboutTitle({ title }: { title: string }) {
       <h2 className="mt-7 font-display text-[1.9rem] font-medium leading-[1.08] tracking-[-0.02em] text-pine sm:text-[2.1rem] lg:text-[2.4rem] xl:text-[2.6rem]">
         {showFallback ? (
           <>
-            Satu kelas,
+            Satu ruang,
             <br />
-            <span className="text-maroon">banyak cerita.</span>
-            <br />
-            Semua karya, satu ruang.
+            <span className="text-maroon">seribu karya.</span>
           </>
         ) : (
           title

@@ -25,7 +25,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <>
+    <div className="page-landing">
       {introVisible ? <IntroOverlay onDone={handleIntroDone} /> : null}
       <Hero />
       <AboutSection />
@@ -33,6 +33,6 @@ export default function LandingPage() {
       <TeacherSection />
       <StructureSection />
       <MemoriesSection />
-    </>
+    </div>
   );
 }
