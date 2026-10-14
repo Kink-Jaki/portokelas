@@ -89,11 +89,10 @@ export function detectImageMime(bytes: Uint8Array): string | null {
   return null;
 }
 
-function assertUploadShape(file: File): void {
-  const maxMb = env.MAX_UPLOAD_SIZE_MB;
-  if (file.size > env.maxUploadBytes) {
+function assertUploadShape(file: File, maxBytes: number): void {
+  if (file.size > maxBytes) {
     throw AppError.badRequest(
-      `Ukuran file maksimal ${maxMb}MB (file Anda ${(file.size / 1024 / 1024).toFixed(2)}MB).`,
+      `Ukuran file maksimal ${Math.round(maxBytes / 1024 / 1024)}MB (file Anda ${(file.size / 1024 / 1024).toFixed(2)}MB).`,
     );
   }
   if (file.size === 0) {
@@ -105,12 +104,20 @@ function assertUploadShape(file: File): void {
   }
 }
 
+/** Batas unggahan foto profil yang lebih longgar (foto langsung dari kamera/HP). */
+export const AVATAR_MAX_BYTES = 20 * 1024 * 1024;
+
 /**
  * Simpan file gambar (R2 bila tersedia, jika tidak ke disk lokal) dengan nama
  * acak. Mengembalikan path relatif `/uploads/...` yang siap dipakai sebagai URL.
+ * `options.maxBytes` menimpa batas ukuran default untuk unggahan tertentu.
  */
-export async function saveImage(file: File, kind: UploadKind): Promise<string> {
-  assertUploadShape(file);
+export async function saveImage(
+  file: File,
+  kind: UploadKind,
+  options: { maxBytes?: number } = {},
+): Promise<string> {
+  assertUploadShape(file, options.maxBytes ?? env.maxUploadBytes);
 
   const bytes = new Uint8Array(await file.arrayBuffer());
   const realMime = detectImageMime(bytes.subarray(0, 16));

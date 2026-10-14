@@ -9,6 +9,7 @@ import {
   useUploadMemory,
 } from '@/hooks/useApi';
 import { assetUrl } from '@/lib/api';
+import { isSupportedImage } from '@/lib/image';
 import { formatDate } from '@/lib/utils';
 
 export function MemoriesPanel() {
@@ -47,13 +48,8 @@ export function MemoriesPanel() {
 
   const validateFile = (f: File | null) => {
     if (!f) return 'Pilih file gambar untuk diunggah.';
-    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!allowed.includes(f.type)) {
+    if (!isSupportedImage(f)) {
       return 'Format gambar harus JPG/PNG/WEBP.';
-    }
-    const maxSize = 2 * 1024 * 1024;
-    if (f.size > maxSize) {
-      return 'Ukuran file maksimal 2MB.';
     }
     return null;
   };
@@ -86,7 +82,7 @@ export function MemoriesPanel() {
           <p className="eyebrow">Unggah kenangan</p>
           <h2 className="font-display text-xl">Tambah foto kenangan</h2>
           <p className="text-sm text-muted">
-            JPG/PNG/WEBP, maksimal 2MB. Caption opsional (maks 280 karakter).
+            JPG/PNG/WEBP, otomatis dikompres ke WEBP. Caption opsional (maks 280 karakter).
           </p>
         </div>
 

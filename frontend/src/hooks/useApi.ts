@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { api, ApiError, buildQuery } from '@/lib/api';
+import { convertImageToWebp } from '@/lib/image';
 import { queryKeys } from '@/lib/query-client';
 import type {
   About,
@@ -158,9 +159,9 @@ export function useUploadProjectImages() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ projectId, files }: { projectId: string; files: File[] }) => {
+    mutationFn: async ({ projectId, files }: { projectId: string; files: File[] }) => {
       const form = new FormData();
-      for (const file of files) form.append('images', file);
+      for (const file of files) form.append('images', await convertImageToWebp(file));
       return api.post<{ images: ProjectImage[] }>(`/me/projects/${projectId}/images`, form);
     },
     onSuccess: () => {
@@ -191,7 +192,7 @@ export function useUploadProjectCover() {
   return useMutation({
     mutationFn: async ({ projectId, file }: { projectId: string; file: File }) => {
       const form = new FormData();
-      form.append('images', file);
+      form.append('images', await convertImageToWebp(file));
       const uploaded = await api.post<{ images: ProjectImage[] }>(
         `/me/projects/${projectId}/images`,
         form,
@@ -224,9 +225,9 @@ export function useMyMemories() {
 export function useUploadMemory() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ image, caption }: { image: File; caption?: string }) => {
+    mutationFn: async ({ image, caption }: { image: File; caption?: string }) => {
       const form = new FormData();
-      form.append('image', image);
+      form.append('image', await convertImageToWebp(image));
       if (caption && caption.trim()) form.append('caption', caption.trim());
       return api.post<{ memory: Memory }>('/me/memories', form);
     },
@@ -406,8 +407,12 @@ export function useSaveAbout() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: AboutPayload) =>
-      api.patch<{ about: About }>('/admin/about', toAboutForm(payload)),
+    mutationFn: async (payload: AboutPayload) => {
+      const image = payload.image
+        ? await convertImageToWebp(payload.image, { maxSize: 1920 })
+        : null;
+      return api.patch<{ about: About }>('/admin/about', toAboutForm({ ...payload, image }));
+    },
     onSuccess: () => {
       invalidateContent(queryClient);
       toast.success('Konten Tentang berhasil disimpan.');
@@ -420,8 +425,17 @@ export function useSaveHero() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: HeroPayload) =>
-      api.patch<{ hero: Hero }>('/admin/hero', toHeroForm(payload)),
+    mutationFn: async (payload: HeroPayload) => {
+      const [image1, image2, image3] = await Promise.all([
+        payload.image1 ? convertImageToWebp(payload.image1, { maxSize: 1920 }) : null,
+        payload.image2 ? convertImageToWebp(payload.image2, { maxSize: 1920 }) : null,
+        payload.image3 ? convertImageToWebp(payload.image3, { maxSize: 1920 }) : null,
+      ]);
+      return api.patch<{ hero: Hero }>(
+        '/admin/hero',
+        toHeroForm({ ...payload, image1, image2, image3 }),
+      );
+    },
     onSuccess: () => {
       invalidateContent(queryClient);
       toast.success('Gambar hero berhasil disimpan.');
@@ -434,8 +448,13 @@ export function useCreateTeacher() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: TeacherPayload) =>
-      api.post<{ teacher: Teacher }>('/admin/teachers', toTeacherForm(payload)),
+    mutationFn: async (payload: TeacherPayload) => {
+      const photo = payload.photo ? await convertImageToWebp(payload.photo) : null;
+      return api.post<{ teacher: Teacher }>(
+        '/admin/teachers',
+        toTeacherForm({ ...payload, photo }),
+      );
+    },
     onSuccess: () => {
       invalidateContent(queryClient);
       toast.success('Mentor berhasil ditambahkan.');
@@ -448,8 +467,13 @@ export function useUpdateTeacher() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: TeacherPayload }) =>
-      api.patch<{ teacher: Teacher }>(`/admin/teachers/${id}`, toTeacherForm(payload)),
+    mutationFn: async ({ id, payload }: { id: string; payload: TeacherPayload }) => {
+      const photo = payload.photo ? await convertImageToWebp(payload.photo) : null;
+      return api.patch<{ teacher: Teacher }>(
+        `/admin/teachers/${id}`,
+        toTeacherForm({ ...payload, photo }),
+      );
+    },
     onSuccess: () => {
       invalidateContent(queryClient);
       toast.success('Mentor berhasil diperbarui.');

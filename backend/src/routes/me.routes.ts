@@ -9,6 +9,7 @@ import { zJson } from '../lib/validate.js';
 import { getCurrentUser, requireAuth, type AppEnv } from '../middleware/auth.js';
 import {
   addProjectImages,
+  AVATAR_MAX_BYTES,
   changeUserEmail,
   changeUserPassword,
   createMemory,
@@ -86,7 +87,7 @@ export const meRoutes = new Hono<AppEnv>()
 
     if (!file) throw AppError.badRequest('File foto profil wajib diunggah (field "avatar").');
 
-    const relativePath = await saveImage(file, 'avatars');
+    const relativePath = await saveImage(file, 'avatars', { maxBytes: AVATAR_MAX_BYTES });
     const previous = user.avatarUrl;
 
     const updated = await updateProfile(user.id, { avatarUrl: relativePath });
