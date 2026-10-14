@@ -24,6 +24,28 @@
   /* Kurva gerak. */
   --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-quart: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Marquee kenangan — gulir horizontal mulus, dua arah berlawanan. */
+  --animate-marquee-left: marquee-left var(--marquee-duration, 48s) linear infinite;
+  --animate-marquee-right: marquee-right var(--marquee-duration, 48s) linear infinite;
+
+  @keyframes marquee-left {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes marquee-right {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
 }
 
 :root {
@@ -400,6 +422,76 @@
     --success: #2f6b3a;
     background-color: var(--bg);
     color: var(--fg);
+  }
+
+  /* Section Kenangan — palet "vintage scrapbook": cream hangat sebagai dasar,
+     hijau forest untuk panel video, maroon sebagai aksen. Ditambah tekstur
+     kertas halus + gradasi radial lembut agar terasa seperti album fisik.
+     Proporsi dijaga sekitar 60% cream, 25% forest, 15% maroon. */
+  .section-memories {
+    --mem-cream: #f7f1e5;
+    --mem-paper: #fff9ef;
+    --mem-cream-2: #ede3d1;
+    --mem-border: #dccfb9;
+    --mem-forest: #183d32;
+    --mem-forest-2: #254b3c;
+    --mem-sage: #879777;
+    --mem-sage-light: #dce3cf;
+    --mem-maroon: #762a36;
+    --mem-maroon-deep: #54202a;
+    --mem-maroon-muted: #a65e65;
+    --mem-blush: #ebd5d1;
+
+    --bg: var(--mem-cream);
+    --bg-subtle: var(--mem-cream-2);
+    --bg-elevated: var(--mem-paper);
+    --fg: var(--mem-forest);
+    --fg-muted: #6f6a5c;
+    --line: var(--mem-border);
+    --line-strong: #c7b89e;
+    --invert-bg: var(--mem-forest);
+    --invert-fg: var(--mem-paper);
+    --accent: var(--mem-maroon);
+    --accent-fg: var(--mem-paper);
+    --accent-soft: rgba(118, 42, 54, 0.1);
+    --danger: #b42318;
+    --success: #2f6b3a;
+
+    /* Alias token palet yang dipakai lintas section. */
+    --ivory: var(--mem-cream);
+    --ivory-alt: var(--mem-cream-2);
+    --ivory-warm: var(--mem-paper);
+    --cream-card: var(--mem-paper);
+    --edge: var(--mem-border);
+    --forest: var(--mem-forest);
+    --forest-soft: var(--mem-forest-2);
+    --pine: var(--mem-forest);
+    --pine-deep: var(--mem-forest-2);
+    --maroon: var(--mem-maroon);
+    --maroon-deep: var(--mem-maroon-deep);
+    --maroon-soft: var(--mem-maroon-muted);
+    --maroon-tint: rgba(118, 42, 54, 0.1);
+    --sage: var(--mem-sage);
+    --sage-soft: var(--mem-sage-light);
+    --sage-tint: rgba(135, 151, 119, 0.14);
+    --gold: #c9a56a;
+    --moss: var(--fg-muted);
+    --blush: var(--mem-blush);
+    --blush-edge: #e3cec8;
+
+    color: var(--fg);
+    background-color: var(--mem-cream);
+    background-image:
+      var(--grain),
+      radial-gradient(120% 90% at 10% 0%, rgba(220, 227, 207, 0.5) 0%, rgba(220, 227, 207, 0) 45%),
+      radial-gradient(110% 85% at 100% 100%, rgba(235, 213, 209, 0.45) 0%, rgba(235, 213, 209, 0) 48%),
+      radial-gradient(75% 65% at 88% 4%, rgba(255, 249, 239, 0.75) 0%, rgba(255, 249, 239, 0) 55%);
+    background-size:
+      140px 140px,
+      auto,
+      auto,
+      auto;
+    background-repeat: repeat, no-repeat, no-repeat, no-repeat;
   }
 
   /* Section Wali Kelas — palet cream hangat / forest green / maroon yang

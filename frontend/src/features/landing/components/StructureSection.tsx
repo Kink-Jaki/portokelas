@@ -233,7 +233,7 @@ export function StructureSection() {
             </div>
           ) : (
             <Stagger className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-              {members.slice(0, 10).map((member, index) => (
+              {members.slice(0, 8).map((member, index) => (
                 <StaggerItem key={member.id} className="h-full">
                   <ClassMemberCard member={member} index={index + 1} />
                 </StaggerItem>

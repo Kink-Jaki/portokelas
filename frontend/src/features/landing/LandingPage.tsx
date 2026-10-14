@@ -10,8 +10,13 @@ import { MemoriesSection } from './components/MemoriesSection';
 /** Welcome hanya diputar sekali per muat halaman, bukan tiap navigasi. */
 let introPlayed = false;
 
+/** Intro hanya tampil di layar desktop; mobile langsung ke konten. */
+const DESKTOP_QUERY = '(min-width: 768px)';
+
 export default function LandingPage() {
-  const [introVisible, setIntroVisible] = useState(!introPlayed);
+  const [introVisible, setIntroVisible] = useState(
+    () => !introPlayed && window.matchMedia(DESKTOP_QUERY).matches,
+  );
 
   const handleIntroDone = useCallback(() => {
     introPlayed = true;

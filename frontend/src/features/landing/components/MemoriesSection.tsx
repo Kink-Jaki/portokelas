@@ -1,27 +1,51 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
 import { Reveal } from '@/components/ui/Reveal';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { buttonClasses } from '@/components/ui/Button';
-import { Skeleton } from '@/components/ui/Skeleton';
 import { usePublicMemories } from '@/hooks/usePublic';
 import { assetUrl } from '@/lib/api';
-import { ease } from '@/lib/motion';
+import { cn } from '@/lib/utils';
 import { useAuth } from '@/providers/AuthProvider';
 
-function ArrowIcon({ direction }: { direction: 'left' | 'right' }) {
-  return (
-    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden>
-      <path
-        d={direction === 'left' ? 'M19 12H5M11 6l-6 6 6 6' : 'M5 12h14M13 6l6 6-6 6'}
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-    </svg>
-  );
-}
+/** Jumlah bingkai foto pada setiap baris marquee. */
+const MARQUEE_COUNT = 10;
+
+/** Variasi kemiringan kartu polaroid (deterministik agar marquee tetap stabil). */
+const TILT_TOP = [
+  '-rotate-3',
+  'rotate-2',
+  '-rotate-2',
+  'rotate-3',
+  '-rotate-1',
+  'rotate-1',
+  '-rotate-2',
+  'rotate-2',
+  '-rotate-3',
+  'rotate-1',
+];
+const TILT_BOTTOM = [
+  'rotate-2',
+  '-rotate-3',
+  'rotate-1',
+  '-rotate-2',
+  'rotate-3',
+  '-rotate-1',
+  'rotate-2',
+  '-rotate-3',
+  '-rotate-1',
+  'rotate-2',
+];
+
+/** Warna pita perekat: beige, sage, dan maroon untuk variasi scrapbook. */
+const TAPE_TONES = ['bg-[#e7dcc4]/85', 'bg-sage/40', 'bg-maroon/25'];
+
+type MarqueeItem = {
+  id: string;
+  src: string | null;
+  caption: string | null;
+};
 
 function shuffleArray<T>(items: T[]): T[] {
   const array = [...items];
@@ -36,220 +60,398 @@ function shuffleArray<T>(items: T[]): T[] {
   return array;
 }
 
-export function MemoriesSection() {
-  const { data, isLoading } = usePublicMemories();
-  const { user } = useAuth();
-  const reduceMotion = useReducedMotion();
+/* ------------------------------ Ikon kecil ------------------------------ */
 
-  const memories = useMemo(() => {
-    return shuffleArray(data?.memories ?? []).slice(0, 12);
-  }, [data?.memories]);
+function PhotoIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" aria-hidden>
+      <rect x="3" y="5" width="18" height="14" rx="2.4" stroke="currentColor" strokeWidth="1.4" />
+      <circle cx="9" cy="10" r="1.7" stroke="currentColor" strokeWidth="1.4" />
+      <path
+        d="M4 17l4.6-4.2a1.6 1.6 0 0 1 2.2.05L14 16l1.6-1.5a1.6 1.6 0 0 1 2.2 0L20 16.2"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 
-  const total = memories.length;
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
+function PlayIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden>
+      <path d="M8 5.5v13a1 1 0 0 0 1.53.85l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 8 5.5Z" />
+    </svg>
+  );
+}
 
-  useEffect(() => {
-    setActive(0);
-  }, [memories]);
+/* ------------------------------ Ornamen --------------------------------- */
 
-  useEffect(() => {
-    if (total <= 1 || paused || reduceMotion) return;
-
-    const timer = window.setTimeout(() => {
-      setActive((current) => (current >= total - 1 ? 0 : current + 1));
-    }, 5000);
-
-    return () => window.clearTimeout(timer);
-  }, [active, total, paused, reduceMotion]);
-
-  const goTo = (index: number) => {
-    const bounded = Math.min(Math.max(index, 0), total - 1);
-    setActive(bounded);
-  };
-
-  const current = memories[active] ?? memories[0] ?? null;
-
-  const carousel = (
-    <div
-      className="relative overflow-hidden border border-line bg-subtle"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
-      onPointerDown={() => setPaused(true)}
+/** Ranting botanical line-art — ornamen scrapbook sudut section. */
+function LeafSprig({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 120 120"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
     >
-      <div className="relative aspect-[4/3] w-full">
-        <AnimatePresence mode="wait" initial={false}>
-          {current ? (
-            <motion.div
-              key={current.id}
-              className="absolute inset-0"
-              initial={reduceMotion ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={reduceMotion ? { opacity: 0 } : { opacity: 0 }}
-              transition={{ duration: reduceMotion ? 0.15 : 0.4, ease }}
-            >
-              <img
-                src={assetUrl(current.imageUrl) ?? ''}
-                alt={current.caption ?? 'Kenangan kelas'}
-                loading="lazy"
-                className="h-full w-full object-cover"
-              />
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-      </div>
+      <path d="M14 106C46 92 76 66 104 30" strokeWidth="1.3" />
+      <g strokeWidth="1">
+        <g transform="translate(30 88) rotate(-40)">
+          <path d="M0 0c-7 8-5 22 0 30 5-8 7-22 0-30Z" />
+          <path d="M0 4v24" />
+        </g>
+        <g transform="translate(52 70) rotate(20)">
+          <path d="M0 0c-6 7-4 19 0 26 4-7 6-19 0-26Z" />
+          <path d="M0 3v21" />
+        </g>
+        <g transform="translate(72 50) rotate(-28)">
+          <path d="M0 0c-6 7-4 19 0 26 4-7 6-19 0-26Z" />
+          <path d="M0 3v21" />
+        </g>
+        <g transform="translate(90 32) rotate(16)">
+          <path d="M0 0c-4 5-3 15 0 19 3-4 4-14 0-19Z" />
+          <path d="M0 2v15" />
+        </g>
+      </g>
+    </svg>
+  );
+}
 
-      {total > 0 ? (
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
-          <span className="pointer-events-auto border border-line bg-bg/90 px-3 py-1.5 font-mono text-[0.6875rem] tracking-[0.2em] text-muted backdrop-blur">
-            {String(active + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
-          </span>
+/** Coretan tangan berbentuk hati — aksen maroon. */
+function HeartDoodle({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 64 64"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path
+        d="M32 52C18 42 8 33 8 23.5 8 16 13.8 11 20.5 11c4.6 0 8.4 2.6 11.5 7 3.1-4.4 6.9-7 11.5-7C50.2 11 56 16 56 23.5 56 33 46 42 32 52Z"
+        strokeWidth="1.6"
+      />
+    </svg>
+  );
+}
 
-          <div className="pointer-events-auto flex gap-2">
-            <button
-              type="button"
-              onClick={() => goTo(active - 1)}
-              disabled={active <= 0}
-              aria-label="Foto kenangan sebelumnya"
-              className="grid h-10 w-10 place-items-center border border-line bg-bg/90 text-fg backdrop-blur transition-colors duration-200 hover:border-line-strong disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <ArrowIcon direction="left" />
-            </button>
-            <button
-              type="button"
-              onClick={() => goTo(active + 1)}
-              disabled={active >= total - 1}
-              aria-label="Foto kenangan berikutnya"
-              className="grid h-10 w-10 place-items-center border border-line bg-bg/90 text-fg backdrop-blur transition-colors duration-200 hover:border-line-strong disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <ArrowIcon direction="right" />
-            </button>
-          </div>
-        </div>
-      ) : null}
+/** Goresan pena pendek — garis dekoratif di sisi panel video. */
+function PenCurve({ className, flip }: { className?: string; flip?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 120 60"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      aria-hidden
+      style={flip ? { transform: 'scaleX(-1)' } : undefined}
+    >
+      <path d="M4 46C22 44 40 34 58 22 74 11 92 6 116 8" strokeWidth="1.4" />
+      <path d="M10 54C30 50 50 40 68 30" strokeWidth="1" opacity="0.6" />
+    </svg>
+  );
+}
+
+/** Ornamen latar section — bentuk organik, ranting, hati, dan garis lengkung. */
+function MemoryOrnaments() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+      {/* Bentuk organik sage kiri atas */}
+      <span className="absolute -left-24 -top-24 h-72 w-72 rounded-[58%_42%_47%_53%/46%_56%_44%_54%] bg-sage-soft/60" />
+
+      {/* Semburat blush kanan bawah */}
+      <span className="absolute -bottom-24 -right-20 h-72 w-72 rounded-full bg-blush/55" />
+
+      {/* Ranting botanical */}
+      <LeafSprig className="absolute -left-4 top-8 hidden h-40 w-40 -rotate-6 text-sage opacity-50 sm:block" />
+      <LeafSprig className="absolute -right-4 bottom-10 hidden h-36 w-36 rotate-180 text-forest opacity-20 sm:block" />
+
+      {/* Coretan hati maroon kanan atas */}
+      <HeartDoodle className="absolute right-[9%] top-16 hidden h-9 w-9 rotate-6 text-maroon/45 lg:block" />
+
+      {/* Garis lengkung maroon tipis kiri bawah */}
+      <svg
+        viewBox="0 0 220 220"
+        fill="none"
+        className="absolute -bottom-8 -left-10 hidden h-48 w-48 text-maroon/35 lg:block"
+      >
+        <path
+          d="M8 150C72 166 148 158 212 92"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+        />
+        <path
+          d="M6 202C96 212 178 186 216 124"
+          stroke="currentColor"
+          strokeWidth="1"
+          strokeLinecap="round"
+          opacity="0.7"
+        />
+      </svg>
+
+      {/* Titik dekoratif */}
+      <span className="absolute left-[6%] top-[44%] hidden h-1.5 w-1.5 rounded-full bg-maroon/40 lg:block" />
+      <span className="absolute right-[8%] top-[60%] hidden h-1 w-1 rounded-full bg-sage lg:block" />
     </div>
   );
+}
+
+/* ------------------------------ Kartu foto ------------------------------ */
+
+/**
+ * Satu bingkai kenangan bergaya polaroid: bingkai kertas cream, pita perekat,
+ * nomor foto, dan keterangan tulisan tangan. Foto asli dipakai bila ada,
+ * jika tidak memakai placeholder kertas.
+ */
+function MemoryFrame({
+  item,
+  index,
+  variant,
+}: {
+  item: MarqueeItem;
+  index: number;
+  variant: 'top' | 'bottom';
+}) {
+  const src = item.src ? assetUrl(item.src) : null;
+  const tilt = (variant === 'top' ? TILT_TOP : TILT_BOTTOM)[index % TILT_TOP.length];
+  const tone = TAPE_TONES[(index + (variant === 'top' ? 0 : 1)) % TAPE_TONES.length];
+  const number = String(index + 1).padStart(2, '0');
 
   return (
-    <section id="memories" className="section-light paper border-b border-line">
-      <div className="container-page py-20 lg:py-28">
+    <figure className="group/frame relative w-36 shrink-0 sm:w-44 lg:w-52">
+      <div
+        className={cn(
+          'relative rounded-[9px] border border-line bg-elevated p-2 pb-10',
+          'shadow-[0_24px_42px_-32px_rgba(84,32,42,0.6)]',
+          'transition-[transform,box-shadow] duration-300 ease-out',
+          'group-hover/frame:-translate-y-1.5 group-hover/frame:rotate-0 group-hover/frame:shadow-[0_36px_58px_-34px_rgba(84,32,42,0.65)]',
+          'motion-reduce:transform-none',
+          tilt,
+        )}
+      >
+        {/* Pita perekat */}
+        <span
+          aria-hidden
+          className={cn(
+            'pointer-events-none absolute -top-3 left-1/2 z-20 h-5 w-14 -translate-x-1/2 -rotate-[5deg] rounded-[2px] border border-white/40 shadow-[0_2px_6px_-2px_rgba(84,32,42,0.4)]',
+            tone,
+          )}
+        />
+
+        {/* Foto */}
+        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[3px] bg-subtle">
+          {src ? (
+            <img
+              src={src}
+              alt={item.caption ?? `Kenangan ${index + 1}`}
+              loading="lazy"
+              className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover/frame:scale-[1.04] motion-reduce:transform-none"
+            />
+          ) : (
+            <div className="relative flex h-full w-full items-center justify-center bg-gradient-to-br from-subtle via-bg to-sage-soft">
+              <span
+                aria-hidden
+                className="absolute inset-2 rounded-[2px] border border-dashed border-line-strong/70"
+              />
+              <PhotoIcon className="h-7 w-7 text-sage/80" />
+            </div>
+          )}
+          {/* Vignette halus agar terasa seperti cetakan analog */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 shadow-[inset_0_0_30px_rgba(84,32,42,0.18)]"
+          />
+        </div>
+
+        {/* Margin bawah: nomor + keterangan tulisan tangan */}
+        <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 px-3 pb-3">
+          <span className="font-mono text-[0.5625rem] tracking-[0.24em] text-maroon">{number}</span>
+          <span aria-hidden className="h-px w-4 bg-line" />
+          {item.caption ? (
+            <span className="truncate font-hand text-[0.8125rem] leading-none text-maroon-deep/80">
+              {item.caption}
+            </span>
+          ) : (
+            <PhotoIcon className="ml-auto h-3.5 w-3.5 text-sage" />
+          )}
+        </div>
+      </div>
+    </figure>
+  );
+}
+
+/**
+ * Baris marquee horizontal. Dua salinan daftar yang identik dirender berdampingan
+ * lalu digeser -50% agar loop tanpa jeda. `direction` adalah arah gerak visual
+ * foto ("right" = kiri→kanan, "left" = kanan→kiri), sedangkan hover/focus
+ * menjeda animasi agar pengunjung bisa mengamati foto.
+ */
+function MarqueeRow({
+  items,
+  direction,
+  variant,
+}: {
+  items: MarqueeItem[];
+  direction: 'left' | 'right';
+  variant: 'top' | 'bottom';
+}) {
+  return (
+    <div className="group relative w-full overflow-hidden py-6 [mask-image:linear-gradient(to_right,transparent,black_7%,black_93%,transparent)]">
+      <div
+        className={cn(
+          'flex w-max',
+          direction === 'left' ? 'animate-marquee-left' : 'animate-marquee-right',
+          'group-hover:[animation-play-state:paused] group-focus-within:[animation-play-state:paused]',
+        )}
+      >
+        {[0, 1].map((copy) => (
+          <ul key={copy} aria-hidden={copy === 1} className="flex gap-4 pr-4 sm:gap-5 sm:pr-5">
+            {items.map((item, index) => (
+              <li key={`${copy}-${item.id}`}>
+                <MemoryFrame item={item} index={index} variant={variant} />
+              </li>
+            ))}
+          </ul>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------ Panel video ----------------------------- */
+
+/** Panel video persegi panjang (16:9) sebagai focal point section kenangan. */
+function VideoPanel() {
+  return (
+    <div className="relative mx-auto w-full max-w-4xl">
+      {/* Goresan pena dekoratif di sisi panel (hanya layar lebar) */}
+      <PenCurve className="absolute -left-14 top-1/2 hidden h-14 w-12 -translate-y-1/2 text-maroon/45 lg:block" />
+      <PenCurve
+        flip
+        className="absolute -right-14 top-1/2 hidden h-14 w-12 -translate-y-1/2 text-maroon/45 lg:block"
+      />
+
+      <div className="group/video relative aspect-video w-full overflow-hidden rounded-[12px] border border-line bg-gradient-to-br from-forest via-forest to-forest-soft shadow-[0_50px_95px_-52px_rgba(24,61,50,0.9)]">
+        {/* Inner border + highlight atas */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-3 rounded-[8px] border border-ivory/15"
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-white/10 to-transparent"
+        />
+
+        {/* Semburat lembut + ornamen daun tipis */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 rounded-full bg-sage/25 blur-3xl"
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-sage-soft/15 blur-3xl"
+        />
+        <LeafSprig className="pointer-events-none absolute -right-3 top-4 h-20 w-20 rotate-12 text-ivory/10" />
+
+        {/* Tombol play + teks */}
+        <div className="relative z-10 flex h-full flex-col items-center justify-center gap-5 px-6 text-center">
+          <span className="grid h-16 w-16 place-items-center rounded-full border border-ivory/60 bg-ivory/10 text-ivory backdrop-blur-sm transition duration-300 ease-out group-hover/video:scale-105 group-hover/video:bg-ivory/20 motion-reduce:transform-none sm:h-20 sm:w-20">
+            <PlayIcon />
+          </span>
+          <p className="font-display text-[0.6875rem] uppercase tracking-[0.34em] text-ivory/85 sm:text-sm">
+            Video Kenangan · Segera Hadir
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------------- Section ------------------------------- */
+
+export function MemoriesSection() {
+  const { data } = usePublicMemories();
+  const { user } = useAuth();
+
+  const memories = useMemo(() => shuffleArray(data?.memories ?? []), [data?.memories]);
+
+  /** Baris atas: foto kenangan asli, dilengkapi fallback hingga 10 bingkai. */
+  const topItems = useMemo<MarqueeItem[]>(() => {
+    const real = memories
+      .slice(0, MARQUEE_COUNT)
+      .map((memory) => ({ id: memory.id, src: memory.imageUrl, caption: memory.caption }));
+
+    if (real.length >= MARQUEE_COUNT) return real;
+
+    const fillers: MarqueeItem[] = Array.from(
+      { length: MARQUEE_COUNT - real.length },
+      (_, index) => ({ id: `fallback-top-${index}`, src: null, caption: null }),
+    );
+    return [...real, ...fillers];
+  }, [memories]);
+
+  /** Baris bawah: masih memakai gambar fallback sampai foto berikutnya tersedia. */
+  const bottomItems = useMemo<MarqueeItem[]>(
+    () =>
+      Array.from({ length: MARQUEE_COUNT }, (_, index) => ({
+        id: `fallback-bottom-${index}`,
+        src: null,
+        caption: null,
+      })),
+    [],
+  );
+
+  const uploadHref = user ? '/dashboard?tab=memories' : '/login';
+  const uploadLabel = user ? 'Unggah kenangan' : 'Masuk & unggah';
+
+  return (
+    <section
+      id="memories"
+      className="section-memories relative isolate overflow-hidden border-b border-line"
+    >
+      <MemoryOrnaments />
+
+      <div className="container-page relative z-10 py-20 lg:py-28">
         <Reveal>
           <SectionHeader
             index="05"
             eyebrow="Memories"
             title="Kenangan kelas"
-            description="Foto-foto kenangan dari seluruh anggota. Carousel menampilkan kiriman secara acak — setiap kunjungan urutannya bisa berbeda."
+            description="Jejak momen dari seluruh anggota kelas. Galeri bergulir di bawah menampilkan kiriman secara acak — setiap kunjungan urutannya bisa berbeda."
+            action={
+              <Link to={uploadHref} className={buttonClasses('primary', 'lg')}>
+                {uploadLabel}
+              </Link>
+            }
           />
         </Reveal>
+      </div>
 
-        <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:gap-12">
-          <Reveal>
-            {isLoading ? (
-              <div className="aspect-[4/3] animate-pulse border border-line bg-subtle" />
-            ) : total === 0 ? (
-              <div className="grid min-h-64 place-items-center border border-line bg-subtle px-6 text-center">
-                <div className="space-y-3 text-muted">
-                  <p className="font-display text-2xl text-fg">
-                    Belum ada kenangan
-                  </p>
-                  <p className="max-w-sm text-sm leading-relaxed">
-                    Jadilah yang pertama mengunggah foto.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              carousel
-            )}
-          </Reveal>
+      <div className="relative z-10">
+        <Reveal>
+          <MarqueeRow items={topItems} direction="right" variant="top" />
+        </Reveal>
+      </div>
 
-          <Reveal delay={0.08}>
-            {isLoading ? (
-              <div className="space-y-3">
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-3 w-full" />
-                <Skeleton className="h-3 w-2/3" />
-                <Skeleton className="mt-4 h-10 w-full" />
-              </div>
-            ) : current ? (
-              <div className="space-y-4">
-                <div>
-                  <p className="eyebrow">Kenangan saat ini</p>
-                  <p className="mt-2 text-base leading-relaxed text-fg">
-                    {current.caption ?? 'Tanpa keterangan'}
-                  </p>
-                  {current.author ? (
-                    <p className="mt-2 font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">
-                      Oleh{' '}
-                      <Link
-                        to={`/m/${current.author.slug}`}
-                        className="text-fg hover:text-accent"
-                      >
-                        {current.author.alias ?? current.author.name}
-                      </Link>
-                    </p>
-                  ) : null}
-                </div>
+      <div className="container-page relative z-10 mt-12 lg:mt-16">
+        <Reveal>
+          <VideoPanel />
+        </Reveal>
+      </div>
 
-                {total > 1 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {memories.slice(0, 6).map((memory, index) => (
-                      <button
-                        key={memory.id}
-                        type="button"
-                        onClick={() => goTo(index)}
-                        aria-label={`Tampilkan foto kenangan ${index + 1}`}
-                        className={`h-1.5 transition-all duration-300 ${
-                          index === active ? 'w-8 bg-fg' : 'w-4 bg-line-strong hover:bg-muted'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                ) : null}
-
-                <div className="flex flex-wrap gap-3 pt-2">
-                  {user ? (
-                    <Link
-                      to="/dashboard?tab=memories"
-                      className={buttonClasses('primary', 'lg')}
-                    >
-                      Unggah kenangan
-                    </Link>
-                  ) : (
-                    <Link to="/login" className={buttonClasses('primary', 'lg')}>
-                      Masuk & unggah
-                    </Link>
-                  )}
-                  <Link to="/members" className={buttonClasses('outline', 'lg')}>
-                    Lihat anggota
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <p className="eyebrow">Kenangan</p>
-                <p className="text-sm leading-relaxed text-muted">
-                  Belum ada kenangan. Jadilah yang pertama mengunggah foto.
-                </p>
-                <div className="flex flex-wrap gap-3 pt-2">
-                  {user ? (
-                    <Link
-                      to="/dashboard?tab=memories"
-                      className={buttonClasses('primary', 'lg')}
-                    >
-                      Unggah kenangan
-                    </Link>
-                  ) : (
-                    <Link to="/login" className={buttonClasses('primary', 'lg')}>
-                      Masuk & unggah
-                    </Link>
-                  )}
-                </div>
-              </div>
-            )}
-          </Reveal>
-        </div>
+      <div className="relative z-10 mt-12 pb-20 lg:mt-16 lg:pb-28">
+        <Reveal>
+          <MarqueeRow items={bottomItems} direction="left" variant="bottom" />
+        </Reveal>
       </div>
     </section>
   );
