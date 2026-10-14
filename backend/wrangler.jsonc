@@ -12,7 +12,7 @@
 		"NODE_ENV": "production",
 		"COOKIE_NAME": "pk_session",
 		"JWT_EXPIRES_IN": "7d",
-		"CORS_ORIGIN": "https://portofolio-kelas.pages.dev",
+		"CORS_ORIGIN": "https://portofolio-kelas.pages.dev,https://portokelas.vercel.app",
 		"MAX_UPLOAD_SIZE_MB": "2"
 	},
 	// Database: Neon (PostgreSQL). Hyperdrive = cara yang direkomendasikan Cloudflare.

@@ -262,7 +262,7 @@ seperti Pages) plus SPA fallback ke `/index.html`.
 4. Bila URL Worker berubah, perbarui `destination` di `frontend/vercel.json`.
 5. Tambahkan domain Vercel ke `CORS_ORIGIN` di `backend/wrangler.jsonc`
    (boleh daftar dipisah koma), mis.
-   `https://portofolio-kelas.pages.dev,https://portofolio-kelas.vercel.app`.
+   `https://portofolio-kelas.pages.dev,https://portokelas.vercel.app`.
 
 ## Catatan Keamanan
 
