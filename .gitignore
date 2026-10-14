@@ -17,6 +17,9 @@ Thumbs.db
 .wrangler/
 worker-configuration.d.ts
 
+# vercel
+.vercel/
+
 # logs
 *.log
 npm-debug.log*
