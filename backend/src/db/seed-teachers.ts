@@ -15,7 +15,7 @@
  */
 import 'dotenv/config';
 
-import { db, pool } from './index.js';
+import { closePool, db } from './index.js';
 import { teachers } from './schema.js';
 
 type TeacherSeed = {
@@ -73,11 +73,11 @@ async function main() {
 
 main()
   .then(async () => {
-    await pool.end();
+    await closePool();
     process.exit(0);
   })
   .catch(async (error: unknown) => {
     console.error('✖ Gagal menjalankan seed wali kelas:', error);
-    await pool.end().catch(() => undefined);
+    await closePool();
     process.exit(1);
   });

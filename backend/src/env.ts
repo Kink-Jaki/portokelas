@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { getBindings } from './runtime.js';
+
 /**
  * Durasi dalam detik dari format ringkas (30s, 15m, 12h, 7d).
  */
@@ -29,7 +31,8 @@ const envSchema = z
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     PORT: z.coerce.number().int().positive().default(8787),
 
-    DATABASE_URL: z.string().min(1, 'DATABASE_URL wajib diisi'),
+    // Opsional bila memakai binding Hyperdrive (produksi Workers).
+    DATABASE_URL: z.string().min(1, 'DATABASE_URL wajib diisi').optional(),
     DATABASE_SSL: booleanish.default('false'),
 
     JWT_SECRET: z
@@ -58,30 +61,91 @@ const envSchema = z
     }
   });
 
-const parsed = envSchema.safeParse(process.env);
+export type Env = {
+  NODE_ENV: 'development' | 'test' | 'production';
+  PORT: number;
+  DATABASE_URL?: string | undefined;
+  DATABASE_SSL: boolean;
+  JWT_SECRET: string;
+  JWT_EXPIRES_IN: string;
+  COOKIE_NAME: string;
+  CORS_ORIGIN: string;
+  UPLOAD_DIR: string;
+  PUBLIC_URL: string;
+  MAX_UPLOAD_SIZE_MB: number;
+  ADMIN_NAME: string;
+  ADMIN_EMAIL: string;
+  ADMIN_PASSWORD: string;
+  isProduction: boolean;
+  isDevelopment: boolean;
+  corsOrigins: string[];
+  maxUploadBytes: number;
+  sessionMaxAge: number;
+};
 
-if (!parsed.success) {
-  const details = parsed.error.issues
-    .map((issue) => `  - ${issue.path.join('.') || 'ENV'}: ${issue.message}`)
-    .join('\n');
-  console.error(
-    `\n[env] Konfigurasi .env tidak valid:\n${details}\n\n` +
-      'Salin backend/.env.example menjadi backend/.env lalu lengkapi.\n',
-  );
-  throw new Error('Konfigurasi environment tidak valid');
+let cached: Env | null = null;
+let cachedSource: unknown = null;
+
+function readSource(): Record<string, unknown> {
+  const bindings = getBindings();
+  if (bindings) return bindings;
+  return process.env as Record<string, unknown>;
 }
 
-const raw = parsed.data;
+function resolveEnv(): Env {
+  const source = readSource();
+  if (cached && cachedSource === source) return cached;
 
-export const env = {
-  ...raw,
-  isProduction: raw.NODE_ENV === 'production',
-  isDevelopment: raw.NODE_ENV === 'development',
-  corsOrigins: raw.CORS_ORIGIN.split(',')
-    .map((origin) => origin.trim())
-    .filter(Boolean),
-  maxUploadBytes: Math.round(raw.MAX_UPLOAD_SIZE_MB * 1024 * 1024),
-  sessionMaxAge: parseDuration(raw.JWT_EXPIRES_IN),
-} as const;
+  const parsed = envSchema.safeParse(source);
 
-export type Env = typeof env;
+  if (!parsed.success) {
+    const details = parsed.error.issues
+      .map((issue) => `  - ${issue.path.join('.') || 'ENV'}: ${issue.message}`)
+      .join('\n');
+    console.error(
+      `\n[env] Konfigurasi environment tidak valid:\n${details}\n\n` +
+        'Lokal: salin backend/.env.example menjadi backend/.env lalu lengkapi.\n' +
+        'Deploy: atur vars di wrangler.jsonc dan secret via `wrangler secret put`.\n',
+    );
+    throw new Error('Konfigurasi environment tidak valid');
+  }
+
+  const raw = parsed.data;
+
+  const resolved: Env = {
+    ...raw,
+    isProduction: raw.NODE_ENV === 'production',
+    isDevelopment: raw.NODE_ENV === 'development',
+    corsOrigins: raw.CORS_ORIGIN.split(',')
+      .map((origin) => origin.trim())
+      .filter(Boolean),
+    maxUploadBytes: Math.round(raw.MAX_UPLOAD_SIZE_MB * 1024 * 1024),
+    sessionMaxAge: parseDuration(raw.JWT_EXPIRES_IN),
+  };
+  cached = resolved;
+  cachedSource = source;
+  return resolved;
+}
+
+/**
+ * Proxy lazy: resolusi environment ditunda sampai akses pertama, sehingga
+ * binding runtime Workers (`c.env`) sudah tersedia saat nilainya dibutuhkan.
+ */
+export const env = new Proxy({} as Env, {
+  get(_target, property) {
+    return resolveEnv()[property as keyof Env];
+  },
+  has(_target, property) {
+    return property in resolveEnv();
+  },
+  ownKeys() {
+    return Reflect.ownKeys(resolveEnv());
+  },
+  getOwnPropertyDescriptor() {
+    return { enumerable: true, configurable: true };
+  },
+});
+
+export function getEnv(): Env {
+  return resolveEnv();
+}
