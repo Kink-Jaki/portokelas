@@ -5,29 +5,31 @@ import { motion } from 'framer-motion';
 import { ProfilePanel } from './ProfilePanel';
 import { ProjectsPanel } from './ProjectsPanel';
 import { MemoriesPanel } from './MemoriesPanel';
+import { PersonalizePanel } from './PersonalizePanel';
 import { AnimatedRule } from '@/components/ui/Reveal';
 import { buttonClasses } from '@/components/ui/Button';
 import { fadeUp } from '@/lib/motion';
 import { useAuth } from '@/providers/AuthProvider';
 
-type Tab = 'profile' | 'projects' | 'memories';
+type Tab = 'profile' | 'projects' | 'memories' | 'personalize';
+
+const TABS: ReadonlyArray<Tab> = ['profile', 'projects', 'memories', 'personalize'];
+
+function parseTab(value: string | null): Tab {
+  return TABS.includes(value as Tab) ? (value as Tab) : 'profile';
+}
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [tab, setTab] = useState<Tab>(
-    searchParams.get('tab') === 'projects'
-      ? 'projects'
-      : searchParams.get('tab') === 'memories'
-        ? 'memories'
-        : 'profile',
-  );
+  const [tab, setTab] = useState<Tab>(() => parseTab(searchParams.get('tab')));
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'profile', label: 'Profil' },
     { id: 'projects', label: 'Project' },
     { id: 'memories', label: 'Kenangan' },
+    { id: 'personalize', label: 'Personalisasi' },
   ];
 
   const selectTab = (next: Tab) => {
@@ -108,8 +110,10 @@ export default function DashboardPage() {
           <ProfilePanel />
         ) : tab === 'projects' ? (
           <ProjectsPanel />
-        ) : (
+        ) : tab === 'memories' ? (
           <MemoriesPanel />
+        ) : (
+          <PersonalizePanel />
         )}
       </div>
     </div>

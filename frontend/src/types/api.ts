@@ -1,5 +1,18 @@
 export type UserRole = 'member' | 'admin';
 
+/** Preset tema tampilan card & portofolio anggota. */
+export type MemberThemePreset =
+  'editorial' | 'midnight' | 'forest' | 'burgundy' | 'mono' | 'ocean' | 'sunset' | 'sakura';
+
+/** Kustomisasi tampilan card & portofolio anggota. */
+export type MemberTheme = {
+  preset: MemberThemePreset;
+  accent?: string;
+  bg?: string;
+  surface?: string;
+  fg?: string;
+};
+
 export type PublicUser = {
   id: string;
   name: string;
@@ -15,6 +28,8 @@ export type PublicUser = {
   instagramUrl: string | null;
   websiteUrl: string | null;
   cvUrl: string | null;
+  theme: MemberTheme | null;
+  customHtml: string | null;
   createdAt: string;
 };
 
@@ -148,6 +163,8 @@ export type ProfilePayload = {
   instagramUrl?: string | null;
   websiteUrl?: string | null;
   cvUrl?: string | null;
+  theme?: MemberTheme | null;
+  customHtml?: string | null;
 };
 
 export type ProjectPayload = {
@@ -178,13 +195,7 @@ export type UpdatePasswordPayload = {
 
 export type ValidationIssue = { path: string; message: string };
 
-export type SpotifyEntityType =
-  | 'track'
-  | 'playlist'
-  | 'album'
-  | 'artist'
-  | 'episode'
-  | 'show';
+export type SpotifyEntityType = 'track' | 'playlist' | 'album' | 'artist' | 'episode' | 'show';
 
 /** Info embed Spotify (lagu, playlist, album, artis, atau episode) dari backend. */
 export type SpotifyEmbed = {

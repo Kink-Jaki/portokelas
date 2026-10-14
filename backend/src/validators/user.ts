@@ -35,6 +35,55 @@ const spotifyUrlField = z
   .transform((value) => (value.length === 0 ? null : value))
   .nullable();
 
+const themePresets = [
+  'editorial',
+  'midnight',
+  'forest',
+  'burgundy',
+  'mono',
+  'ocean',
+  'sunset',
+  'sakura',
+] as const;
+
+const hexColor = z
+  .string()
+  .trim()
+  .regex(/^#[0-9a-fA-F]{6}$/, 'Warna harus format hex #rrggbb');
+
+const themeSchema = z
+  .object({
+    preset: z.enum(themePresets),
+    accent: hexColor.optional(),
+    bg: hexColor.optional(),
+    surface: hexColor.optional(),
+    fg: hexColor.optional(),
+  })
+  .strict();
+
+/** Buang konstruksi berbahaya dari HTML/CSS kustom anggota (sandbox, tanpa JS). */
+function sanitizeCustomHtml(value: string): string {
+  return value
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<script[^>]*>/gi, '')
+    .replace(/<\s*\/?\s*(iframe|object|embed|link|meta|base|form|template)[^>]*>/gi, '')
+    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/@import[^;]*;?/gi, '')
+    .replace(/\bexpression\s*\(/gi, '')
+    .replace(/javascript:/gi, '');
+}
+
+const customHtmlField = z
+  .string()
+  .trim()
+  .max(12000, 'Kode HTML/CSS maksimal 12000 karakter')
+  .nullable()
+  .transform((value) => {
+    if (!value) return null;
+    const cleaned = sanitizeCustomHtml(value).trim();
+    return cleaned.length === 0 ? null : cleaned;
+  });
+
 const profileFields = {
   name: z.string().trim().min(3, 'Nama minimal 3 karakter').max(80).optional(),
   alias: nullableText(40, 'Alias').optional(),
@@ -46,6 +95,8 @@ const profileFields = {
   instagramUrl: urlField.optional(),
   websiteUrl: urlField.optional(),
   cvUrl: urlField.optional(),
+  theme: themeSchema.nullable().optional(),
+  customHtml: customHtmlField.optional(),
 };
 
 export const updateProfileSchema = z

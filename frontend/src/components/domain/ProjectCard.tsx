@@ -70,7 +70,10 @@ export function ProjectCard({
   index?: number;
 }) {
   return (
-    <motion.article variants={staggerItem} className="group flex h-full flex-col bg-bg">
+    <motion.article
+      variants={staggerItem}
+      className="portfolio-card group flex h-full flex-col bg-bg"
+    >
       <Link to={href ?? projectHref(project)} className="flex flex-1 flex-col">
         <div className="relative aspect-[16/10] overflow-hidden border-b border-line bg-subtle">
           <div className="absolute inset-0 transition-transform duration-700 ease-editorial group-hover:scale-[1.04] [&>img]:opacity-90 [&>img]:grayscale group-hover:[&>img]:opacity-100 group-hover:[&>img]:grayscale-0">
@@ -139,13 +142,7 @@ export function ProjectCard({
 }
 
 /** Sorotan project pertama: komposisi dua kolom asimetris, lebih besar. */
-export function ProjectSpotlight({
-  project,
-  href,
-}: {
-  project: Project;
-  href?: string;
-}) {
+export function ProjectSpotlight({ project, href }: { project: Project; href?: string }) {
   const target = href ?? projectHref(project);
 
   return (
@@ -154,7 +151,7 @@ export function ProjectSpotlight({
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, margin: '-10% 0px' }}
-      className="group grid overflow-hidden border border-line bg-bg lg:grid-cols-2"
+      className="portfolio-card group grid overflow-hidden border border-line bg-bg lg:grid-cols-2"
     >
       <Link
         to={target}
