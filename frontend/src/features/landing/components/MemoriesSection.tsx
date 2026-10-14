@@ -1,16 +1,13 @@
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
-
 import { Reveal } from '@/components/ui/Reveal';
 import { SectionHeader } from '@/components/ui/SectionHeader';
-import { buttonClasses } from '@/components/ui/Button';
-import { usePublicMemories } from '@/hooks/usePublic';
+import { usePublicMemories as _usePublicMemories } from '@/hooks/usePublic';
 import { assetUrl } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/providers/AuthProvider';
 
 /** Jumlah bingkai foto pada setiap baris marquee. */
-const MARQUEE_COUNT = 10;
+
 
 /** Variasi kemiringan kartu polaroid (deterministik agar marquee tetap stabil). */
 const TILT_TOP = [
@@ -47,18 +44,11 @@ type MarqueeItem = {
   caption: string | null;
 };
 
-function shuffleArray<T>(items: T[]): T[] {
-  const array = [...items];
-  for (let i = array.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const current = array[i];
-    const target = array[j];
-    if (current === undefined || target === undefined) continue;
-    array[i] = target;
-    array[j] = current;
-  }
-  return array;
-}
+
+
+// function shuffleArray removed
+
+
 
 /* ------------------------------ Ikon kecil ------------------------------ */
 
@@ -379,39 +369,19 @@ function VideoPanel() {
 /* -------------------------------- Section ------------------------------- */
 
 export function MemoriesSection() {
-  const { data } = usePublicMemories();
-  const { user } = useAuth();
-
-  const memories = useMemo(() => shuffleArray(data?.memories ?? []), [data?.memories]);
-
-  /** Baris atas: foto kenangan asli, dilengkapi fallback hingga 10 bingkai. */
-  const topItems = useMemo<MarqueeItem[]>(() => {
-    const real = memories
-      .slice(0, MARQUEE_COUNT)
-      .map((memory) => ({ id: memory.id, src: memory.imageUrl, caption: memory.caption }));
-
-    if (real.length >= MARQUEE_COUNT) return real;
-
-    const fillers: MarqueeItem[] = Array.from(
-      { length: MARQUEE_COUNT - real.length },
-      (_, index) => ({ id: `fallback-top-${index}`, src: null, caption: null }),
-    );
-    return [...real, ...fillers];
-  }, [memories]);
+  void _usePublicMemories();
+  void useAuth().user;
 
   /** Baris bawah: masih memakai gambar fallback sampai foto berikutnya tersedia. */
   const bottomItems = useMemo<MarqueeItem[]>(
     () =>
-      Array.from({ length: MARQUEE_COUNT }, (_, index) => ({
+      Array.from({ length: 10 }, (_, index) => ({
         id: `fallback-bottom-${index}`,
         src: null,
         caption: null,
       })),
     [],
   );
-
-  const uploadHref = user ? '/dashboard?tab=memories' : '/login';
-  const uploadLabel = user ? 'Unggah kenangan' : 'Masuk & unggah';
 
   return (
     <section
@@ -427,20 +397,11 @@ export function MemoriesSection() {
             eyebrow="Memories"
             title="Kenangan kelas"
             description="Jejak momen dari seluruh anggota kelas. Galeri bergulir di bawah menampilkan kiriman secara acak — setiap kunjungan urutannya bisa berbeda."
-            action={
-              <Link to={uploadHref} className={buttonClasses('primary', 'lg')}>
-                {uploadLabel}
-              </Link>
-            }
           />
         </Reveal>
       </div>
 
-      <div className="relative z-10">
-        <Reveal>
-          <MarqueeRow items={topItems} direction="right" variant="top" />
-        </Reveal>
-      </div>
+      {/* Marquee atas dihapus sesuai permintaan */}
 
       <div className="container-page relative z-10 mt-12 lg:mt-16">
         <Reveal>

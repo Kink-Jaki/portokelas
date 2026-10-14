@@ -97,8 +97,9 @@ export function SectionConnector() {
         className="absolute inset-0 h-full w-full"
       >
         {/* Sage green — jalur utama */}
+        {/* Sage green — jalur utama: dari samping kiri foto About menuju pojok kanan Teacher */}
         <path
-          d="M -80 240 C 140 160 320 220 520 140 C 720 60 900 140 1120 80 C 1300 36 1480 80 1520 60"
+          d="M -40 200 C 80 140 160 100 320 120 C 560 150 760 60 1000 80 C 1240 100 1400 40 1480 30"
           fill="none"
           stroke={palette.sage}
           strokeWidth="2.0"
@@ -106,27 +107,27 @@ export function SectionConnector() {
           vectorEffect="non-scaling-stroke"
           strokeLinejoin="round"
         />
-        {/* Maroon — aksen lengkung, lebih terlihat */}
+        {/* Maroon — aksen lengkung mengikuti jalur */}
         <path
-          d="M -60 220 C 160 140 340 200 540 120 C 740 40 920 120 1140 60 C 1320 16 1500 60 1540 40"
+          d="M -30 180 C 90 120 170 80 330 100 C 570 130 770 40 1010 60 C 1250 80 1410 20 1490 10"
           fill="none"
           stroke={palette.maroon}
           strokeWidth="1.6"
           strokeLinecap="round"
           vectorEffect="non-scaling-stroke"
           strokeLinejoin="round"
-          opacity="0.85"
+          opacity="0.9"
         />
-        {/* Beige — garis pendamping lebih tegas */}
+        {/* Beige — garis pendamping */}
         <path
-          d="M -40 260 C 180 180 360 240 560 160 C 760 80 940 160 1160 100 C 1340 56 1520 100 1560 80"
+          d="M -50 220 C 70 160 150 120 310 140 C 550 170 750 80 990 100 C 1230 120 1390 60 1470 50"
           fill="none"
           stroke={palette.beige}
           strokeWidth="1.8"
           strokeLinecap="round"
           vectorEffect="non-scaling-stroke"
           strokeLinejoin="round"
-          opacity="0.9"
+          opacity="0.95"
         />
         {/* Fade out pada ujung kanan */}
         <defs>
@@ -141,48 +142,48 @@ export function SectionConnector() {
         </defs>
         <g mask="url(#connectorMask)">
           <path
-            d="M -80 240 C 140 160 320 220 520 140 C 720 60 900 140 1120 80 C 1300 36 1480 80 1520 60"
+            d="M -40 200 C 80 140 160 100 320 120 C 560 150 760 60 1000 80 C 1240 100 1400 40 1480 30"
             fill="none"
             stroke={palette.sage}
             strokeWidth="2.0"
             strokeLinecap="round"
           />
           <path
-            d="M -60 220 C 160 140 340 200 540 120 C 740 40 920 120 1140 60 C 1320 16 1500 60 1540 40"
+            d="M -30 180 C 90 120 170 80 330 100 C 570 130 770 40 1010 60 C 1250 80 1410 20 1490 10"
             fill="none"
             stroke={palette.maroon}
             strokeWidth="1.6"
             strokeLinecap="round"
-            opacity="0.85"
+            opacity="0.9"
           />
           <path
-            d="M -40 260 C 180 180 360 240 560 160 C 760 80 940 160 1160 100 C 1340 56 1520 100 1560 80"
+            d="M -50 220 C 70 160 150 120 310 140 C 550 170 750 80 990 100 C 1230 120 1390 60 1470 50"
             fill="none"
             stroke={palette.beige}
             strokeWidth="1.8"
             strokeLinecap="round"
-            opacity="0.9"
+            opacity="0.95"
           />
         </g>
       </svg>
 
-      {/* Botanical — kiri */}
-      <LeafSprig className="absolute -bottom-1 left-[2%] h-14 w-14 -rotate-12 text-[#8FA68F] opacity-70 sm:left-[4%] sm:h-20 sm:w-20 lg:h-24 lg:w-24" />
+      {/* Botanical — kiri (dekat awal garis di bawah About) */}
+      <LeafSprig className="absolute bottom-[2%] left-[4%] h-16 w-16 -rotate-12 text-[#8FA68F] opacity-80 sm:left-[6%] sm:h-20 sm:w-20 lg:h-24 lg:w-24" />
       {/* Tengah */}
-      <LeafSprig className="absolute left-[38%] top-[8%] hidden h-12 w-12 rotate-[8deg] text-[#8FA68F] opacity-60 md:block lg:h-16 lg:w-16" />
-      {/* Kanan — dekat ujung, diperkecil */}
-      <LeafSprig className="absolute -right-2 bottom-[10%] h-12 w-12 rotate-180 text-[#8FA68F] opacity-60 sm:right-[6%] sm:h-16 sm:w-16 lg:h-20 lg:w-20" />
+      <LeafSprig className="absolute left-[40%] top-[6%] hidden h-14 w-14 rotate-[10deg] text-[#8FA68F] opacity-70 md:block lg:h-18 lg:w-18" />
+      {/* Kanan — dekat ujung menuju Teacher (pojok kanan) */}
+      <LeafSprig className="absolute -right-4 top-[4%] h-16 w-16 rotate-180 text-[#8FA68F] opacity-75 sm:right-[2%] sm:h-20 sm:w-20 lg:h-24 lg:w-24" />
 
       {/* Ornamen kecil */}
-      <FourPointStar className="absolute left-[18%] top-[22%] h-3 w-3 text-[#76263D] opacity-80 sm:h-3.5 sm:w-3.5" />
-      <FourPointStar className="absolute left-[52%] bottom-[28%] hidden h-2.5 w-2.5 text-[#76263D] opacity-70 md:block" />
-      <span className="absolute left-[12%] top-[36%] h-1 w-1 rounded-full bg-[#8FA68F] opacity-70" />
-      <span className="absolute left-[46%] bottom-[20%] h-1 w-1 rounded-full bg-[#8FA68F] opacity-60" />
+      <FourPointStar className="absolute left-[16%] top-[18%] h-3.5 w-3.5 text-[#76263D] opacity-90 sm:h-4 sm:w-4" />
+      <FourPointStar className="absolute right-[28%] top-[10%] hidden h-3 w-3 text-[#76263D] opacity-80 md:block" />
+      <span className="absolute left-[10%] top-[40%] h-1.5 w-1.5 rounded-full bg-[#8FA68F] opacity-80" />
+      <span className="absolute right-[36%] top-[16%] h-1 w-1 rounded-full bg-[#8FA68F] opacity-70" />
 
-      {/* Pesawat kertas — mengarahkan pandangan ke arah Teacher */}
+      {/* Pesawat kertas — lebih besar, mengarah ke pojok kanan (area Teacher) */}
       <motion.div
-        className="absolute right-[14%] top-[10%] h-12 w-12 sm:right-[20%] sm:top-[6%] sm:h-16 sm:w-16 lg:h-18 lg:w-18"
-        animate={reduceMotion ? undefined : { y: [0, -5, 0], x: [0, 4, 0] }}
+        className="absolute right-[8%] top-[2%] h-14 w-14 sm:right-[10%] sm:top-[0%] sm:h-20 sm:w-20 lg:h-24 lg:w-24"
+        animate={reduceMotion ? undefined : { y: [0, -6, 0], x: [0, 5, 0] }}
         transition={
           reduceMotion ? undefined : { duration: 6.5, repeat: Infinity, ease: 'easeInOut' }
         }
