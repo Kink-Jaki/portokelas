@@ -76,9 +76,10 @@ export function MemberCustomHtml({
       title={title}
       srcDoc={srcDoc}
       loading="lazy"
+      scrolling="no"
       sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-      className={className ?? 'w-full border-0'}
-      style={{ minHeight: '8rem' }}
+      className={className ?? 'block w-full border-0'}
+      style={{ minHeight: '8rem', overflow: 'hidden', display: 'block' }}
     />
   );
 }

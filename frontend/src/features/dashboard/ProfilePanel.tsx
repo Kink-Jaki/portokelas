@@ -5,20 +5,23 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea } from '@/components/ui/Field';
 import { Avatar } from '@/components/ui/Avatar';
+import { ImageCropDialog } from '@/components/ui/ImageCropDialog';
 import { ApiError } from '@/lib/api';
+import { isSupportedImage, SUPPORTED_IMAGE_TYPES } from '@/lib/image';
 import { useUpdateProfile, useUploadAvatar } from '@/hooks/useApi';
 import { formatDate } from '@/lib/utils';
 import { useAuth } from '@/providers/AuthProvider';
 import { profileSchema, type ProfileFormValues } from '@/features/auth/schemas';
 import type { ProfilePayload } from '@/types/api';
 
-const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
+const AVATAR_ACCEPT = SUPPORTED_IMAGE_TYPES.join(',');
 
 export function ProfilePanel() {
   const { user } = useAuth();
   const updateProfile = useUpdateProfile();
   const uploadAvatar = useUploadAvatar();
   const [avatarError, setAvatarError] = useState<string | null>(null);
+  const [cropFile, setCropFile] = useState<File | null>(null);
 
   const {
     register,
@@ -89,17 +92,18 @@ export function ProfilePanel() {
     event.target.value = '';
     if (!file) return;
 
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    if (!isSupportedImage(file)) {
       setAvatarError('Format harus JPG, PNG, atau WEBP.');
-      return;
-    }
-    if (file.size > MAX_AVATAR_BYTES) {
-      setAvatarError('Ukuran maksimal 2MB.');
       return;
     }
 
     setAvatarError(null);
-    uploadAvatar.mutate(file);
+    setCropFile(file);
+  };
+
+  const onCropConfirm = (cropped: File) => {
+    setCropFile(null);
+    uploadAvatar.mutate(cropped);
   };
 
   if (!user) return null;
@@ -115,12 +119,14 @@ export function ProfilePanel() {
             </label>
             <input
               type="file"
-              accept="image/jpeg,image/png,image/webp"
+              accept={AVATAR_ACCEPT}
               onChange={onAvatarChange}
               disabled={uploadAvatar.isPending}
               className="block w-full text-xs text-muted file:mr-3 file:rounded-sm file:border file:border-line-strong file:bg-subtle file:px-3 file:py-1.5 file:text-xs file:text-fg hover:file:border-fg"
             />
-            <p className="text-xs text-muted">JPG/PNG/WEBP, maksimal 2MB.</p>
+            <p className="text-xs text-muted">
+              JPG/PNG/WEBP. Foto bisa dipotong lalu otomatis dikonversi ke WEBP.
+            </p>
             {avatarError ? (
               <p className="text-xs text-danger" role="alert">
                 {avatarError}
@@ -244,6 +250,13 @@ export function ProfilePanel() {
           ) : null}
         </div>
       </form>
+
+      <ImageCropDialog
+        open={cropFile !== null}
+        file={cropFile}
+        onCancel={() => setCropFile(null)}
+        onConfirm={onCropConfirm}
+      />
     </div>
   );
 }

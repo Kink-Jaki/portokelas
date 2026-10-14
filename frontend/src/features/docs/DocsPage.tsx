@@ -1,12 +1,10 @@
 ﻿import { Link } from 'react-router-dom';
 
-import { SiteFooter, SiteHeader } from '@/components/layout/SiteHeader';
+import { CardSandboxPlayground } from '@/features/docs/CardSandboxPlayground';
 
 export default function DocsPage() {
   return (
-    <>
-      <SiteHeader />
-      <main className="relative min-h-[calc(100vh-80px)] bg-gradient-to-b from-ivory to-ivory-alt/40">
+    <div className="relative min-h-[calc(100vh-80px)] bg-gradient-to-b from-ivory to-ivory-alt/40">
         <div className="container-page py-12 lg:py-16">
           <header className="mb-12 text-center">
             <p className="eyebrow inline-flex items-center rounded-full border border-line bg-ivory px-3 py-1 shadow-sm">
