@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { assetUrl } from '@/lib/api';
 import { cn, initials } from '@/lib/utils';
+import { themeToCssVars } from '@/lib/theme';
 import type { PublicUser } from '@/types/api';
 
 function GitHubIcon() {
@@ -16,7 +17,15 @@ function GitHubIcon() {
 function InstagramIcon() {
   return (
     <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden>
-      <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5" stroke="currentColor" strokeWidth="1.6" />
+      <rect
+        x="3.2"
+        y="3.2"
+        width="17.6"
+        height="17.6"
+        rx="5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
       <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.6" />
       <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" />
     </svg>
@@ -58,7 +67,7 @@ function SocialButton({
 
   const toneClasses =
     tone === 'filled'
-      ? 'border border-forest bg-forest text-ivory-warm hover:border-[#183328] hover:bg-[#183328]'
+      ? 'border border-forest bg-forest text-ivory-warm hover:border-forest hover:bg-forest hover:opacity-90'
       : 'border border-forest bg-transparent text-forest hover:border-forest hover:bg-forest hover:text-ivory-warm';
 
   return (
@@ -91,7 +100,10 @@ export function ClassMemberCard({ member, index }: { member: PublicUser; index?:
   const badgeTone = (index ?? 0) % 2 === 0 ? 'bg-maroon' : 'bg-forest';
 
   return (
-    <article className="group relative flex h-full flex-col rounded-2xl border border-line bg-elevated p-5 outline-none transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-forest/50 hover:shadow-[0_26px_48px_-36px_rgba(24,51,40,0.5)] motion-reduce:transform-none motion-reduce:transition-none sm:p-6">
+    <article
+      className="member-card group relative flex h-full flex-col rounded-2xl border border-line bg-elevated p-5 text-fg outline-none transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-forest/50 hover:shadow-[0_26px_48px_-36px_rgba(24,51,40,0.5)] motion-reduce:transform-none motion-reduce:transition-none sm:p-6"
+      style={themeToCssVars(member.theme)}
+    >
       <Link
         to={`/m/${member.slug}`}
         aria-label={`Buka portofolio ${name}`}
@@ -157,7 +169,12 @@ export function ClassMemberCard({ member, index }: { member: PublicUser; index?:
         <span aria-hidden className="mt-4 block h-px w-11 bg-maroon/70" />
 
         <div className="relative z-20 mt-4 flex gap-3">
-          <SocialButton href={member.githubUrl} label="GitHub" icon={<GitHubIcon />} tone="filled" />
+          <SocialButton
+            href={member.githubUrl}
+            label="GitHub"
+            icon={<GitHubIcon />}
+            tone="filled"
+          />
           <SocialButton
             href={member.instagramUrl}
             label="Instagram"

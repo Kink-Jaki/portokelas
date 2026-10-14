@@ -3,6 +3,7 @@ import {
   boolean,
   index,
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   text,
@@ -12,6 +13,33 @@ import {
 } from 'drizzle-orm/pg-core';
 
 export const userRole = pgEnum('user_role', ['member', 'admin']);
+
+/** Preset tema tampilan card & portofolio anggota. */
+export const THEME_PRESETS = [
+  'editorial',
+  'midnight',
+  'forest',
+  'burgundy',
+  'mono',
+  'ocean',
+  'sunset',
+  'sakura',
+] as const;
+
+export type ThemePreset = (typeof THEME_PRESETS)[number];
+
+/** Kustomisasi tampilan card & portofolio anggota. */
+export type MemberTheme = {
+  preset: ThemePreset;
+  /** Warna aksen (hex #rrggbb), menimpa preset bila diisi. */
+  accent?: string;
+  /** Warna latar halaman (hex #rrggbb). */
+  bg?: string;
+  /** Warna permukaan card (hex #rrggbb). */
+  surface?: string;
+  /** Warna teks utama (hex #rrggbb). */
+  fg?: string;
+};
 
 export const users = pgTable(
   'users',
@@ -33,6 +61,8 @@ export const users = pgTable(
     instagramUrl: text('instagram_url'),
     websiteUrl: text('website_url'),
     cvUrl: text('cv_url'),
+    theme: jsonb('theme').$type<MemberTheme>(),
+    customHtml: text('custom_html'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
@@ -223,6 +253,8 @@ export const publicUserColumns = {
   instagramUrl: users.instagramUrl,
   websiteUrl: users.websiteUrl,
   cvUrl: users.cvUrl,
+  theme: users.theme,
+  customHtml: users.customHtml,
   createdAt: users.createdAt,
 } as const;
 
@@ -243,6 +275,8 @@ export type PublicUser = Pick<
   | 'instagramUrl'
   | 'websiteUrl'
   | 'cvUrl'
+  | 'theme'
+  | 'customHtml'
   | 'createdAt'
 >;
 
