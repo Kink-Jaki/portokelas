@@ -63,6 +63,15 @@ export function useMembers(search: string, page: number) {
   });
 }
 
+/** Daftar anggota untuk landing — sengaja lebih banyak agar card terisi terprioritaskan. */
+export function useLandingMembers(limit = 48) {
+  return useQuery({
+    queryKey: queryKeys.landingMembers,
+    queryFn: () => api.get<Paginated<PublicUser>>(`/members${buildQuery({ page: 1, limit })}`),
+    staleTime: 60_000,
+  });
+}
+
 export function useMember(slug: string) {
   return useQuery({
     queryKey: queryKeys.member(slug),

@@ -27,7 +27,7 @@ export function StatsSection() {
             index="04"
             eyebrow="Statistik"
             title="Craftly dalam angka"
-            description="Direktori publik memutakhirkan jumlah kreator dan project yang tayang secara otomatis — tanpa perlu hitung manual."
+            description="Direktori publik memutakhirkan jumlah anggota dan project yang tayang secara otomatis — tanpa perlu hitung manual."
           />
         </Reveal>
 
@@ -35,7 +35,7 @@ export function StatsSection() {
 
         <div className="mt-12 grid gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
           <Reveal>
-            <StatBlock value={isLoading ? undefined : data?.members} label="Kreator" />
+            <StatBlock value={isLoading ? undefined : data?.members} label="Anggota" />
           </Reveal>
           <Reveal delay={0.08}>
             <StatBlock value={isLoading ? undefined : data?.projects} label="Project tayang" />
@@ -43,7 +43,7 @@ export function StatsSection() {
           <Reveal delay={0.16} className="sm:col-span-2">
             <div className="flex h-full flex-col justify-between gap-8 bg-bg p-8">
               <p className="max-w-md text-sm leading-relaxed text-muted">
-                Semua kreator tampil di direktori publik. Project yang disembunyikan moderator tidak
+                Semua anggota tampil di direktori publik. Project yang disembunyikan moderator tidak
                 ikut tayang.
               </p>
               <Link to="/login" className={buttonClasses('outline', 'sm', 'self-start')}>

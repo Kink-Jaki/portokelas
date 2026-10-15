@@ -106,7 +106,7 @@ export function AdminUserDialog({
     <Modal
       open={open}
       onClose={onClose}
-      title="Edit profil kreator"
+      title="Edit profil anggota"
       description={`${user.name} · ${user.nim ? `NIS ${user.nim}` : user.email}`}
       size="lg"
       footer={
@@ -152,7 +152,7 @@ export function AdminUserDialog({
         <Select
           label="Role"
           options={[
-            { value: 'member', label: 'Kreator' },
+            { value: 'member', label: 'Anggota' },
             { value: 'admin', label: 'Admin (Dev)' },
           ]}
           {...register('role')}

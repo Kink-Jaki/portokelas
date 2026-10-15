@@ -25,6 +25,8 @@ export const queryKeys = {
   hero: ['public', 'hero'] as const,
   teachers: ['public', 'teachers'] as const,
   members: (search: string, page: number) => ['public', 'members', { search, page }] as const,
+  membersAll: ['public', 'members'] as const,
+  landingMembers: ['public', 'members', 'landing'] as const,
   member: (slug: string) => ['public', 'member', slug] as const,
   memberProjects: (slug: string) => ['public', 'member', slug, 'projects'] as const,
   project: (idOrSlug: string) => ['public', 'project', idOrSlug] as const,
@@ -35,4 +37,8 @@ export const queryKeys = {
   adminUsers: (search: string, page: number) => ['admin', 'users', { search, page }] as const,
   adminProjects: (search: string, hidden: string | undefined, page: number) =>
     ['admin', 'projects', { search, hidden, page }] as const,
+  nglSettings: ['public', 'ngl', 'settings'] as const,
+  nglInbox: (page: number) => ['ngl', 'messages', { page }] as const,
+  adminNglMessages: (page: number) => ['admin', 'ngl', 'messages', { page }] as const,
+  adminNglReports: ['admin', 'ngl', 'reports'] as const,
 };

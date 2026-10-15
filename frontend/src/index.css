@@ -105,6 +105,20 @@
   --seam-gap: 14px;
   --seam-dash: 62px;
 
+  /* Kanvas landing — satu gradasi vertikal panjang yang mengalir dari atas
+     ke bawah sehingga semua section terasa menyatu. Warna disimpan sebagai
+     variabel agar transisi antar section mudah disetel. */
+  --bg-cream: #f7f2e8;
+  --bg-cream-warm: #f4efe2;
+  --bg-sage: #e6edda;
+  --bg-sage-mid: #e3ebd7;
+  --bg-sage-soft: #edf0e2;
+  --bg-sand: #f5efe2;
+  --bg-blush: #f3e7e2;
+
+  /* Irama vertikal seragam antar section landing. */
+  --section-pad: clamp(80px, 10vw, 140px);
+
   /* Grain halus untuk permukaan kertas (dipakai via .paper). */
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
 
@@ -299,6 +313,78 @@
   .paper {
     background-image: var(--grain);
     background-size: 140px 140px;
+  }
+
+  /* Kanvas landing — SATU latar global untuk seluruh halaman invintasi.
+     Gradasi vertikal panjang dengan banyak color stop berdekatan membuat
+     perubahan warna mengalir halus (tanpa banding), lalu beberapa
+     radial-gradient besar beropasitas rendah bertindak sebagai "awan warna"
+     agar permukaan tidak terasa datar. Grain 5% ikut serta mencegah banding.
+     overflow-x: clip menahan bleed ornamen horizontal tanpa memotongnya
+     secara vertikal (berbeda dari overflow-x: hidden yang memaksa scroll). */
+  .landing-canvas {
+    position: relative;
+    isolation: isolate;
+    overflow-x: clip;
+    background-color: var(--bg-cream);
+    background-image:
+      var(--grain),
+      radial-gradient(58% 15% at 12% 12%, rgba(141, 165, 139, 0.2) 0%, rgba(141, 165, 139, 0) 72%),
+      radial-gradient(52% 13% at 88% 32%, rgba(201, 165, 106, 0.14) 0%, rgba(201, 165, 106, 0) 72%),
+      radial-gradient(62% 16% at 6% 50%, rgba(220, 229, 213, 0.6) 0%, rgba(220, 229, 213, 0) 74%),
+      radial-gradient(56% 14% at 94% 60%, rgba(112, 31, 53, 0.07) 0%, rgba(112, 31, 53, 0) 72%),
+      radial-gradient(64% 17% at 44% 80%, rgba(141, 165, 139, 0.22) 0%, rgba(141, 165, 139, 0) 74%),
+      radial-gradient(50% 12% at 6% 95%, rgba(215, 173, 93, 0.14) 0%, rgba(215, 173, 93, 0) 72%),
+      linear-gradient(
+        180deg,
+        var(--bg-cream) 0%,
+        var(--bg-cream-warm) 8%,
+        #f2edde 16%,
+        var(--bg-sage-soft) 25%,
+        #e9efdd 34%,
+        var(--bg-sage-mid) 44%,
+        var(--bg-sage) 52%,
+        #eaeee0 60%,
+        #f0ecdf 68%,
+        var(--bg-sand) 76%,
+        #f6f0e5 84%,
+        var(--bg-blush) 90%,
+        var(--bg-cream) 100%
+      );
+    background-size:
+      140px 140px,
+      auto,
+      auto,
+      auto,
+      auto,
+      auto,
+      auto,
+      auto;
+    background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat,
+      no-repeat;
+  }
+
+  /* Section landing melebur ke kanvas: tanpa latar solid, tanpa tekstur lokal.
+     Hanya di dalam kanvas, sehingga palet section lain (mis. MembersPage)
+     tetap utuh. */
+  .landing-canvas .section-teacher,
+  .landing-canvas .section-members,
+  .landing-canvas .section-memories {
+    background-color: transparent;
+    background-image: none;
+  }
+
+  /* Irama vertikal seragam antar section landing. */
+  .section-pad {
+    padding-block: var(--section-pad);
+  }
+
+  .section-pad-top {
+    padding-top: var(--section-pad);
+  }
+
+  .section-pad-bottom {
+    padding-bottom: var(--section-pad);
   }
 
   /* Ornamen sambungan Hero ↔ About.
@@ -496,7 +582,7 @@
     background-repeat: repeat, no-repeat, no-repeat;
   }
 
-  /* Section Mentor — palet cream hangat / forest green / maroon yang
+  /* Section Wali Kelas — palet cream hangat / forest green / maroon yang
      terkunci. Semua variabel dipetakan ulang di sini agar utilities bg-bg,
      text-fg, border-line, text-maroon, bg-pine otomatis memakai palet ini.
      Nilai --teacher-* diisolasi hanya untuk section ini. */
@@ -603,6 +689,46 @@
     --accent: #701f35;
     --accent-soft: rgba(112, 31, 53, 0.1);
     --terracotta: #701f35;
+  }
+
+  /* Sidebar aplikasi — memakai palet landing (ivory/forest/maroon) agar rail
+     kiri menyatu dengan tema halaman invintasi. Utilities bg-bg, text-fg,
+     border-line, dan turunan aksen otomatis ikut karena token dipetakan ulang
+     di sini. Disimpan terpisah dari .section-light agar bisa disetel sendiri. */
+  .section-sidebar {
+    --bg: #f7f3e8;
+    --bg-subtle: #f0e9d9;
+    --bg-elevated: #fffcf4;
+    --fg: #193d32;
+    --fg-muted: #776f60;
+    --line: #e2d8c6;
+    --line-strong: #c6b89f;
+    --invert-bg: #193d32;
+    --invert-fg: #f7f3e8;
+    --accent: #7a2435;
+    --accent-fg: #fbf8f2;
+    --accent-soft: rgba(122, 36, 53, 0.1);
+    --danger: #b42318;
+    --success: #2f6b3a;
+
+    /* Alias palet landing yang dipakai lintas komponen. */
+    --ivory: #f7f3e8;
+    --ivory-alt: #f0e9d9;
+    --ivory-warm: #fffcf4;
+    --forest: #193d32;
+    --forest-soft: #31594a;
+    --burgundy: #7a2435;
+    --burgundy-dark: #5e1b29;
+    --terracotta: #7a2435;
+    --maroon: #701f35;
+    --pine: #193d32;
+    --sage: #8da58b;
+    --gold: #c9a56a;
+    --moss: #776f60;
+    --line-warm: #d8d0c0;
+
+    background-color: var(--bg-subtle);
+    color: var(--fg);
   }
 
   /* Section footer — campuran maroon dominan dengan semburat cream & hijau.

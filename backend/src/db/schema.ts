@@ -1,6 +1,7 @@
 import { relations, sql } from 'drizzle-orm';
 import {
   boolean,
+  check,
   index,
   integer,
   jsonb,
@@ -14,7 +15,7 @@ import {
 
 export const userRole = pgEnum('user_role', ['member', 'admin']);
 
-/** Preset tema tampilan card & portofolio kreator. */
+/** Preset tema tampilan card & portofolio anggota. */
 export const THEME_PRESETS = [
   'editorial',
   'midnight',
@@ -28,7 +29,7 @@ export const THEME_PRESETS = [
 
 export type ThemePreset = (typeof THEME_PRESETS)[number];
 
-/** Kustomisasi tampilan card & portofolio kreator. */
+/** Kustomisasi tampilan card & portofolio anggota. */
 export type MemberTheme = {
   preset: ThemePreset;
   /** Warna aksen (hex #rrggbb), menimpa preset bila diisi. */
@@ -122,7 +123,7 @@ export const projectImages = pgTable(
   ],
 );
 
-/** Kolaborator project — kreator lain yang ikut mengerjakan project bersama. */
+/** Kolaborator project — anggota lain yang ikut mengerjakan project bersama. */
 export const projectCollaborators = pgTable(
   'project_collaborators',
   {
@@ -160,7 +161,7 @@ export const heroes = pgTable('heroes', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
-/** Mentor yang tampil di carousel landing page. */
+/** Wali Kelas yang tampil di carousel landing page. */
 export const teachers = pgTable(
   'teachers',
   {
@@ -175,7 +176,7 @@ export const teachers = pgTable(
   (table) => [index('teachers_sort_order_idx').on(table.sortOrder)],
 );
 
-/** Kenangan/album foto yang diunggah kreator untuk carousel landing page. */
+/** Kenangan/album foto yang diunggah anggota untuk carousel landing page. */
 export const memories = pgTable(
   'memories',
   {
@@ -190,6 +191,89 @@ export const memories = pgTable(
   (table) => [
     index('memories_user_id_idx').on(table.userId),
     index('memories_created_at_idx').on(table.createdAt),
+  ],
+);
+
+/* ------------------------------- Craftly NGL ------------------------------- */
+
+/** Status laporan pesan NGL. */
+export const MESSAGE_REPORT_STATUSES = ['pending', 'resolved', 'dismissed'] as const;
+export type MessageReportStatus = (typeof MESSAGE_REPORT_STATUSES)[number];
+
+/** Pengaturan aplikasi global (key/value JSON) — mis. `ngl_enabled`. */
+export const appSettings = pgTable('app_settings', {
+  key: text('key').primaryKey(),
+  value: jsonb('value').$type<unknown>().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/**
+ * Pesan anonim Craftly NGL. Tidak pernah menyimpan identitas pengirim —
+ * `ip_hash` = SHA-256(IP + salt) dan hanya dipakai untuk rate limit.
+ */
+export const nglMessages = pgTable(
+  'ngl_messages',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    content: text('content'),
+    spotifyType: text('spotify_type'),
+    spotifyId: text('spotify_id'),
+    imagePath: text('image_path'),
+    isHidden: boolean('is_hidden').notNull().default(false),
+    ipHash: text('ip_hash'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    check(
+      'ngl_messages_has_payload',
+      sql`${table.content} is not null or ${table.spotifyId} is not null or ${table.imagePath} is not null`,
+    ),
+    index('ngl_messages_created_at_idx').on(table.createdAt),
+    index('ngl_messages_is_hidden_idx').on(table.isHidden),
+  ],
+);
+
+/** Penanda pesan sudah dibaca — unik per kombinasi pesan + user. */
+export const messageReads = pgTable(
+  'message_reads',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    messageId: uuid('message_id')
+      .notNull()
+      .references(() => nglMessages.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    readAt: timestamp('read_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('message_reads_message_user_unique').on(table.messageId, table.userId),
+    index('message_reads_message_id_idx').on(table.messageId),
+    index('message_reads_user_id_idx').on(table.userId),
+  ],
+);
+
+/** Laporan pesan NGL — satu user hanya boleh melaporkan satu pesan sekali. */
+export const messageReports = pgTable(
+  'message_reports',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    messageId: uuid('message_id')
+      .notNull()
+      .references(() => nglMessages.id, { onDelete: 'cascade' }),
+    reporterUserId: uuid('reporter_user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    reason: text('reason').notNull(),
+    note: text('note'),
+    status: text('status').notNull().default('pending'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('message_reports_message_reporter_unique').on(table.messageId, table.reporterUserId),
+    index('message_reports_message_id_idx').on(table.messageId),
+    index('message_reports_reporter_user_id_idx').on(table.reporterUserId),
+    index('message_reports_status_idx').on(table.status),
   ],
 );
 
@@ -218,6 +302,21 @@ export const memoriesRelations = relations(memories, ({ one }) => ({
   author: one(users, { fields: [memories.userId], references: [users.id] }),
 }));
 
+export const nglMessagesRelations = relations(nglMessages, ({ many }) => ({
+  reads: many(messageReads),
+  reports: many(messageReports),
+}));
+
+export const messageReadsRelations = relations(messageReads, ({ one }) => ({
+  message: one(nglMessages, { fields: [messageReads.messageId], references: [nglMessages.id] }),
+  user: one(users, { fields: [messageReads.userId], references: [users.id] }),
+}));
+
+export const messageReportsRelations = relations(messageReports, ({ one }) => ({
+  message: one(nglMessages, { fields: [messageReports.messageId], references: [nglMessages.id] }),
+  reporter: one(users, { fields: [messageReports.reporterUserId], references: [users.id] }),
+}));
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Project = typeof projects.$inferSelect;
@@ -234,6 +333,14 @@ export type Teacher = typeof teachers.$inferSelect;
 export type NewTeacher = typeof teachers.$inferInsert;
 export type Memory = typeof memories.$inferSelect;
 export type NewMemory = typeof memories.$inferInsert;
+export type AppSetting = typeof appSettings.$inferSelect;
+export type NewAppSetting = typeof appSettings.$inferInsert;
+export type NglMessage = typeof nglMessages.$inferSelect;
+export type NewNglMessage = typeof nglMessages.$inferInsert;
+export type MessageRead = typeof messageReads.$inferSelect;
+export type NewMessageRead = typeof messageReads.$inferInsert;
+export type MessageReport = typeof messageReports.$inferSelect;
+export type NewMessageReport = typeof messageReports.$inferInsert;
 
 export type UserRole = User['role'];
 

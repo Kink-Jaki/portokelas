@@ -3,9 +3,10 @@ import path from 'node:path';
 
 import { env } from '../env.js';
 import { AppError } from '../lib/errors.js';
+import { stripImageMetadata } from '../lib/image-metadata.js';
 import { getBindings, type KVNamespaceBinding, type R2BucketBinding } from '../runtime.js';
 
-export type UploadKind = 'avatars' | 'projects' | 'content' | 'memories';
+export type UploadKind = 'avatars' | 'projects' | 'content' | 'memories' | 'ngl';
 
 const CACHE_CONTROL = 'public, max-age=31536000, immutable';
 
@@ -107,10 +108,56 @@ function assertUploadShape(file: File, maxBytes: number): void {
 /** Batas unggahan foto profil yang lebih longgar (foto langsung dari kamera/HP). */
 export const AVATAR_MAX_BYTES = 20 * 1024 * 1024;
 
+/** Tulis byte gambar (sudah divalidasi) ke storage dengan nama acak. */
+async function storeBytes(
+  bytes: Uint8Array,
+  kind: UploadKind,
+  extension: string,
+  mime: string,
+): Promise<string> {
+  const key = `${kind}/${crypto.randomUUID()}.${extension}`;
+  const bucket = getBucket();
+  const kv = getKv();
+
+  if (bucket) {
+    await bucket.put(key, bytes, {
+      httpMetadata: { contentType: mime, cacheControl: CACHE_CONTROL },
+    });
+  } else if (kv) {
+    await kv.put(key, bytes);
+  } else {
+    const absolutePath = resolveWithinRoot(key);
+    if (!absolutePath) throw AppError.internal('Path unggahan tidak valid.');
+    await mkdir(path.dirname(absolutePath), { recursive: true });
+    await writeFile(absolutePath, bytes, { flag: 'wx' });
+  }
+
+  return `/uploads/${key}`;
+}
+
+/**
+ * Simpan byte gambar mentah sebagai file gambar. Magic bytes diverifikasi,
+ * metadata EXIF/XMP dibuang, lalu disimpan dengan nama acak. Cocok untuk
+ * endpoint yang sudah mengatur batas ukurannya sendiri (mis. NGL).
+ */
+export async function saveImageBytes(bytes: Uint8Array, kind: UploadKind): Promise<string> {
+  const realMime = detectImageMime(bytes.subarray(0, 16));
+  if (!realMime) {
+    throw AppError.badRequest('Isi file bukan gambar JPG/PNG/WEBP yang valid.');
+  }
+
+  const extension = ALLOWED_MIME.get(realMime);
+  if (!extension) throw AppError.badRequest('Format file tidak didukung.');
+
+  const stripped = stripImageMetadata(bytes, realMime);
+  return storeBytes(stripped, kind, extension, realMime);
+}
+
 /**
  * Simpan file gambar (R2 bila tersedia, jika tidak ke disk lokal) dengan nama
  * acak. Mengembalikan path relatif `/uploads/...` yang siap dipakai sebagai URL.
- * `options.maxBytes` menimpa batas ukuran default untuk unggahan tertentu.
+ * Metadata EXIF/XMP dibuang untuk semua unggahan. `options.maxBytes` menimpa
+ * batas ukuran default untuk unggahan tertentu.
  */
 export async function saveImage(
   file: File,
@@ -140,24 +187,8 @@ export async function saveImage(
   const extension = ALLOWED_MIME.get(realMime);
   if (!extension) throw AppError.badRequest('Format file tidak didukung.');
 
-  const key = `${kind}/${crypto.randomUUID()}.${extension}`;
-  const bucket = getBucket();
-  const kv = getKv();
-
-  if (bucket) {
-    await bucket.put(key, bytes, {
-      httpMetadata: { contentType: realMime, cacheControl: CACHE_CONTROL },
-    });
-  } else if (kv) {
-    await kv.put(key, bytes);
-  } else {
-    const absolutePath = resolveWithinRoot(key);
-    if (!absolutePath) throw AppError.internal('Path unggahan tidak valid.');
-    await mkdir(path.dirname(absolutePath), { recursive: true });
-    await writeFile(absolutePath, bytes, { flag: 'wx' });
-  }
-
-  return `/uploads/${key}`;
+  const stripped = stripImageMetadata(bytes, realMime);
+  return storeBytes(stripped, kind, extension, realMime);
 }
 
 export type StoredUpload = {

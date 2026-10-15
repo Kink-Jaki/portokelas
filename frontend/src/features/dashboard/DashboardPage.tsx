@@ -40,7 +40,7 @@ export default function DashboardPage() {
   return (
     <div className="container-page py-14">
       <motion.header variants={fadeUp} initial="hidden" animate="show" className="max-w-2xl">
-        <p className="eyebrow">Dashboard kreator</p>
+        <p className="eyebrow">Dashboard anggota</p>
         <h1 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">
           Halo, {user?.name.split(' ')[0]}.
         </h1>

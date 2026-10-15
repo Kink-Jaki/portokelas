@@ -105,7 +105,7 @@ export function IntroOverlay({ onDone }: { onDone: () => void }) {
           variants={item}
           className="mt-7 max-w-xl text-sm leading-[1.7] text-forest-soft sm:text-base"
         >
-          Craftly, Beragam Kreator, Sejuta Karya.
+          Craftly, Beragam Anggota, Sejuta Karya.
         </motion.p>
       </motion.div>
     </motion.div>

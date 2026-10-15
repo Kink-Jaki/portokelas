@@ -67,6 +67,52 @@ export function buildSpotifyEmbedUrl(url: string): string | null {
     : null;
 }
 
+/** Jenis entity yang diterima untuk pesan NGL (tanpa artis & show). */
+export const NGL_SPOTIFY_TYPES = ['track', 'album', 'playlist', 'episode'] as const;
+export type NglSpotifyType = (typeof NGL_SPOTIFY_TYPES)[number];
+
+/**
+ * Validasi tautan Spotify dari pengguna NGL: wajib domain open.spotify.com
+ * dan salah satu jenis track/album/playlist/episode. Mengembalikan tipe + ID
+ * yang sudah tervalidasi (bukan URL mentah).
+ */
+export function parseNglSpotifyUrl(
+  value: string,
+): { type: NglSpotifyType; id: string } | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  let url: URL;
+  try {
+    url = new URL(trimmed);
+  } catch {
+    return null;
+  }
+
+  if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
+
+  const host = url.hostname.toLowerCase();
+  if (host !== 'open.spotify.com' && host !== 'www.open.spotify.com') return null;
+
+  const segments = url.pathname.split('/').filter(Boolean);
+  for (let index = 0; index < segments.length; index += 1) {
+    const segment = segments[index];
+    const id = segments[index + 1];
+    if (!segment || !id) continue;
+    if ((NGL_SPOTIFY_TYPES as readonly string[]).includes(segment)) {
+      if (!/^[A-Za-z0-9]{8,}$/.test(id)) return null;
+      return { type: segment as NglSpotifyType, id };
+    }
+  }
+
+  return null;
+}
+
+/** URL embed minimal (tanpa autoplay) untuk pratinjau & kotak NGL. */
+export function buildNglSpotifyEmbedUrl(type: NglSpotifyType, id: string): string {
+  return `https://open.spotify.com/embed/${type}/${id}?theme=0`;
+}
+
 async function fetchWithTimeout(url: string): Promise<Response | null> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 3000);

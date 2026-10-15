@@ -23,9 +23,9 @@ export function AdminMemoriesPanel() {
     <div className="space-y-6">
       <div>
         <p className="eyebrow">Kenangan</p>
-        <h2 className="font-display text-2xl">Manajemen kenangan kreator</h2>
+        <h2 className="font-display text-2xl">Manajemen kenangan anggota</h2>
         <p className="mt-1 text-sm text-muted">
-          Semua foto kenangan kreator. Anda dapat menghapus kiriman yang tidak pantas.
+          Semua foto kenangan anggota. Anda dapat menghapus kiriman yang tidak pantas.
         </p>
       </div>
 
@@ -77,7 +77,7 @@ export function AdminMemoriesPanel() {
                       {memory.author.alias ?? memory.author.name}
                     </Link>
                   ) : (
-                    'Kreator dihapus'
+                    'Anggota dihapus'
                   )}
                 </p>
               </div>

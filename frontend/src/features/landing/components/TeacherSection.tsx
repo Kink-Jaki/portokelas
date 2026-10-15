@@ -62,7 +62,7 @@ function TeacherName({ name }: { name: string }) {
 /** Ornamen botanical sudut section — selalu di belakang konten. */
 function TeacherOrnaments() {
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
       {/* Kiri atas — lengkung organik maroon */}
       <svg
         viewBox="0 0 260 260"
@@ -229,11 +229,11 @@ export function TeacherSection() {
       >
         <div className="space-y-3 text-muted">
           <p className="font-display text-2xl text-pine">
-            {isLoading ? 'Memuat mentor…' : 'Belum ada data mentor'}
+            {isLoading ? 'Memuat wali kelas…' : 'Belum ada data wali kelas'}
           </p>
           {!isLoading ? (
             <p className="max-w-sm text-sm leading-relaxed">
-              Tambahkan mentor lewat panel admin agar carousel ini tampil.
+              Tambahkan wali kelas lewat panel admin agar carousel ini tampil.
             </p>
           ) : null}
         </div>
@@ -273,7 +273,7 @@ export function TeacherSection() {
           onScroll={handleScroll}
           className="flex w-full snap-x snap-mandatory items-start gap-3 overflow-x-auto"
           role="group"
-          aria-label="Carousel foto mentor"
+          aria-label="Carousel foto wali kelas"
         >
           {teachers.map((teacher) => (
             <div
@@ -295,7 +295,7 @@ export function TeacherSection() {
               type="button"
               onClick={() => goTo(active - 1)}
               disabled={active <= 0}
-              aria-label="Foto mentor sebelumnya"
+              aria-label="Foto wali kelas sebelumnya"
               className="grid h-10 w-10 place-items-center rounded-[3px] border border-line bg-bg text-maroon transition-colors duration-200 hover:border-maroon hover:bg-maroon hover:text-ivory-warm disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ArrowIcon direction="left" />
@@ -304,7 +304,7 @@ export function TeacherSection() {
               type="button"
               onClick={() => goTo(active + 1)}
               disabled={active >= maxIndex}
-              aria-label="Foto mentor berikutnya"
+              aria-label="Foto wali kelas berikutnya"
               className="grid h-10 w-10 place-items-center rounded-[3px] border border-pine bg-pine text-ivory-warm transition-colors duration-200 hover:border-pine-deep hover:bg-pine-deep disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ArrowIcon direction="right" />
@@ -316,19 +316,19 @@ export function TeacherSection() {
 
   return (
     <section
-      id="mentor"
-      className="section-teacher relative isolate overflow-hidden"
+      id="wali-kelas"
+      className="section-teacher relative isolate overflow-visible"
     >
       <TeacherOrnaments />
 
-      <div className="container-page relative z-10 grid items-center gap-10 py-16 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-16 lg:py-24">
+      <div className="container-page section-pad relative z-10 grid items-center gap-10 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-16">
         <Reveal>{carousel}</Reveal>
 
         <Reveal delay={0.08}>
           <p className="eyebrow flex items-center gap-3 text-pine">
             <span className="index-num">02</span>
             <span aria-hidden className="h-px w-6 bg-gold" />
-            Mentor
+            Wali Kelas
           </p>
 
           <div className="mt-6 min-h-56 sm:min-h-52">
@@ -352,8 +352,8 @@ export function TeacherSection() {
             ) : (
               <p className="max-w-xl text-base leading-[1.75] text-moss">
                 {isLoading
-                  ? 'Memuat data mentor…'
-                  : 'Nama dan deskripsi mentor akan tampil di sini setelah ditambahkan lewat panel admin.'}
+                  ? 'Memuat data wali kelas…'
+                  : 'Nama dan deskripsi wali kelas akan tampil di sini setelah ditambahkan lewat panel admin.'}
               </p>
             )}
           </div>
@@ -361,14 +361,14 @@ export function TeacherSection() {
           {total > 0 ? (
             <div className="mt-8 flex flex-wrap items-center gap-4">
               {positions > 1 ? (
-                <div className="flex items-center gap-2" role="tablist" aria-label="Pilih mentor">
+                <div className="flex items-center gap-2" role="tablist" aria-label="Pilih wali kelas">
                   {Array.from({ length: positions }).map((_, index) => (
                     <button
                       key={index}
                       type="button"
                       role="tab"
                       aria-selected={index === active}
-                      aria-label={`Tampilkan ${teachers[index]?.name ?? `mentor ${index + 1}`}`}
+                      aria-label={`Tampilkan ${teachers[index]?.name ?? `wali kelas ${index + 1}`}`}
                       onClick={() => goTo(index)}
                       className={cn(
                         'h-1.5 transition-all duration-300',

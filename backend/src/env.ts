@@ -47,6 +47,9 @@ const envSchema = z
     PUBLIC_URL: z.string().url().default('http://localhost:8787'),
     MAX_UPLOAD_SIZE_MB: z.coerce.number().positive().max(20).default(2),
 
+    // Salt untuk hash IP di fitur NGL (anonim). Ganti di produksi.
+    NGL_IP_SALT: z.string().min(8).default('craftly-ngl-salt-ganti-di-produksi'),
+
     ADMIN_NAME: z.string().min(2).default('Admin Craftly'),
     ADMIN_EMAIL: z.string().email().default('admin@craftly.test'),
     ADMIN_PASSWORD: z.string().min(8, 'ADMIN_PASSWORD minimal 8 karakter').default('Admin12345'),
@@ -73,6 +76,7 @@ export type Env = {
   UPLOAD_DIR: string;
   PUBLIC_URL: string;
   MAX_UPLOAD_SIZE_MB: number;
+  NGL_IP_SALT: string;
   ADMIN_NAME: string;
   ADMIN_EMAIL: string;
   ADMIN_PASSWORD: string;

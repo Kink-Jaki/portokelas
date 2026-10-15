@@ -9,8 +9,8 @@ import { cn } from '@/lib/utils';
 
 const landingSections = [
   { label: 'Tentang', href: '#tentang' },
-  { label: 'Mentor', href: '#mentor' },
-  { label: 'Kreator', href: '#kreator' },
+  { label: 'Wali Kelas', href: '#wali-kelas' },
+  { label: 'Anggota', href: '#anggota' },
   { label: 'Memories', href: '#memories' },
 ];
 
@@ -159,7 +159,7 @@ export function Logo({
                 : 'tracking-[0.24em] text-muted',
             )}
           >
-            Portofolio Kreator
+            Portofolio Anggota
           </span>
         ) : null}
       </span>
@@ -202,6 +202,12 @@ export function SiteHeader() {
           ) : null}
 
           <div className="flex items-center gap-2">
+            <NavLink
+              to="/ngl"
+              className={(args) => cn(navClass(args), 'mr-2 hidden sm:inline-flex')}
+            >
+              NGL
+            </NavLink>
             <Link
               to="/docs"
               className={buttonClasses('ghost', 'sm', 'hidden sm:inline-flex')}
@@ -227,7 +233,8 @@ export function SiteHeader() {
 
 const footerNav = [
   { label: 'Beranda', to: '/' },
-  { label: 'Direktori kreator', to: '/members' },
+  { label: 'Direktori anggota', to: '/members' },
+  { label: 'Craftly NGL', to: '/ngl' },
   { label: 'Dokumentasi', to: '/docs' },
   { label: 'Masuk', to: '/login' },
 ];
@@ -248,8 +255,8 @@ export function SiteFooter() {
           <div className="lg:col-span-5">
             <Logo />
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted">
-              Kumpulan portofolio kreator dalam satu etalase publik. Dibangun oleh dan untuk
-              kreator — setiap karya punya halamannya sendiri.
+              Kumpulan portofolio anggota dalam satu etalase publik. Dibangun oleh dan untuk
+              anggota — setiap karya punya halamannya sendiri.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/members" className={buttonClasses('primary', 'sm')}>

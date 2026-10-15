@@ -2,7 +2,7 @@
   "name": "craftly",
   "version": "1.0.0",
   "private": true,
-  "description": "Craftly — kreator mendaftarkan diri dan menampilkan project mereka lewat portofolio publik.",
+  "description": "Craftly — anggota mendaftarkan diri dan menampilkan project mereka lewat portofolio publik.",
   "type": "module",
   "workspaces": [
     "backend",

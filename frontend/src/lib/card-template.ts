@@ -49,12 +49,12 @@ type CardMember = Pick<
   | 'websiteUrl'
 >;
 
-/** Ganti token {{...}} dengan data kreator (di-escape agar tidak merusak markup). */
+/** Ganti token {{...}} dengan data anggota (di-escape agar tidak merusak markup). */
 export function fillCardTemplate(template: string, member: CardMember): string {
   const values: Record<string, string> = {
     name: member.alias || member.name,
     alias: member.alias ?? '',
-    headline: member.headline?.trim() || 'Kreator',
+    headline: member.headline?.trim() || 'Anggota',
     bio: excerptBio(member.bio?.trim() || 'Belum menambahkan deskripsi singkat.'),
     photo: assetUrl(member.avatarUrl) ?? '',
     github: member.githubUrl ?? '',

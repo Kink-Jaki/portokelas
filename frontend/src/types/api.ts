@@ -125,7 +125,7 @@ export type Hero = {
   updatedAt: string;
 };
 
-/** Satu entri mentor pada carousel landing. */
+/** Satu entri wali kelas pada carousel landing. */
 export type Teacher = {
   id: string;
   name: string;
@@ -207,3 +207,50 @@ export type SpotifyEmbed = {
 };
 
 export type MemberWithSpotify = PublicUser & { spotify?: SpotifyEmbed | null };
+
+/* ------------------------------ Craftly NGL ------------------------------ */
+
+export type NglReportReason = 'bullying' | 'sara' | 'spam' | 'inappropriate' | 'other';
+export type NglReportStatus = 'pending' | 'resolved' | 'dismissed';
+
+/** Info Spotify untuk pesan NGL (jenis dibatasi: track/album/playlist/episode). */
+export type NglSpotify = {
+  type: SpotifyEntityType;
+  id: string;
+  embedUrl: string;
+};
+
+export type NglMessage = {
+  id: string;
+  content: string | null;
+  imagePath: string | null;
+  isHidden: boolean;
+  createdAt: string;
+  spotify: NglSpotify | null;
+  isRead?: boolean;
+  isReported?: boolean;
+};
+
+export type NglInbox = Paginated<NglMessage> & { unread: number };
+
+export type NglSettings = { enabled: boolean };
+
+export type AdminNglMessage = NglMessage & { readCount: number; reportCount: number };
+
+export type AdminNglReport = {
+  id: string;
+  messageId: string;
+  reason: string;
+  note: string | null;
+  status: NglReportStatus;
+  createdAt: string;
+  reporterCount: number;
+  message: { content: string | null; imagePath: string | null; isHidden: boolean } | null;
+};
+
+export type NglSubmitPayload = {
+  content?: string;
+  spotify?: string;
+  image?: File | null;
+  website?: string;
+};

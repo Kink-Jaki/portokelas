@@ -26,7 +26,6 @@ export function SectionConnector() {
     <div
       aria-hidden="true"
       className="pointer-events-none relative isolate h-24 w-full overflow-hidden sm:h-32 lg:h-40"
-      style={{ backgroundColor: palette.cream }}
     >
       {/* Organic flowing ribbon — tiga garis tipis dengan arah diagonal+bergelombang. */}
       <svg

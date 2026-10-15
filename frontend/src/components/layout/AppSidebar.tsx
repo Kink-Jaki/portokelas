@@ -32,6 +32,19 @@ function IconUsers({ className }: IconProps) {
   );
 }
 
+function IconNgl({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" className={className} aria-hidden>
+      <path
+        d="M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v9A1.5 1.5 0 0 1 18.5 17H9l-5 3.5v-14Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <path d="M8 9.5h8M8 12.5h5" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
 function IconUser({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" className={className} aria-hidden>
@@ -120,7 +133,7 @@ const itemClass = (collapsed: boolean) =>
       'flex items-center border-l-2 text-sm transition-colors duration-200',
       collapsed ? 'justify-center px-0 py-2.5' : 'gap-3 px-3 py-2.5',
       isActive
-        ? 'border-fg bg-bg text-fg'
+        ? 'border-accent bg-bg text-accent'
         : 'border-transparent text-muted hover:border-line-strong hover:bg-bg hover:text-fg',
     );
 
@@ -138,7 +151,8 @@ function SidebarNav({
 
   const items: NavItem[] = [
     { key: 'home', to: '/', label: 'Beranda', icon: IconHome, end: true },
-    { key: 'members', to: '/members', label: 'Kreator', icon: IconUsers },
+    { key: 'members', to: '/members', label: 'Anggota', icon: IconUsers },
+    { key: 'ngl', to: '/ngl', label: 'NGL', icon: IconNgl },
   ];
 
   if (user) {
@@ -193,7 +207,7 @@ function SidebarNav({
             className={cn('space-y-0.5', collapsed ? 'mt-0' : 'mt-3')}
             aria-label="Navigasi sidebar"
           >
-            {items.slice(0, 2).map(renderLink)}
+            {items.slice(0, 3).map(renderLink)}
           </nav>
         </div>
 
@@ -217,7 +231,7 @@ function SidebarNav({
           </div>
         ) : null}
 
-        {items.length > 2 ? (
+        {items.length > 3 ? (
           <div>
             {collapsed ? null : (
               <p className="px-3 font-mono text-[0.625rem] uppercase tracking-[0.22em] text-muted">
@@ -228,7 +242,7 @@ function SidebarNav({
               className={cn('space-y-0.5', collapsed ? 'mt-0' : 'mt-3')}
               aria-label="Menu akun"
             >
-              {items.slice(2).map(renderLink)}
+              {items.slice(3).map(renderLink)}
             </nav>
           </div>
         ) : null}
@@ -306,7 +320,7 @@ export function AppSidebar({
   return (
     <aside
       className={cn(
-        'section-dark fixed inset-y-0 left-0 z-30 hidden border-r border-line bg-subtle transition-[width] duration-300 ease-out lg:block',
+        'section-sidebar fixed inset-y-0 left-0 z-30 hidden border-r border-line bg-subtle transition-[width] duration-300 ease-out lg:block',
         collapsed ? 'w-[4.75rem]' : 'w-64',
       )}
       aria-label="Sidebar aplikasi"
@@ -397,7 +411,7 @@ export function MobileSidebar({ sections }: { sections?: SectionLink[] }) {
                 role="dialog"
                 aria-modal="true"
                 aria-label="Navigasi"
-                className="absolute inset-y-0 left-0 flex w-[86%] max-w-xs flex-col border-r border-line bg-subtle"
+                className="section-sidebar absolute inset-y-0 left-0 flex w-[86%] max-w-xs flex-col border-r border-line bg-subtle"
                 initial={{ x: '-100%' }}
                 animate={{ x: 0 }}
                 exit={{ x: '-100%' }}

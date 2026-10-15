@@ -27,6 +27,8 @@ import ProjectDetailPage from '@/features/projects/ProjectDetailPage';
 import DashboardPage from '@/features/dashboard/DashboardPage';
 import ProfilePage from '@/features/dashboard/ProfilePage';
 import AdminPage from '@/features/admin/AdminPage';
+import AdminNglReportsPage from '@/features/admin/AdminNglReportsPage';
+import NglPage from '@/features/ngl/NglPage';
 import DocsPage from '@/features/docs/DocsPage';
 import NotFoundPage from '@/features/misc/NotFoundPage';
 import ErrorPage from '@/features/misc/ErrorPage';
@@ -72,6 +74,7 @@ const router = createBrowserRouter(
           ),
         },
         { path: 'members', element: <MembersPage /> },
+        { path: 'ngl', element: <NglPage /> },
         { path: 'm/:slug', element: <MemberPortfolioPage /> },
         {
           path: 'm/:slug/:projectSlug',
@@ -102,6 +105,14 @@ const router = createBrowserRouter(
           element: (
             <RequireAdmin>
               <AdminPage />
+            </RequireAdmin>
+          ),
+        },
+        {
+          path: 'admin/ngl/reports',
+          element: (
+            <RequireAdmin>
+              <AdminNglReportsPage />
             </RequireAdmin>
           ),
         },

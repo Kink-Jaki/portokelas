@@ -3,7 +3,7 @@
  *
  *   bun run seed:class
  *
- * Menghapus SELURUH akun yang ada lalu membuat ulang 31 akun kreator awal.
+ * Menghapus SELURUH akun yang ada lalu membuat ulang 31 akun anggota awal.
  * Login memakai NIS (kolom `nim`) dengan password default "password".
  * Akun MUHAMMAD FAIRUZ ZAKY dibuat dengan role `admin` (badge "Dev").
  *
@@ -81,7 +81,7 @@ const MEMBERS: ClassMember[] = [
 
 /** Slug unik dari nama; tambah suffix angka bila bentrok. */
 function uniqueSlug(name: string, used: Set<string>): string {
-  const base = slugify(name) || 'kreator';
+  const base = slugify(name) || 'anggota';
   let candidate = base;
   let attempt = 2;
   while (used.has(candidate)) {

@@ -106,13 +106,13 @@ export default function MembersPage() {
             <p className="flex items-center gap-3 font-mono text-[0.6875rem] uppercase tracking-[0.3em] text-forest sm:text-xs">
               <span className="tnum font-medium text-maroon">00</span>
               <span aria-hidden className="h-px w-10 bg-maroon/50" />
-              <span>Direktori Kreator</span>
+              <span>Direktori Anggota</span>
             </p>
             <h1 className="mt-6 font-display text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.02em] sm:text-[3rem] lg:text-[3.5rem]">
-              <span className="text-maroon">Kreator</span> <span className="text-forest">Craftly</span>
+              <span className="text-maroon">Anggota</span> <span className="text-forest">Craftly</span>
             </h1>
             <p className="mt-5 max-w-xl text-[0.9375rem] leading-[1.7] text-muted sm:text-base">
-              Hanya kreator yang sudah dikurasi yang ditampilkan di sini. Klik kartu untuk membuka portofolio pribadi beserta project-nya.
+              Hanya anggota yang sudah dikurasi yang ditampilkan di sini. Klik kartu untuk membuka portofolio pribadi beserta project-nya.
             </p>
           </div>
         </motion.header>
@@ -137,7 +137,7 @@ export default function MembersPage() {
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
               placeholder="Cari nama atau headline…"
-              aria-label="Cari kreator"
+              aria-label="Cari anggota"
               className="w-full rounded-xl border border-line bg-elevated py-2.5 pl-10 pr-9 text-sm placeholder:text-muted/70 transition-colors duration-200 focus:border-forest focus:outline-none focus:ring-1 focus:ring-forest/20"
             />
             {searchInput ? (
@@ -155,7 +155,7 @@ export default function MembersPage() {
           </div>
 
           <p className="font-mono text-xs uppercase tracking-[0.16em] text-muted">
-            {isFetching ? 'Memuat…' : `${meta?.total ?? 0} kreator`}
+            {isFetching ? 'Memuat…' : `${meta?.total ?? 0} anggota`}
           </p>
         </div>
 
@@ -169,11 +169,11 @@ export default function MembersPage() {
           ) : members.length === 0 ? (
             <div className="rounded-2xl border border-line bg-elevated">
               <EmptyState
-                title={search ? 'Tidak ada kreator yang cocok' : 'Belum ada kreator'}
+                title={search ? 'Tidak ada anggota yang cocok' : 'Belum ada anggota'}
                 description={
                   search
-                    ? `Tidak ditemukan kreator dengan kata kunci “${search}”.`
-                    : 'Direktori akan terisi setelah kreator pertama bergabung.'
+                    ? `Tidak ditemukan anggota dengan kata kunci “${search}”.`
+                    : 'Direktori akan terisi setelah anggota pertama bergabung.'
                 }
               action={
                 search ? (
@@ -189,7 +189,7 @@ export default function MembersPage() {
             />
             </div>
           ) : (
-            <Stagger className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+            <Stagger className="grid auto-rows-fr grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
               {members.map((member, index) => (
                 <StaggerItem key={member.id} className="h-full">
                   <MemberDirectoryCard member={member} index={index + 1} />

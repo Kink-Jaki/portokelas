@@ -38,7 +38,7 @@ export function RoleBadge({ role }: { role: 'member' | 'admin' }) {
   );
 }
 
-/** Badge "Dev" beraksen untuk kreator berrole admin. */
+/** Badge "Dev" beraksen untuk anggota berrole admin. */
 export function DevBadge() {
   return (
     <span

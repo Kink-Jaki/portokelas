@@ -16,11 +16,11 @@ type Collage = [CollageImage, CollageImage, CollageImage];
 const DEFAULT_COLLAGE: Collage = [
   {
     src: 'https://plus.unsplash.com/premium_photo-1682284353484-4e16001c58eb?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
-    alt: 'Kreator sedang menulis dan mengerjakan proyek di meja belajar',
+    alt: 'Anggota sedang menulis dan mengerjakan proyek di meja belajar',
   },
   {
     src: 'https://images.unsplash.com/photo-1581726707445-75cbe4efc586?q=80&w=1476&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
-    alt: 'Suasana komunitas kreator dari belakang',
+    alt: 'Suasana komunitas anggota dari belakang',
   },
   {
     src: 'https://plus.unsplash.com/premium_photo-1713296255442-e9338f42aad8?q=80&w=722&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
@@ -137,10 +137,10 @@ export function Hero() {
   ];
 
   return (
-    <section className="paper relative isolate overflow-hidden bg-ivory text-forest">
+    <section className="relative isolate overflow-hidden text-forest">
       <EdgeOrnaments />
 
-      <div className="container-wide relative z-10 py-20 lg:py-24">
+      <div className="container-wide section-pad relative z-10">
         <motion.div
           variants={stagger(0.12, 0.1)}
           initial="hidden"
@@ -155,7 +155,7 @@ export function Hero() {
             >
               <span aria-hidden className="h-px w-8 shrink-0 bg-burgundy sm:w-10" />
               <span className="text-[0.625rem] font-medium uppercase tracking-[0.2em] text-forest-soft sm:text-xs sm:tracking-[0.3em]">
-                Craftly · Platform Portofolio Kreator
+                Craftly · Platform Portofolio Anggota
               </span>
             </motion.p>
 
@@ -176,14 +176,14 @@ export function Hero() {
               variants={staggerItem}
               className="mt-7 max-w-[34rem] text-[1.0625rem] leading-[1.65] text-forest-soft sm:text-[1.125rem]"
             >
-              Setiap kreator punya satu halaman portofolio pribadi. Daftar sekali, unggah
+              Setiap anggota punya satu halaman portofolio pribadi. Daftar sekali, unggah
               project, lalu karya kamu tampil di halaman publik yang bisa dibagikan ke siapa saja.
             </motion.p>
 
             <motion.div variants={staggerItem} className="mt-9 flex flex-wrap items-center gap-4">
               <Magnetic>
                 <Link to="/members" className={buttonClasses('burgundy', 'lg')}>
-                  Lihat kreator
+                  Lihat anggota
                   <svg
                     viewBox="0 0 24 24"
                     width="16"

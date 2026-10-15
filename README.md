@@ -1,7 +1,7 @@
 # Craftly
 
-Platform portofolio untuk kreator: kreator mendaftar, menunggu kurasi admin,
-lalu mempublikasikan profil dan projectnya. Admin mengkurasi kreator dan project.
+Platform portofolio untuk anggota: anggota mendaftar, menunggu kurasi admin,
+lalu mempublikasikan profil dan projectnya. Admin mengkurasi anggota dan project.
 
 - **Frontend** — React 18 + TypeScript + Vite, React Router, TanStack Query, Tailwind CSS v4, Framer Motion.
 - **Backend** — Hono + Drizzle ORM + PostgreSQL. Dijalankan di **Cloudflare Workers** (produksi) atau Bun (pengembangan lokal). Autentikasi cookie JWT.
@@ -11,18 +11,18 @@ lalu mempublikasikan profil dan projectnya. Admin mengkurasi kreator dan project
 
 | Area | Kemampuan |
 | --- | --- |
-| Publik | Landing, daftar kreator, portofolio kreator (`/m/:slug`), detail project, statistik, pencarian |
-| Kreator | Registrasi, login, dashboard profil + project, upload avatar/cover/galeri |
-| Admin | Login admin, kurasi kreator, moderasi sembunyikan/hapus project, daftar seluruh kreator & project |
+| Publik | Landing, daftar anggota, portofolio anggota (`/m/:slug`), detail project, statistik, pencarian |
+| Anggota | Registrasi, login, dashboard profil + project, upload avatar/cover/galeri |
+| Admin | Login admin, kurasi anggota, moderasi sembunyikan/hapus project, daftar seluruh anggota & project |
 | Keamanan | Argon2id, JWT httpOnly cookie, rate limit login/registrasi, validasi Zod di frontend + backend, proteksi path traversal, RBAC `member`/`admin` |
 
 > **Catatan tampilan:** seluruh route aktif di `frontend/src/main.tsx` — landing (`/`), direktori
-> kreator (`/members`), portofolio kreator (`/m/:slug`), detail project, login/registrasi, dashboard,
+> anggota (`/members`), portofolio anggota (`/m/:slug`), detail project, login/registrasi, dashboard,
 > dan admin. Desain memakai arah *modern editorial*: kertas hangat, serif display (Fraunces), aksen
 > vermilion tunggal, aturan/nomor section, dan grid bergaris rambut. Backend, database, dan API tetap
 > utuh.
 
-## Alur Status Kreator
+## Alur Status Anggota
 
 ```
 registrasi ──► pending ──(admin setujui)──► approved ──(admin suspend)──► suspended
@@ -112,7 +112,7 @@ Atau jalankan keduanya sekaligus dari root: `bun run dev`.
 | `bun run db:generate` | Buat migrasi baru setelah mengubah `schema.ts` |
 | `bun run db:push` | Sinkronkan skema tanpa file migrasi (prototipe) |
 | `bun run db:studio` | Drizzle Studio |
-| `bun run seed:class` | Hapus semua akun lalu buat 31 akun kreator contoh (login pakai NIS) |
+| `bun run seed:class` | Hapus semua akun lalu buat 31 akun anggota contoh (login pakai NIS) |
 | `bun run seed:admin` | Buat/perbarui akun admin dari `ADMIN_*` (opsional) |
 
 ## Struktur Proyek

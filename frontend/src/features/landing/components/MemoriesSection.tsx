@@ -354,11 +354,14 @@ function MemoriesHeading() {
 /** Lapisan ornamen scrapbook: bentuk organik, pesawat kertas, bintang, hati. */
 function MemoriesOrnaments() {
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
       {/* Bentuk organik opacity rendah di balik konten */}
       <span className="absolute -left-32 top-24 h-80 w-80 rounded-[58%_42%_47%_53%/46%_56%_44%_54%] bg-sage/15" />
       <span className="absolute -right-24 top-[45%] h-72 w-72 rounded-[46%_54%_58%_42%/52%_44%_56%_48%] bg-maroon/[0.07]" />
       <span className="absolute -left-20 bottom-10 h-64 w-64 rounded-[52%_48%_40%_60%/54%_46%_54%_46%] bg-[#d7ad5d]/15" />
+
+      {/* Lanjutan jembatan dari section Anggota — melintasi batas teratas. */}
+      <LeafSprig className="absolute -top-12 left-[16%] hidden h-24 w-24 -rotate-[18deg] text-sage/70 sm:block" />
 
       {/* Ranting kecil di pojok kiri atas section */}
       <LeafSprig className="absolute left-0 top-1 hidden h-14 w-14 -rotate-12 text-sage/70 sm:block lg:h-16 lg:w-16" />
@@ -472,12 +475,12 @@ export function MemoriesSection() {
   return (
     <section
       id="memories"
-      className="section-memories relative isolate overflow-hidden border-b border-line"
+      className="section-memories relative isolate overflow-visible"
     >
       <MemoriesOrnaments />
 
       {/* Desktop: teks di kiri, panel video di kanan sejajar eyebrow 05. */}
-      <div className="container-page relative z-10 pt-16 pb-4 lg:pt-20 lg:pb-6">
+      <div className="container-page section-pad-top relative z-10 pb-4 lg:pb-6">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,44fr)_minmax(0,56fr)] lg:items-center lg:gap-12 xl:gap-16">
           <div className="min-w-0">
             <Reveal>
@@ -506,7 +509,7 @@ export function MemoriesSection() {
         </div>
       </div>
 
-      <div className="relative z-10 mt-10 pb-16 lg:mt-14 lg:pb-20">
+      <div className="section-pad-bottom relative z-10 mt-10 lg:mt-14">
         {/* Lapisan bentuk organik + jejak putus-putus di balik galeri */}
         <span
           aria-hidden

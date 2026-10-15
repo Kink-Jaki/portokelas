@@ -13,7 +13,9 @@
 		"COOKIE_NAME": "pk_session",
 		"JWT_EXPIRES_IN": "7d",
 		"CORS_ORIGIN": "https://portofolio-kelas.pages.dev,https://portokelas.vercel.app",
-		"MAX_UPLOAD_SIZE_MB": "2"
+		"MAX_UPLOAD_SIZE_MB": "2",
+		// Salt hash IP NGL. Ganti lewat: wrangler secret put NGL_IP_SALT
+		"NGL_IP_SALT": "craftly-ngl-salt-ganti-di-produksi"
 	},
 	// Database: Neon (PostgreSQL). Hyperdrive = cara yang direkomendasikan Cloudflare.
 	// 1) Di Neon Console: buat role khusus (mis. `hyperdrive-user`), lalu ambil

@@ -115,13 +115,13 @@ export async function updateTeacher(id: string, input: Partial<NewTeacher>): Pro
     .returning();
 
   const updated = rows[0];
-  if (!updated) throw AppError.notFound('Mentor tidak ditemukan');
+  if (!updated) throw AppError.notFound('Wali Kelas tidak ditemukan');
   return updated;
 }
 
 export async function deleteTeacher(id: string): Promise<Teacher> {
   const rows = await db.delete(teachers).where(eq(teachers.id, id)).returning();
   const removed = rows[0];
-  if (!removed) throw AppError.notFound('Mentor tidak ditemukan');
+  if (!removed) throw AppError.notFound('Wali Kelas tidak ditemukan');
   return removed;
 }

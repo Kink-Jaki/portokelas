@@ -1,4 +1,4 @@
-﻿import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { CardSandboxPlayground } from '@/features/docs/CardSandboxPlayground';
 
@@ -78,6 +78,14 @@ export default function DocsPage() {
                       Kartu Kustom
                     </a>
                   </li>
+                  <li>
+                    <a
+                      href="#ngl"
+                      className="rounded-md px-2 py-1.5 text-muted transition hover:bg-ivory-alt hover:text-forest"
+                    >
+                      Craftly NGL
+                    </a>
+                  </li>
                 </ul>
               </nav>
             </aside>
@@ -86,7 +94,7 @@ export default function DocsPage() {
               <section id="pendahuluan" className="rounded-xl border border-line bg-ivory p-8 shadow-sm">
                 <h2 className="text-2xl font-display text-forest">Pendahuluan</h2>
                 <p className="mt-4 leading-relaxed text-muted">
-                  Platform ini memudahkan kreator untuk membagikan portofolio karya mereka secara terstruktur dan
+                  Platform ini memudahkan anggota untuk membagikan portofolio karya mereka secara terstruktur dan
                   menarik. Melalui halaman Dokumentasi ini, kamu bisa belajar cara mengelola project, mengatur profil,
                   hingga menampilkan elemen interaktif seperti Spotify Embed.
                 </p>
@@ -117,7 +125,7 @@ export default function DocsPage() {
                   </li>
                   <li className="leading-relaxed">
                     <span className="font-medium text-forest">4. Simpan</span> – Tekan tombol Simpan. Project-mu akan
-                    langsung tampil di halaman portofoliomu dan bisa dilihat oleh kreator lainnya.
+                    langsung tampil di halaman portofoliomu dan bisa dilihat oleh anggota lainnya.
                   </li>
                 </ol>
 
@@ -236,6 +244,47 @@ export default function DocsPage() {
                 <div className="mt-6">
                   <CardSandboxPlayground />
                 </div>
+              </section>
+
+              <section id="ngl" className="rounded-xl border border-line bg-ivory p-8 shadow-sm">
+                <h2 className="text-2xl font-display text-forest">Craftly NGL</h2>
+                <p className="mt-4 leading-relaxed text-muted">
+                  Craftly NGL adalah fitur pesan anonim. Siapa pun dapat mengirim pesan tanpa perlu
+                  masuk, sementara anggota dapat membacanya di kotak NGL. Halaman ini memakai
+                  tampilan monokrom yang berbeda dari tema utama.
+                </p>
+
+                <h3 className="mt-6 text-lg font-semibold text-forest">Mengirim pesan</h3>
+                <ol className="mt-4 space-y-3 text-muted">
+                  <li className="leading-relaxed">
+                    1. Buka halaman{' '}
+                    <Link to="/ngl" className="text-burgundy underline">
+                      Craftly NGL
+                    </Link>
+                    .
+                  </li>
+                  <li className="leading-relaxed">
+                    2. Tulis pesan, tempel tautan Spotify, dan/atau lampirkan foto (maks 3MB).
+                  </li>
+                  <li className="leading-relaxed">
+                    3. Tekan <strong>Kirim anonim</strong> — identitasmu tidak disimpan.
+                  </li>
+                </ol>
+
+                <h3 className="mt-8 text-lg font-semibold text-forest">Membaca &amp; moderasi</h3>
+                <ul className="mt-4 space-y-2 text-muted">
+                  <li className="leading-relaxed">
+                    • Anggota yang masuk dapat membuka kotak NGL berupa kartu balik (flashcard).
+                  </li>
+                  <li className="leading-relaxed">
+                    • Pesan tidak pantas dapat dilaporkan; pesan dengan 3 laporan otomatis
+                    disembunyikan.
+                  </li>
+                  <li className="leading-relaxed">
+                    • Admin dapat mengaktifkan/menonaktifkan fitur serta meninjau laporan di panel
+                    admin.
+                  </li>
+                </ul>
               </section>
             </div>
           </div>

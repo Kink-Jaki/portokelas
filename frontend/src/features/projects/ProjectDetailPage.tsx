@@ -136,7 +136,7 @@ export default function ProjectDetailPage() {
           >
             <path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" strokeWidth="1.5" />
           </svg>
-          {author ? author.name : 'Direktori kreator'}
+          {author ? author.name : 'Direktori anggota'}
         </Link>
       </motion.nav>
 
@@ -165,7 +165,7 @@ export default function ProjectDetailPage() {
                   {author.role === 'admin' ? <DevBadge /> : null}
                 </p>
                 <p className="font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">
-                  {author.headline ?? 'Kreator'}
+                  {author.headline ?? 'Anggota'}
                 </p>
               </div>
             </Link>

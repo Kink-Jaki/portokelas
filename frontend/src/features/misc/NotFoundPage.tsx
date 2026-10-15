@@ -27,7 +27,7 @@ export default function NotFoundPage() {
               Kembali ke beranda
             </Link>
             <Link to="/members" className={buttonClasses('outline')}>
-              Direktori kreator
+              Direktori anggota
             </Link>
           </div>
         </motion.div>

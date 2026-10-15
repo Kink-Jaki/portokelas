@@ -61,7 +61,7 @@ export async function emailTaken(email: string): Promise<boolean> {
 
 /** Slug portofolio unik berdasarkan nama; suffix numerik bila bentrok. */
 export async function generateUniqueSlug(name: string): Promise<string> {
-  const base = slugify(name) || 'kreator';
+  const base = slugify(name) || 'anggota';
 
   for (let attempt = 0; attempt < 50; attempt += 1) {
     const candidate = attempt === 0 ? base : `${base}-${attempt + 1}`;

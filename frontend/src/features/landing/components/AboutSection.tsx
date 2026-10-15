@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 
 import { Reveal } from '@/components/ui/Reveal';
 import { useAbout, usePublicStats } from '@/hooks/usePublic';
@@ -8,7 +8,7 @@ import { PaperPlane, Sparkle } from './ornaments';
 
 const FALLBACK_TITLE = 'Satu ruang, seribu karya.';
 const FALLBACK_DESCRIPTION =
-  'Craftly menghimpun karya para kreator dalam satu halaman publik: cerita singkat tentang komunitas, lalu portofolio tiap kreator yang bisa dibagikan ke siapa saja.';
+  'Craftly menghimpun karya para anggota dalam satu halaman publik: cerita singkat tentang komunitas, lalu portofolio tiap anggota yang bisa dibagikan ke siapa saja.';
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1588075592446-265fd1e6e76f?q=80&w=1472&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D';
 
@@ -119,6 +119,8 @@ function AboutOrnaments() {
 /* ---------------------- Kartu gambar dokumentasi kelas ---------------------- */
 
 function ScrapbookImage({ image }: { image: string | null }) {
+  const [ratio, setRatio] = useState(4 / 3);
+
   return (
     <div className="relative mx-auto w-full max-w-[34rem] px-2 pb-12 pt-4 sm:px-4 lg:max-w-none lg:pb-14">
       {/* Bentuk organik hijau pastel di belakang kartu */}
@@ -141,29 +143,39 @@ function ScrapbookImage({ image }: { image: string | null }) {
         className="pointer-events-none absolute -right-3 top-8 h-[74%] w-[88%] rotate-3 rounded-[30px] border border-gold/60 sm:-right-5"
       />
 
-      <figure className="relative z-10 overflow-hidden rounded-[30px] border-[10px] border-cream-card bg-cream-card shadow-[0_40px_80px_-40px_rgba(33,77,61,0.45)]">
-        <div className="relative h-[340px] w-full sm:h-[440px] lg:h-[520px]">
-          {image ? (
-            <>
-              <img
-                src={image}
-                alt="Dokumentasi suasana kelas"
-                loading="lazy"
-                className="h-full w-full object-cover"
-              />
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background:
-                    'linear-gradient(180deg, rgba(22,59,48,0) 46%, rgba(22,59,48,0.3) 100%)',
-                }}
-              />
-            </>
-          ) : (
-            <ImagePlaceholder />
-          )}
-        </div>
+      <figure
+        className="relative z-10 mx-auto overflow-hidden rounded-[30px] border-[10px] border-cream-card bg-cream-card shadow-[0_40px_80px_-40px_rgba(33,77,61,0.45)] [--frame-h:340px] sm:[--frame-h:440px] lg:[--frame-h:520px]"
+        style={{
+          aspectRatio: String(ratio),
+          width: `min(100%, calc(var(--frame-h) * ${ratio}))`,
+        }}
+      >
+        {image ? (
+          <>
+            <img
+              src={image}
+              alt="Dokumentasi suasana kelas"
+              loading="lazy"
+              onLoad={(event) => {
+                const el = event.currentTarget;
+                if (el.naturalWidth && el.naturalHeight) {
+                  setRatio(el.naturalWidth / el.naturalHeight);
+                }
+              }}
+              className="h-full w-full object-cover"
+            />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  'linear-gradient(180deg, rgba(22,59,48,0) 46%, rgba(22,59,48,0.3) 100%)',
+              }}
+            />
+          </>
+        ) : (
+          <ImagePlaceholder />
+        )}
       </figure>
 
       {/* Label kertas bertumpuk di sudut kiri bawah foto */}
@@ -296,11 +308,11 @@ export function AboutSection() {
   return (
     <section
       id="tentang"
-      className="paper relative isolate overflow-hidden bg-parchment text-pine"
+      className="relative isolate overflow-hidden text-pine"
     >
       <AboutOrnaments />
 
-      <div className="container-page relative z-10 py-[72px] lg:py-[112px]">
+      <div className="container-page section-pad relative z-10">
         <div className="grid grid-cols-1 gap-y-8 lg:grid-cols-[47fr_53fr] lg:items-start lg:gap-x-14 lg:gap-y-0 xl:gap-x-20">
           <Reveal className="order-1 lg:col-start-2 lg:row-start-1">
             <SectionEyebrow />

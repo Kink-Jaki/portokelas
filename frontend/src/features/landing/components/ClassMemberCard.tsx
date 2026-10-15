@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
+import { DevBadge } from '@/components/ui/Badge';
 import { assetUrl } from '@/lib/api';
 import { cn, initials } from '@/lib/utils';
 import { themeToCssVars } from '@/lib/theme';
@@ -84,7 +85,7 @@ function SocialButton({
 }
 
 /**
- * Kartu kreator bernuansa editorial — foto portrait dominan, nomor urut,
+ * Kartu anggota bernuansa editorial — foto portrait dominan, nomor urut,
  * badge posisi/keahlian, deskripsi singkat, dan tombol media sosial.
  * Seluruh kartu dapat diklik menuju portofolio tanpa mengganggu tombol sosial.
  */
@@ -92,7 +93,7 @@ export function ClassMemberCard({ member, index }: { member: PublicUser; index?:
   const name = member.alias || member.name;
   const photo = assetUrl(member.avatarUrl);
   const roleLabel =
-    member.headline?.trim() || (member.role === 'admin' ? 'Developer' : 'Kreator');
+    member.headline?.trim() || (member.role === 'admin' ? 'Developer' : 'Anggota');
   const description =
     member.bio?.trim() || member.headline?.trim() || 'Belum menambahkan deskripsi singkat.';
 
@@ -150,12 +151,24 @@ export function ClassMemberCard({ member, index }: { member: PublicUser; index?:
 
       {/* Nama & badge posisi — dikunci 1 baris agar tidak ikut melar */}
       <div className="mt-6 min-w-0">
-        <h3
-          title={name}
-          className="truncate font-display text-[1.375rem] font-semibold leading-tight tracking-[-0.01em] text-forest sm:text-[1.5rem]"
-        >
-          {name}
-        </h3>
+        <div className="flex min-w-0 items-center gap-2">
+          <h3
+            title={name}
+            className="min-w-0 truncate font-display text-[1.375rem] font-semibold leading-tight tracking-[-0.01em] text-forest sm:text-[1.5rem]"
+          >
+            {name}
+          </h3>
+          {member.role === 'admin' && (
+            <span className="shrink-0">
+              <DevBadge />
+            </span>
+          )}
+        </div>
+        {member.name !== name && (
+          <p title={member.name} className="mt-1 truncate text-[0.8125rem] font-medium text-muted">
+            {member.name}
+          </p>
+        )}
         <span
           title={roleLabel}
           className={cn(

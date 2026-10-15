@@ -40,6 +40,10 @@ export class AppError extends Error {
     return new AppError(429, 'RATE_LIMITED', message);
   }
 
+  static serviceUnavailable(message = 'Layanan sedang tidak tersedia.') {
+    return new AppError(503, 'SERVICE_UNAVAILABLE', message);
+  }
+
   static internal(message = 'Terjadi kesalahan pada server') {
     return new AppError(500, 'INTERNAL_ERROR', message);
   }

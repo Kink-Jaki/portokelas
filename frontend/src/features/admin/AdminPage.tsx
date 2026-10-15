@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 
 import { ContentPanel } from './ContentPanel';
 import { AdminMemoriesPanel } from './AdminMemoriesPanel';
+import { AdminNglPanel } from './AdminNglPanel';
 import { ProjectModerationList } from './ProjectModeration';
 import { UserRow } from './UserRow';
 import { Button } from '@/components/ui/Button';
@@ -13,7 +14,7 @@ import { useAdminUsers } from '@/hooks/useApi';
 import { fadeUp } from '@/lib/motion';
 import { useAuth } from '@/providers/AuthProvider';
 
-type Tab = 'users' | 'projects' | 'content' | 'memories';
+type Tab = 'users' | 'projects' | 'content' | 'memories' | 'ngl';
 
 function UserManagement() {
   const [search, setSearch] = useState('');
@@ -35,7 +36,7 @@ function UserManagement() {
             setPage(1);
           }}
           placeholder="Cari nama, email, atau NIM…"
-          aria-label="Cari kreator"
+          aria-label="Cari anggota"
           className="w-full rounded-sm border border-line bg-bg py-2.5 pl-3.5 pr-3 text-sm placeholder:text-muted/70 focus:border-line-strong focus:outline-none focus:ring-1 focus:ring-line-strong lg:max-w-xs"
         />
       </div>
@@ -45,7 +46,7 @@ function UserManagement() {
       ) : usersQuery.isError ? (
         <div className="border border-line">
           <EmptyState
-            title="Gagal memuat data kreator"
+            title="Gagal memuat data anggota"
             description={usersQuery.error?.message}
             action={
               <Button variant="outline" onClick={() => void usersQuery.refetch()}>
@@ -56,7 +57,7 @@ function UserManagement() {
         </div>
       ) : users.length === 0 ? (
         <div className="border border-line">
-          <EmptyState title="Tidak ada kreator" description="Belum ada kreator pada filter ini." />
+          <EmptyState title="Tidak ada anggota" description="Belum ada anggota pada filter ini." />
         </div>
       ) : (
         <div className="overflow-x-auto border border-line">
@@ -64,7 +65,7 @@ function UserManagement() {
             <thead>
               <tr className="border-b border-line">
                 <th className="px-4 py-3 text-left font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">
-                  Kreator
+                  Anggota
                 </th>
                 <th className="px-4 py-3 text-left font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">
                   Status
@@ -89,7 +90,7 @@ function UserManagement() {
       {meta && meta.totalPages > 1 ? (
         <nav
           className="flex items-center justify-between gap-4"
-          aria-label="Navigasi halaman kreator"
+          aria-label="Navigasi halaman anggota"
         >
           <Button
             variant="outline"
@@ -122,9 +123,10 @@ export default function AdminPage() {
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'projects', label: 'Moderasi project' },
-    { id: 'users', label: 'Kreator' },
+    { id: 'users', label: 'Anggota' },
     { id: 'content', label: 'Landing page' },
     { id: 'memories', label: 'Kenangan' },
+    { id: 'ngl', label: 'NGL' },
   ];
 
   return (
@@ -135,7 +137,7 @@ export default function AdminPage() {
           Moderasi Craftly.
         </h1>
         <p className="mt-4 text-sm leading-relaxed text-muted">
-          Kelola kreator dan perannya, moderasi project yang tayang, serta kelola konten landing page.
+          Kelola anggota dan perannya, moderasi project yang tayang, serta kelola konten landing page.
         </p>
       </motion.header>
 
@@ -190,8 +192,10 @@ export default function AdminPage() {
           <ProjectModerationList />
         ) : tab === 'content' ? (
           <ContentPanel />
-        ) : (
+        ) : tab === 'memories' ? (
           <AdminMemoriesPanel />
+        ) : (
+          <AdminNglPanel />
         )}
       </div>
     </div>

@@ -45,7 +45,7 @@ export function useUpdateProfile() {
       queryClient.setQueryData(queryKeys.me, data.user);
       if (data.user.slug) {
         queryClient.invalidateQueries({ queryKey: queryKeys.member(data.user.slug) });
-        queryClient.invalidateQueries({ queryKey: queryKeys.members('', 1) });
+        queryClient.invalidateQueries({ queryKey: queryKeys.membersAll });
       }
       toast.success('Profil berhasil disimpan.');
     },
@@ -66,7 +66,7 @@ export function useUploadAvatar() {
       queryClient.setQueryData(queryKeys.me, data.user);
       if (data.user.slug) {
         queryClient.invalidateQueries({ queryKey: queryKeys.member(data.user.slug) });
-        queryClient.invalidateQueries({ queryKey: queryKeys.members('', 1) });
+        queryClient.invalidateQueries({ queryKey: queryKeys.membersAll });
       }
       toast.success('Foto profil diperbarui.');
     },
@@ -297,7 +297,7 @@ export function useAdminUpdateUser() {
 
       toast.success(`Profil ${data.user.name} diperbarui.`);
     },
-    onError: (error) => toastApiError(error, 'Gagal memperbarui profil kreator.'),
+    onError: (error) => toastApiError(error, 'Gagal memperbarui profil anggota.'),
   });
 }
 
@@ -457,9 +457,9 @@ export function useCreateTeacher() {
     },
     onSuccess: () => {
       invalidateContent(queryClient);
-      toast.success('Mentor berhasil ditambahkan.');
+      toast.success('Wali Kelas berhasil ditambahkan.');
     },
-    onError: (error) => toastApiError(error, 'Gagal menambahkan mentor.'),
+    onError: (error) => toastApiError(error, 'Gagal menambahkan wali kelas.'),
   });
 }
 
@@ -476,9 +476,9 @@ export function useUpdateTeacher() {
     },
     onSuccess: () => {
       invalidateContent(queryClient);
-      toast.success('Mentor berhasil diperbarui.');
+      toast.success('Wali Kelas berhasil diperbarui.');
     },
-    onError: (error) => toastApiError(error, 'Gagal memperbarui mentor.'),
+    onError: (error) => toastApiError(error, 'Gagal memperbarui wali kelas.'),
   });
 }
 
@@ -490,8 +490,8 @@ export function useDeleteTeacher() {
       api.delete<{ id: string; deleted: boolean }>(`/admin/teachers/${id}`),
     onSuccess: () => {
       invalidateContent(queryClient);
-      toast.success('Mentor dihapus.');
+      toast.success('Wali Kelas dihapus.');
     },
-    onError: (error) => toastApiError(error, 'Gagal menghapus mentor.'),
+    onError: (error) => toastApiError(error, 'Gagal menghapus wali kelas.'),
   });
 }

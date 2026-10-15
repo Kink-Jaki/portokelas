@@ -19,7 +19,7 @@ import type {
 } from '../validators/project.js';
 import type { Paginated } from './user.service.js';
 
-/** Ringkasan kreator yang ikut mengerjakan project (tanpa kredensial). */
+/** Ringkasan anggota yang ikut mengerjakan project (tanpa kredensial). */
 export type CollaboratorUser = {
   id: string;
   name: string;
@@ -176,7 +176,7 @@ export async function createProject(userId: string, input: CreateProjectInput) {
 }
 
 /**
- * Kumpulkan project yang melibatkan seorang kreator — baik sebagai pemilik
+ * Kumpulkan project yang melibatkan seorang anggota — baik sebagai pemilik
  * maupun sebagai kolaborator.
  */
 async function collectProjectsForUser(userId: string, onlyVisible: boolean): Promise<Project[]> {

@@ -17,9 +17,9 @@ import { slugify } from '../lib/slug.js';
 
 async function main() {
   const dummyEmail = 'dummy@craftly.local';
-  const dummyName = 'Dummy Kreator';
+  const dummyName = 'Dummy Anggota';
   const dummyPassword = 'Dummy1234';
-  const dummySlug = slugify(dummyName) || 'dummy-kreator';
+  const dummySlug = slugify(dummyName) || 'dummy-anggota';
 
   const passwordHash = await hashPassword(dummyPassword);
 
@@ -92,7 +92,7 @@ async function main() {
       .update(projects)
       .set({
         title: projectTitle,
-        shortDescription: 'Contoh project dummy untuk testing card kreator.',
+        shortDescription: 'Contoh project dummy untuk testing card anggota.',
         description:
           '# Project Dummy\n\nIni adalah project contoh untuk melihat tampilan portofolio.',
         techStack: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],
@@ -109,7 +109,7 @@ async function main() {
       userId,
       title: projectTitle,
       slug: projectSlug,
-        shortDescription: 'Contoh project dummy untuk testing card kreator.',
+        shortDescription: 'Contoh project dummy untuk testing card anggota.',
       description:
         '# Project Dummy\n\nIni adalah project contoh untuk melihat tampilan portofolio.',
       techStack: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],

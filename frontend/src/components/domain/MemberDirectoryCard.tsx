@@ -14,7 +14,7 @@ export function MemberDirectoryCard({ member, index }: { member: PublicUser; ind
 
   if (custom) {
     return (
-      <div className="h-full">
+      <div className="h-full overflow-hidden">
         <MemberCustomHtml
           html={fillCardTemplate(custom, member)}
           theme={member.theme}

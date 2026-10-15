@@ -327,7 +327,7 @@ export function PersonalizePanel() {
               </div>
               <h3 className="mt-5 font-display text-xl">{user.alias || user.name}</h3>
               <p className="mt-1.5 font-mono text-[0.625rem] uppercase tracking-[0.16em] text-muted">
-                Kreator
+                Anggota
               </p>
               <p className="mt-3 text-sm leading-relaxed text-muted">
                 {user.headline || 'Belum menambahkan headline.'}

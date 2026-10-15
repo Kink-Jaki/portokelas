@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { AnimatedRule, Reveal, Stagger, StaggerItem } from '@/components/ui/Reveal';
@@ -5,8 +6,12 @@ import { buttonClasses } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { MemberDirectoryCard } from '@/components/domain/MemberDirectoryCard';
-import { useMembers } from '@/hooks/usePublic';
+import { useLandingMembers } from '@/hooks/usePublic';
+import { getLandingOrderSeed, orderLandingMembers } from '../lib/member-order';
 import { LeafSprig, Sparkle } from './ornaments';
+
+/** Jumlah card anggota yang tampil di landing. */
+const LANDING_MEMBER_LIMIT = 8;
 
 /* ------------------------------ Ikon kecil ------------------------------ */
 
@@ -22,7 +27,7 @@ function ArrowIcon() {
 
 function StructureOrnaments() {
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
       {/* Bentuk organik forest sangat transparan di kanan atas */}
       <span className="absolute -right-28 -top-20 h-72 w-72 rounded-[58%_42%_47%_53%/46%_56%_44%_54%] bg-forest/[0.06]" />
 
@@ -58,6 +63,23 @@ function StructureOrnaments() {
       <span className="absolute right-[6%] top-40 hidden h-3.5 w-3.5 text-maroon/45 lg:block">
         <Sparkle />
       </span>
+
+      {/* Jembatan ke section Memories — menjulur melewati batas section agar
+          dua section tampak bertaut, bukan terpotong garis lurus. */}
+      <LeafSprig className="absolute -bottom-16 right-[10%] h-28 w-28 rotate-[24deg] text-maroon opacity-30 sm:-bottom-20 sm:h-36 sm:w-36" />
+      <svg
+        viewBox="0 0 400 120"
+        fill="none"
+        className="absolute -bottom-14 left-[6%] hidden h-24 w-72 text-sage opacity-60 sm:block"
+      >
+        <path
+          d="M4 108C92 92 168 76 236 40 292 10 352 8 396 4"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeDasharray="5 9"
+        />
+      </svg>
     </div>
   );
 }
@@ -71,11 +93,11 @@ function StructureHeader() {
         <p className="flex items-center gap-3 font-mono text-[0.6875rem] uppercase tracking-[0.3em] text-forest sm:text-xs">
           <span className="tnum font-medium text-maroon">03</span>
           <span aria-hidden className="h-px w-10 bg-maroon/50" />
-          <span>Direktori Kreator</span>
+          <span>Direktori Anggota</span>
         </p>
 
         <h2 className="mt-6 font-display text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.02em] sm:text-[3rem] lg:text-[3.5rem]">
-          <span className="text-maroon">Kreator</span> <span className="text-forest">Craftly</span>
+          <span className="text-maroon">Anggota</span> <span className="text-forest">Craftly</span>
         </h2>
 
         <p className="mt-5 max-w-xl text-[0.9375rem] leading-[1.7] text-muted sm:text-base">
@@ -137,17 +159,24 @@ function ClassMemberSkeletonGrid() {
 /* -------------------------------- Section ------------------------------- */
 
 export function StructureSection() {
-  const { data, isLoading, isError, error, refetch } = useMembers('', 1);
-  const members = data?.items ?? [];
+  const { data, isLoading, isError, error, refetch } = useLandingMembers();
+  const members = useMemo(() => data?.items ?? [], [data?.items]);
+
+  /* Seed per sesi: card terisi diutamakan, sisanya diacak secara stabil. */
+  const seed = useMemo(() => getLandingOrderSeed(), []);
+  const orderedMembers = useMemo(
+    () => orderLandingMembers(members, seed).slice(0, LANDING_MEMBER_LIMIT),
+    [members, seed],
+  );
 
   return (
     <section
-      id="kreator"
-      className="section-members paper relative isolate overflow-hidden border-b border-line"
+      id="anggota"
+      className="section-members relative isolate overflow-visible"
     >
       <StructureOrnaments />
 
-      <div className="container-page relative z-10 py-20 lg:py-28">
+      <div className="container-page section-pad relative z-10">
         <Reveal>
           <StructureHeader />
         </Reveal>
@@ -160,7 +189,7 @@ export function StructureSection() {
           ) : isError ? (
             <div className="rounded-2xl border border-line bg-elevated">
               <EmptyState
-                title="Gagal memuat kreator"
+                title="Gagal memuat anggota"
                 description={error?.message}
                 action={
                   <button
@@ -173,11 +202,11 @@ export function StructureSection() {
                 }
               />
             </div>
-          ) : members.length === 0 ? (
+          ) : orderedMembers.length === 0 ? (
             <div className="rounded-2xl border border-line bg-elevated">
               <EmptyState
-                title="Belum ada kreator"
-                description="Daftar kreator akan tampil setelah kreator pertama bergabung."
+                title="Belum ada anggota"
+                description="Daftar anggota akan tampil setelah anggota pertama bergabung."
                 action={
                   <Link to="/login" className={buttonClasses('primary', 'sm')}>
                     Masuk
@@ -186,8 +215,8 @@ export function StructureSection() {
               />
             </div>
           ) : (
-            <Stagger className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-              {members.slice(0, 8).map((member, index) => (
+            <Stagger className="grid auto-rows-fr grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+              {orderedMembers.map((member, index) => (
                 <StaggerItem key={member.id} className="h-full">
                   <MemberDirectoryCard member={member} index={index + 1} />
                 </StaggerItem>
