@@ -77,7 +77,7 @@ export function MemberCustomHtml({
       srcDoc={srcDoc}
       loading="lazy"
       scrolling="no"
-      sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+      sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
       className={className ?? 'block w-full border-0'}
       style={{ minHeight: '8rem', overflow: 'hidden', display: 'block' }}
     />

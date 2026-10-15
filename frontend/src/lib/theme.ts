@@ -366,6 +366,7 @@ export function buildSandboxDocument(html: string, theme?: MemberTheme | null): 
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<base target="_top" />
 <style>
   :root { ${varDeclarations} }
   *, *::before, *::after { box-sizing: border-box; }
