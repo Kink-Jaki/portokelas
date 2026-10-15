@@ -148,14 +148,18 @@ export function ClassMemberCard({ member, index }: { member: PublicUser; index?:
         />
       </div>
 
-      {/* Nama & badge posisi */}
+      {/* Nama & badge posisi — dikunci 1 baris agar tidak ikut melar */}
       <div className="mt-6 min-w-0">
-        <h3 className="font-display text-[1.375rem] font-semibold leading-tight tracking-[-0.01em] text-forest sm:text-[1.5rem]">
+        <h3
+          title={name}
+          className="truncate font-display text-[1.375rem] font-semibold leading-tight tracking-[-0.01em] text-forest sm:text-[1.5rem]"
+        >
           {name}
         </h3>
         <span
+          title={roleLabel}
           className={cn(
-            'mt-3 inline-block rounded-md px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.15em] text-ivory-warm',
+            'mt-3 inline-block max-w-full truncate align-top rounded-md px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.15em] text-ivory-warm',
             badgeTone,
           )}
         >
@@ -163,9 +167,24 @@ export function ClassMemberCard({ member, index }: { member: PublicUser; index?:
         </span>
       </div>
 
-      {/* Deskripsi + tombol sosial — menempel di dasar agar tinggi kartu sejajar */}
+      {/* Deskripsi + tombol sosial — tinggi bio dikunci 3 baris agar card tetap default */}
       <div className="mt-auto pt-5">
-        <p className="min-h-[4.4rem] text-[0.9375rem] leading-[1.68] text-muted">{description}</p>
+        <p
+          title={description}
+          style={{
+            display: '-webkit-box',
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            height: '4.73rem',
+            minHeight: '4.73rem',
+            maxHeight: '4.73rem',
+            overflowWrap: 'anywhere',
+          }}
+          className="line-clamp-3 h-[4.73rem] break-words text-[0.9375rem] leading-[1.68] text-muted"
+        >
+          {description}
+        </p>
         <span aria-hidden className="mt-4 block h-px w-11 bg-maroon/70" />
 
         <div className="relative z-20 mt-4 flex gap-3">

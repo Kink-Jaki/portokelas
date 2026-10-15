@@ -19,6 +19,23 @@ function escapeHtml(value: string): string {
     .replace(/"/g, '&quot;');
 }
 
+/**
+ * Panjang kutipan bio untuk kartu direktori (±3 baris).
+ * Kartu (standar maupun HTML kustom) tidak boleh ikut melar saat bio panjang —
+ * yang tampil hanya sebagian, bio lengkap tetap ada di halaman portofolio.
+ */
+export const CARD_BIO_EXCERPT_LENGTH = 120;
+
+/** Potong bio menjadi kutipan satu baris logis, dipotong di batas kata + elipsis. */
+export function excerptBio(value: string, max = CARD_BIO_EXCERPT_LENGTH): string {
+  const text = value.trim().replace(/\s+/g, ' ');
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max);
+  const lastSpace = cut.lastIndexOf(' ');
+  const head = lastSpace > max * 0.5 ? cut.slice(0, lastSpace) : cut;
+  return `${head.trimEnd()}…`;
+}
+
 type CardMember = Pick<
   PublicUser,
   | 'name'
@@ -38,7 +55,7 @@ export function fillCardTemplate(template: string, member: CardMember): string {
     name: member.alias || member.name,
     alias: member.alias ?? '',
     headline: member.headline?.trim() || 'Kreator',
-    bio: member.bio?.trim() || 'Belum menambahkan deskripsi singkat.',
+    bio: excerptBio(member.bio?.trim() || 'Belum menambahkan deskripsi singkat.'),
     photo: assetUrl(member.avatarUrl) ?? '',
     github: member.githubUrl ?? '',
     instagram: member.instagramUrl ?? '',
