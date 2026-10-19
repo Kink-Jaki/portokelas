@@ -221,11 +221,14 @@ function PortfolioOrnaments() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
       <span className="absolute -right-32 -top-28 h-80 w-80 rounded-[58%_42%_46%_54%] bg-sage-soft/70" />
-      <span className="absolute -left-28 top-1/3 h-64 w-64 rounded-full bg-maroon" />
-      <span className="absolute -right-20 top-3/4 h-44 w-44 -translate-y-1/2 rounded-full bg-sage" />
-      <span className="absolute -right-28 top-3/4 h-60 w-60 -translate-y-1/2 rounded-full border border-forest/40" />
+      {/* Lingkaran tepi: di mobile diperkecil dan didorong keluar layar
+          sehingga hanya menyembul di balik padding container — tidak
+          menutupi teks. Mulai sm kembali ke ukuran penuh. */}
+      <span className="absolute -left-36 top-1/3 h-40 w-40 rounded-full bg-maroon sm:-left-28 sm:h-64 sm:w-64" />
+      <span className="absolute -right-36 top-3/4 h-40 w-40 -translate-y-1/2 rounded-full bg-sage sm:-right-20 sm:h-44 sm:w-44" />
+      <span className="absolute -right-[9.75rem] top-3/4 h-44 w-44 -translate-y-1/2 rounded-full border border-forest/40 sm:-right-28 sm:h-60 sm:w-60" />
       <span className="absolute bottom-24 right-10 hidden h-56 w-56 rounded-[52%_48%_38%_62%] bg-sage-soft/50 lg:block" />
-      <FlowerIcon className="absolute -left-6 top-24 h-20 w-20 text-sage/35" />
+      <FlowerIcon className="absolute -left-6 top-24 h-12 w-12 text-sage/35 sm:h-20 sm:w-20" />
       <FlowerIcon className="absolute -right-4 bottom-52 hidden h-14 w-14 text-maroon-soft/25 lg:block" />
       <BotanicalSprig className="absolute -left-10 bottom-40 hidden h-36 w-36 rotate-[14deg] text-sage/45 lg:block" />
       <SparkIcon className="absolute right-1/4 top-40 hidden h-3.5 w-3.5 text-gold/60 lg:block" />
@@ -241,7 +244,7 @@ function SectionLabel({ index, children }: { index: string; children: ReactNode 
       <span aria-hidden className="text-line-strong">
         —
       </span>
-      <span>{children}</span>
+      <span className="text-accent sm:text-muted">{children}</span>
     </p>
   );
 }
@@ -299,7 +302,7 @@ function PortraitCard({ name, src }: { name: string; src: string | null }) {
   const url = assetUrl(src);
 
   return (
-    <div className="relative mx-auto w-full max-w-[17rem] sm:max-w-[19rem] lg:ml-auto lg:max-w-[20.5rem]">
+    <div className="relative mx-auto w-full max-w-[19rem] lg:ml-auto lg:max-w-[20.5rem]">
       <span
         aria-hidden
         className="absolute -left-3 -top-3 hidden h-full w-full -rotate-2 rounded-[10px] border border-line bg-sage-soft/70 sm:block"
@@ -354,12 +357,19 @@ function InfoColumn({
   className?: string;
 }) {
   return (
-    <div className={cn('relative p-4 sm:p-5', className)}>
-      <dt className="flex items-center gap-3">
+    /* Mobile (<640px): satu baris grid — ikon di kiri (memanjang dua baris),
+       label + isi di kanan. Mulai sm kembali ke tata letak desktop. */
+    <div
+      className={cn(
+        'relative grid grid-cols-[auto_1fr] items-start gap-x-3 gap-y-1 p-4 sm:block sm:p-5',
+        className,
+      )}
+    >
+      <dt className="contents sm:flex sm:items-center sm:gap-3">
         <span
           aria-hidden
           className={cn(
-            'grid h-9 w-9 shrink-0 place-items-center rounded-full border border-line/70',
+            'row-span-2 grid h-9 w-9 shrink-0 place-items-center self-center rounded-full border border-line/70',
             iconClassName,
           )}
         >
@@ -369,10 +379,10 @@ function InfoColumn({
           {label}
         </span>
       </dt>
-      <dd className="mt-2.5 font-display text-lg leading-snug break-words text-maroon sm:text-xl">
+      <dd className="col-start-2 mt-1 font-display text-lg leading-snug break-words text-maroon sm:col-start-auto sm:mt-2.5 sm:text-xl">
         {value}
         {note ? (
-          <span className="mt-1 block font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-muted">
+          <span className="mt-0.5 block font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-muted sm:mt-1">
             {note}
           </span>
         ) : null}
@@ -457,25 +467,32 @@ export default function MemberPortfolioPage() {
         : 'text-[clamp(3.1rem,11vw,7.5rem)]';
 
   return (
-    <section className="section-portfolio relative isolate overflow-hidden">
+    <section className="member-portfolio section-portfolio relative isolate overflow-hidden">
       <ColorBand />
       <PortfolioOrnaments />
 
-      <div className="container-page relative z-10 py-16 lg:py-20">
+      <div className="container-page relative z-10 py-14 sm:py-16 lg:py-20">
         <motion.header variants={fadeUp} initial="hidden" animate="show">
-          <div className="grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-10 xl:gap-16">
+          {/* Eyebrow khusus mobile: label muncul sebelum foto agar urutannya
+              label → foto → nama → tombol seperti desain referensi. */}
+          <div className="mb-7 flex flex-wrap items-center gap-3 sm:hidden">
+            <SectionLabel index="01">Portofolio Member</SectionLabel>
+            {member.role === 'admin' ? <DevBadge /> : null}
+          </div>
+
+          <div className="grid gap-8 sm:gap-12 lg:grid-cols-12 lg:items-center lg:gap-10 xl:gap-16">
             {/* ——— Kolom kiri: judul + tautan ——— */}
             <div className="order-2 min-w-0 lg:order-1 lg:col-span-7 xl:col-span-8">
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="hidden flex-wrap items-center gap-3 sm:flex">
                 <SectionLabel index="01">Portofolio Member</SectionLabel>
                 {member.role === 'admin' ? <DevBadge /> : null}
               </div>
 
-              <div className="relative mt-15">
-                <LeafIcon className="pointer-events-none absolute -left-1 -top-14 hidden h-7 w-7 -rotate-12 text-forest/75 sm:block" />
-                <FlowerIcon className="pointer-events-none absolute -top-14 right-6 hidden h-8 w-8 text-maroon-soft/45 sm:block" />
-                <HeartIcon className="pointer-events-none absolute -top-11 right-24 hidden h-5 w-5 text-maroon-soft/70 sm:block" />
-                <SparkIcon className="pointer-events-none absolute -top-12 right-40 hidden h-4 w-4 text-gold sm:block" />
+              <div className="relative mt-9 sm:mt-15">
+                <LeafIcon className="pointer-events-none absolute -left-1 -top-9 h-5 w-5 -rotate-12 text-forest/75 sm:-top-14 sm:h-7 sm:w-7" />
+                <FlowerIcon className="pointer-events-none absolute -top-9 right-3 h-5 w-5 text-maroon-soft/45 sm:-top-14 sm:right-6 sm:h-8 sm:w-8" />
+                <HeartIcon className="pointer-events-none absolute -top-8 right-14 h-4 w-4 text-maroon-soft/70 sm:-top-11 sm:right-24 sm:h-5 sm:w-5" />
+                <SparkIcon className="pointer-events-none absolute -top-9 right-24 h-3 w-3 text-gold sm:-top-12 sm:right-40 sm:h-4 sm:w-4" />
 
                 <h1
                   className={cn(
@@ -495,7 +512,7 @@ export default function MemberPortfolioPage() {
                 </p>
               ) : null}
 
-              <div className="mt-9 flex flex-wrap items-center gap-3">
+              <div className="mt-8 flex flex-wrap items-center gap-2.5 sm:mt-9 sm:gap-3">
                 <PortfolioAction href={member.instagramUrl} label="Instagram">
                   <InstagramIcon />
                   Instagram
@@ -518,7 +535,7 @@ export default function MemberPortfolioPage() {
           </div>
 
           {/* ——— Panel informasi member ——— */}
-          <div className="relative mt-12 overflow-hidden rounded-[14px] border border-line bg-elevated/70 lg:mt-16">
+          <div className="relative mt-10 overflow-hidden rounded-[14px] border border-line bg-elevated/70 sm:mt-12 lg:mt-16">
             <dl className="grid sm:grid-cols-3">
               <InfoColumn
                 className="border-b border-line sm:border-b-0 sm:border-r"
@@ -635,7 +652,7 @@ export default function MemberPortfolioPage() {
                 onRetry={() => void projectsQuery.refetch()}
               />
             ) : projects.length === 0 ? (
-              <div className="relative overflow-hidden rounded-[14px] border border-dashed border-sage/60 bg-sage-soft/30">
+              <div className="relative overflow-hidden rounded-[14px] border border-dashed border-sage/60 bg-sage-soft/30 [&>div]:py-10 sm:[&>div]:py-16">
                 <span
                   aria-hidden
                   className="absolute -right-6 -top-6 h-24 w-24 rounded-[48%_52%_60%_40%] bg-sage-soft/70"
