@@ -683,6 +683,62 @@
     color: var(--fg);
   }
 
+  /* Halaman portofolio anggota — palet "Vintage Botanical Scrapbook":
+      cream hangat (#f6f1e5), burgundy gelap (#682b22), merah bata (#984b4a),
+      olive (#596a48), sage (#aab49a), dan border beige (#dfd1bc).
+      Token dipetakan ulang agar utilities bg-bg/text-fg/border-line, text-maroon,
+      text-forest, bg-sage, dan ProjectCard otomatis mengikuti palet ini. */
+  .section-portfolio {
+    --bg: #f6f1e5;
+    --bg-subtle: #efe8d7;
+    --bg-elevated: #fdfaf3;
+    --fg: #4a3a2e;
+    --fg-muted: #74675b;
+    --line: #dfd1bc;
+    --line-strong: #d2c1a7;
+    --invert-bg: #682b22;
+    --invert-fg: #fdfaf3;
+    --accent: #984b4a;
+    --accent-fg: #fdfaf3;
+    --accent-soft: rgba(152, 75, 74, 0.12);
+    --danger: #b42318;
+    --success: #2f6b3a;
+
+    /* Alias token palet yang dipakai lintas komponen. */
+    --ivory: #f6f1e5;
+    --ivory-alt: #efe8d7;
+    --ivory-warm: #fdfaf3;
+    --cream-card: #fdfaf3;
+    --edge: #dfd1bc;
+    --forest: #596a48;
+    --forest-soft: #6b7d57;
+    --pine: #596a48;
+    --pine-deep: #46553a;
+    --maroon: #682b22;
+    --maroon-deep: #55211a;
+    --maroon-soft: #984b4a;
+    --maroon-tint: rgba(152, 75, 74, 0.1);
+    --sage: #aab49a;
+    --sage-soft: #dfe4d5;
+    --sage-tint: rgba(170, 180, 154, 0.3);
+    --gold: #984b4a;
+    --moss: #74675b;
+    --blush: #f0e0d9;
+    --blush-edge: #e4cdc5;
+
+    color: var(--fg);
+    background-color: var(--bg);
+    background-image:
+      var(--grain),
+      radial-gradient(70% 60% at 100% 0%, rgba(170, 180, 154, 0.35) 0%, rgba(170, 180, 154, 0) 62%),
+      radial-gradient(60% 55% at 0% 100%, rgba(152, 75, 74, 0.07) 0%, rgba(152, 75, 74, 0) 60%);
+    background-size:
+      140px 140px,
+      auto,
+      auto;
+    background-repeat: repeat, no-repeat, no-repeat;
+  }
+
   /* Palet aksen halaman landing — sisa aksen vermilion/terracotta dipetakan ke
      maroon agar seluruh section (Hero, header, tombol, cincin fokus, dan
      sorotan teks) selaras dengan identitas hijau–cream–maroon. Hanya warna

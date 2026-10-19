@@ -49,24 +49,42 @@ export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   hint?: string;
   error?: string;
+  /** Elemen opsional di sisi kanan input (mis. tombol lihat password). */
+  trailing?: ReactNode;
 };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { label, hint, error, className, required, ...props },
+  { label, hint, error, className, required, trailing, ...props },
   ref,
 ) {
   return (
     <FieldShell label={label} hint={hint} error={error} required={required}>
-      {(id) => (
-        <input
-          ref={ref}
-          id={id}
-          required={required}
-          aria-invalid={error ? true : undefined}
-          className={cn(fieldClasses, error && 'border-danger', className)}
-          {...props}
-        />
-      )}
+      {(id) => {
+        const field = (
+          <input
+            ref={ref}
+            id={id}
+            required={required}
+            aria-invalid={error ? true : undefined}
+            className={cn(
+              fieldClasses,
+              error && 'border-danger',
+              trailing ? 'pr-11' : undefined,
+              className,
+            )}
+            {...props}
+          />
+        );
+
+        if (!trailing) return field;
+
+        return (
+          <div className="relative">
+            {field}
+            <div className="absolute inset-y-0 right-1.5 flex items-center">{trailing}</div>
+          </div>
+        );
+      }}
     </FieldShell>
   );
 });

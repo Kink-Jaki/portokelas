@@ -29,7 +29,8 @@
     "db:studio": "bun run --cwd backend db:studio",
     "seed:admin": "bun run --cwd backend seed:admin",
     "seed:class": "bun run --cwd backend seed:class",
-    "seed:teachers": "bun run --cwd backend seed:teachers"
+    "seed:teachers": "bun run --cwd backend seed:teachers",
+    "migrate:passwords": "bun run --cwd backend migrate:passwords"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
