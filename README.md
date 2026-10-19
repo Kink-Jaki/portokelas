@@ -191,6 +191,13 @@ Kode error: `BAD_REQUEST` (400), `UNAUTHORIZED` (401), `FORBIDDEN` (403), `NOT_F
   revalidasi (`max-age=0, must-revalidate`) dan aset ber-hash di-cache 1 tahun.
   Tanpa ini browser bisa menyajikan bundle lama setelah deploy (hard-refresh
   `Ctrl+Shift+R` tetap disarankan sekali).
+- **DB lokal vs migrasi**: kalau database lokal pernah disinkronkan dengan `db:push`,
+  catatan migrasi di `drizzle.__drizzle_migrations` bisa tertinggal sehingga
+  `db:migrate` tidak menerapkan migrasi baru. Gejala: endpoint baru error 500
+  (kasus nyata: `/api/settings/ngl` dan `/api/ngl/messages` — tabel `ngl_messages`
+  belum ada). Cek: jumlah baris `drizzle.__drizzle_migrations` harus sama dengan
+  jumlah file `backend/drizzle/*.sql`; bila kurang, tandai migrasi lama yang sudah
+  terlanjur diterapkan sebagai recorded, baru jalankan `bun run db:migrate`.
 - **Verifikasi cepat setelah build**:
   ```bash
   grep -R "Kotak NGL" frontend/dist/assets/*.js   # harus ketemu
