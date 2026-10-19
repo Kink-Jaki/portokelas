@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 import { Button, buttonClasses } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { useMarkNglRead, useNglInbox, useNglSettings } from '@/hooks/useNgl';
+import { useMarkNglRead, useMarkNglUnread, useNglInbox, useNglSettings } from '@/hooks/useNgl';
 import { useAuth } from '@/providers/AuthProvider';
 import { fadeUp, stagger, staggerItem } from '@/lib/motion';
 import { cn } from '@/lib/utils';
@@ -54,18 +54,17 @@ export default function NglBoxPage() {
   const [reportTarget, setReportTarget] = useState<NglMessage | null>(null);
   const [shareTarget, setShareTarget] = useState<NglMessage | null>(null);
   const shareRef = useRef<HTMLDivElement>(null);
-  const revealed = useRef(new Set<string>());
 
   const inbox = useNglInbox(page, enabled);
   const markRead = useMarkNglRead();
+  const markUnread = useMarkNglUnread();
 
   const messages = inbox.data?.items ?? [];
   const meta = inbox.data?.meta;
   const unread = inbox.data?.unread ?? 0;
 
   const handleReveal = (message: NglMessage) => {
-    if (revealed.current.has(message.id)) return;
-    revealed.current.add(message.id);
+    if (message.isRead) return;
     markRead.mutate(message.id);
   };
 
@@ -248,6 +247,10 @@ export default function NglBoxPage() {
                         onReveal={handleReveal}
                         onReport={setReportTarget}
                         onRepost={setShareTarget}
+                        onToggleRead={(message, read) => {
+                          if (read) markRead.mutate(message.id);
+                          else markUnread.mutate(message.id);
+                        }}
                       />
                     ))}
                   </motion.div>

@@ -225,6 +225,13 @@ export async function markNglMessageRead(messageId: string, userId: string): Pro
     .onConflictDoNothing({ target: [messageReads.messageId, messageReads.userId] });
 }
 
+/** Tandai pesan kembali belum dibaca oleh seorang user (hapus riwayat baca). */
+export async function unmarkNglMessageRead(messageId: string, userId: string): Promise<void> {
+  await db
+    .delete(messageReads)
+    .where(and(eq(messageReads.messageId, messageId), eq(messageReads.userId, userId)));
+}
+
 /* --------------------------------- Reports -------------------------------- */
 
 function isUniqueViolation(error: unknown): boolean {

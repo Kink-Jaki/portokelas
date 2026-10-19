@@ -30,6 +30,8 @@ type Props = {
   onReveal: (message: NglMessage) => void;
   onReport: (message: NglMessage) => void;
   onRepost: (message: NglMessage) => void;
+  /** Ubah status baca: `true` = tandai sudah dibaca, `false` = kembali belum dibaca. */
+  onToggleRead: (message: NglMessage, read: boolean) => void;
 };
 
 function ReportIcon() {
@@ -53,6 +55,35 @@ function SendIcon() {
         d="M21 3 10.5 13.5M21 3l-6.5 18-4-8-8-4L21 3Z"
         stroke="currentColor"
         strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden>
+      <path
+        d="m4.5 12.5 5 5 10-11"
+        stroke="currentColor"
+        strokeWidth="1.9"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden>
+      <rect x="3" y="5.5" width="18" height="13" rx="2.5" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="m4 7 8 5.5L20 7"
+        stroke="currentColor"
+        strokeWidth="1.6"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -117,6 +148,7 @@ export function NglBoxCard({
   onReveal,
   onReport,
   onRepost,
+  onToggleRead,
 }: Props) {
   const reduceMotion = useReducedMotion();
   const theme = useMemo(() => nglThemeFor(message.id), [message.id]);
@@ -126,7 +158,6 @@ export function NglBoxCard({
   const playerIdRef = useRef(
     `ngl-${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`,
   );
-  const revealedRef = useRef(false);
 
   // Hanya satu kartu yang boleh memutar Spotify pada satu waktu.
   useEffect(() => {
@@ -139,11 +170,9 @@ export function NglBoxCard({
   }, [playerOpen]);
 
   // Flashcard: mulai tertutup, diklik untuk membuka/menutup.
+  // Membuka kartu yang belum dibaca otomatis menandainya sudah dibaca.
   const toggle = useCallback(() => {
-    if (!open && !revealedRef.current) {
-      revealedRef.current = true;
-      onReveal(message);
-    }
+    if (!open && !message.isRead) onReveal(message);
     if (open) setPlayerOpen(false);
     setOpen((prev) => !prev);
   }, [open, message, onReveal]);
@@ -247,7 +276,14 @@ export function NglBoxCard({
               >
                 ⚠️ Dilaporkan
               </span>
-            ) : null}
+            ) : (
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide opacity-80"
+                style={chipStyle}
+              >
+                <span aria-hidden>✓</span> Sudah dibaca
+              </span>
+            )}
           </header>
 
           {/* Pesan — fokus utama */}
@@ -315,6 +351,20 @@ export function NglBoxCard({
             </div>
 
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onToggleRead(message, !unread);
+                }}
+                aria-label={unread ? 'Tandai sudah dibaca' : 'Tandai belum dibaca'}
+                title={unread ? 'Tandai sudah dibaca' : 'Tandai belum dibaca'}
+                className="grid h-11 w-11 place-items-center rounded-full backdrop-blur-sm transition-transform hover:scale-105 active:scale-90"
+                style={chipStyle}
+              >
+                {unread ? <CheckIcon /> : <MailIcon />}
+              </button>
+
               <button
                 type="button"
                 onClick={(event) => {
@@ -455,6 +505,13 @@ export function NglBoxCard({
             >
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-current" aria-hidden />
               Baru
+            </span>
+          ) : message.isRead ? (
+            <span
+              className="absolute right-5 top-5 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide opacity-80"
+              style={chipStyle}
+            >
+              <span aria-hidden>✓</span> Dibaca
             </span>
           ) : null}
 

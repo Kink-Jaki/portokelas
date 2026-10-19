@@ -79,7 +79,38 @@ export function useMarkNglRead() {
       api.post<{ id: string; read: boolean }>(`/ngl/messages/${id}/read`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ngl', 'messages'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.nglUnread });
     },
+  });
+}
+
+/** Kembalikan pesan ke status belum dibaca. */
+export function useMarkNglUnread() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) =>
+      api.post<{ id: string; read: boolean }>(`/ngl/messages/${id}/unread`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ngl', 'messages'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.nglUnread });
+    },
+    onError: (error) => toastApiError(error, 'Gagal menandai pesan.'),
+  });
+}
+
+/**
+ * Jumlah pesan belum dibaca untuk badge sidebar "Kotak NGL".
+ * Fitur nonaktif (503) atau belum login dianggap tanpa badge — tanpa retry.
+ */
+export function useNglUnreadCount(enabled = true) {
+  return useQuery({
+    queryKey: queryKeys.nglUnread,
+    queryFn: () => api.get<{ count: number }>('/ngl/messages/unread-count'),
+    enabled,
+    staleTime: 15_000,
+    refetchInterval: 60_000,
+    retry: false,
   });
 }
 

@@ -39,6 +39,7 @@ export const queryKeys = {
     ['admin', 'projects', { search, hidden, page }] as const,
   nglSettings: ['public', 'ngl', 'settings'] as const,
   nglInbox: (page: number) => ['ngl', 'messages', { page }] as const,
+  nglUnread: ['ngl', 'unread'] as const,
   adminNglMessages: (page: number) => ['admin', 'ngl', 'messages', { page }] as const,
   adminNglReports: ['admin', 'ngl', 'reports'] as const,
 };

@@ -25,6 +25,7 @@ import {
   markNglMessageRead,
   reportNglMessage,
   setNglEnabled,
+  unmarkNglMessageRead,
   updateNglReportStatus,
 } from '../services/index.js';
 import { parseNglSpotifyUrl } from '../services/spotify.service.js';
@@ -159,6 +160,13 @@ export const nglRoutes = new Hono<AppEnv>()
     }
   })
 
+  /** Jumlah pesan belum dibaca — dipakai badge sidebar "Kotak NGL". */
+  .get('/messages/unread-count', requireAuth, async (c) => {
+    await assertNglEnabled();
+    const user = getCurrentUser(c);
+    return c.json(ok({ count: await countUnreadNglMessages(user.id) }));
+  })
+
   .get('/messages', requireAuth, zQuery(nglListQuerySchema), async (c) => {
     await assertNglEnabled();
     const user = getCurrentUser(c);
@@ -177,6 +185,18 @@ export const nglRoutes = new Hono<AppEnv>()
 
     await markNglMessageRead(id, user.id);
     return c.json(ok({ id, read: true }));
+  })
+
+  .post('/messages/:id/unread', requireAuth, async (c) => {
+    await assertNglEnabled();
+    const user = getCurrentUser(c);
+    const id = requireParam(c.req.param('id'), 'id');
+
+    const message = await getNglMessageById(id);
+    if (!message) throw AppError.notFound('Pesan tidak ditemukan');
+
+    await unmarkNglMessageRead(id, user.id);
+    return c.json(ok({ id, read: false }));
   })
 
   .post('/messages/:id/report', requireAuth, zJson(nglReportSchema), async (c) => {
