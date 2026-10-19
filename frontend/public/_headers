@@ -1,0 +1,7 @@
+# Jangan sajikan index.html basi: HTML selalu revalidasi ke server,
+# aset ber-hash (nama file berubah tiap build) boleh di-cache lama.
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

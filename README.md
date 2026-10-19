@@ -172,6 +172,30 @@ Kode error: `BAD_REQUEST` (400), `UNAUTHORIZED` (401), `FORBIDDEN` (403), `NOT_F
 - Nama file diganti UUID acak dan path disimpan relatif (`/uploads/projects/<uuid>.png`) sehingga mudah dipindah server.
 - Mengganti avatar/cover atau menghapus project otomatis menghapus file lama (di Workers KV saat produksi, di disk saat dev lokal). R2 juga didukung bila binding `UPLOADS_BUCKET` dipakai.
 
+## Alur Branch, CI & Rilis
+
+- **Kerja di `dev`, rilis ke `main`.** Jangan commit fitur baru langsung ke `main`.
+  Kalau kedua branch dikerjakan paralel, tampilan bisa beda (kasus nyata: fitur NGL
+  dikomit langsung di `main`, sedangkan `dev` masih dari commit lama sehingga menu
+  NGL tidak ada di sidebar `dev`). Setelah merge, kedua branch wajib menunjuk commit
+  yang sama — cek dengan `git rev-parse main dev`.
+- **Selalu `git pull` sebelum build/deploy.** Build dari commit lama menghasilkan
+  `dist/` yang tampilannya tertinggal.
+- **CI (`.github/workflows/ci.yml`)** jalan di setiap push/PR ke `main` dan `dev`:
+  lint → typecheck → build → **verifikasi menu NGL ada di bundle** → verifikasi
+  `_headers` → upload `dist` → deploy Cloudflare Pages. Supaya deploy-nya aktif, set
+  secret `CLOUDFLARE_API_TOKEN` dan `CLOUDFLARE_ACCOUNT_ID` di GitHub → Settings →
+  Secrets and variables → Actions; kalau belum di-set, CI tetap memvalidasi build
+  dan melewati deploy.
+- **Anti index.html basi**: `frontend/public/_headers` memaksa `index.html` selalu
+  revalidasi (`max-age=0, must-revalidate`) dan aset ber-hash di-cache 1 tahun.
+  Tanpa ini browser bisa menyajikan bundle lama setelah deploy (hard-refresh
+  `Ctrl+Shift+R` tetap disarankan sekali).
+- **Verifikasi cepat setelah build**:
+  ```bash
+  grep -R "Kotak NGL" frontend/dist/assets/*.js   # harus ketemu
+  ```
+
 ## Deployment
 
 ### Backend — Cloudflare Workers
