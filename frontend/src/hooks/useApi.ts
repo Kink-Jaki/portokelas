@@ -301,6 +301,20 @@ export function useAdminUpdateUser() {
   });
 }
 
+export function useAdminDeleteUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => api.delete<{ id: string; deleted: boolean }>(`/admin/users/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin'] });
+      queryClient.invalidateQueries({ queryKey: ['public'] });
+      toast.success('Anggota dihapus.');
+    },
+    onError: (error) => toastApiError(error, 'Gagal menghapus anggota.'),
+  });
+}
+
 export function useAdminProjects(search: string, hidden: string, page: number) {
   return useQuery({
     queryKey: queryKeys.adminProjects(search, hidden, page),

@@ -218,6 +218,8 @@ export type NglSpotify = {
   type: SpotifyEntityType;
   id: string;
   embedUrl: string;
+  title: string | null;
+  artistName: string | null;
 };
 
 export type NglMessage = {

@@ -156,6 +156,7 @@ function SidebarNav({
   ];
 
   if (user) {
+    items.push({ key: 'ngl-box', to: '/ngl/kotak', label: 'Kotak NGL', icon: IconNgl });
     items.push({ key: 'profile', to: '/profile', label: 'Profil', icon: IconUser });
     if (user.slug) {
       items.push({

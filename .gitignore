@@ -29,6 +29,14 @@ bun-error.log*
 backend/uploads/*
 !backend/uploads/.gitkeep
 
+# playwright
+tests/.auth/
+tests/.report/
+tests/.artifacts/
+playwright-report/
+test-results/
+blob-report/
+
 # editor
 .vscode/*
 !.vscode/extensions.json

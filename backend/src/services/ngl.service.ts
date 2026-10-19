@@ -13,7 +13,7 @@ import {
 import { NGL_REPORT_AUTOHIDE_THRESHOLD } from '../config/ngl.js';
 import { env } from '../env.js';
 import { AppError } from '../lib/errors.js';
-import { buildNglSpotifyEmbedUrl } from './spotify.service.js';
+import { buildNglSpotifyEmbedUrl, resolveSpotifyEmbed } from './spotify.service.js';
 import type { Paginated } from './user.service.js';
 
 export const NGL_SETTING_KEY = 'ngl_enabled';
@@ -65,7 +65,13 @@ export type SerializedNglMessage = {
   imagePath: string | null;
   isHidden: boolean;
   createdAt: string;
-  spotify: { type: string; id: string; embedUrl: string } | null;
+  spotify: {
+    type: string;
+    id: string;
+    embedUrl: string;
+    title: string | null;
+    artistName: string | null;
+  } | null;
   isRead?: boolean;
   isReported?: boolean;
 };
@@ -89,6 +95,8 @@ function serializeMessage(
               message.spotifyType as 'track' | 'album' | 'playlist' | 'episode',
               message.spotifyId,
             ),
+            title: message.spotifyTitle,
+            artistName: message.spotifyArtist,
           }
         : null,
     ...flags,
@@ -106,13 +114,47 @@ export type CreateNglMessageInput = {
   isHidden: boolean;
 };
 
+/** Ambil judul & penyanyi dari Spotify agar badge di kartu bisa menampilkannya. */
+async function resolveNglSpotifyMeta(
+  type: string | null,
+  id: string | null,
+): Promise<{ title: string | null; artistName: string | null }> {
+  if (!type || !id) return { title: null, artistName: null };
+  const info = await resolveSpotifyEmbed(`https://open.spotify.com/${type}/${id}`);
+  return { title: info?.title ?? null, artistName: info?.artistName ?? null };
+}
+
+/** Isi metadata Spotify yang masih kosong (pesan lama) lalu simpan hasilnya. */
+async function backfillSpotifyMeta(messages: NglMessage[]): Promise<void> {
+  const targets = messages.filter(
+    (message) => message.spotifyId && !message.spotifyTitle,
+  );
+  if (targets.length === 0) return;
+
+  await Promise.all(
+    targets.map(async (message) => {
+      const meta = await resolveNglSpotifyMeta(message.spotifyType, message.spotifyId);
+      if (!meta.title && !meta.artistName) return;
+      message.spotifyTitle = meta.title;
+      message.spotifyArtist = meta.artistName;
+      await db
+        .update(nglMessages)
+        .set({ spotifyTitle: meta.title, spotifyArtist: meta.artistName })
+        .where(eq(nglMessages.id, message.id));
+    }),
+  );
+}
+
 export async function createNglMessage(input: CreateNglMessageInput): Promise<NglMessage> {
+  const meta = await resolveNglSpotifyMeta(input.spotifyType, input.spotifyId);
   const rows = await db
     .insert(nglMessages)
     .values({
       content: input.content,
       spotifyType: input.spotifyType,
       spotifyId: input.spotifyId,
+      spotifyTitle: meta.title,
+      spotifyArtist: meta.artistName,
       imagePath: input.imagePath,
       ipHash: input.ipHash,
       isHidden: input.isHidden,
@@ -157,6 +199,8 @@ export async function listNglMessagesForUser(
     .select({ value: count() })
     .from(nglMessages)
     .where(eq(nglMessages.isHidden, false));
+
+  await backfillSpotifyMeta(rows.map((row) => row.message));
 
   const items = rows.map((row) =>
     serializeMessage(row.message, {

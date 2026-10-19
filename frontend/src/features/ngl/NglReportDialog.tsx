@@ -43,10 +43,7 @@ export function NglReportDialog({ message, onClose }: Props) {
 
   const submit = () => {
     if (!message) return;
-    report.mutate(
-      { id: message.id, reason, note: note.trim() || null },
-      { onSuccess: onClose },
-    );
+    report.mutate({ id: message.id, reason, note: note.trim() || null }, { onSuccess: onClose });
   };
 
   if (typeof document === 'undefined') return null;
@@ -130,20 +127,10 @@ export function NglReportDialog({ message, onClose }: Props) {
             </div>
 
             <footer className="flex flex-col-reverse gap-3 border-t border-line px-6 py-4 sm:flex-row sm:justify-end">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                disabled={report.isPending}
-              >
+              <Button type="button" variant="outline" onClick={onClose} disabled={report.isPending}>
                 Batal
               </Button>
-              <Button
-                type="button"
-                variant="danger"
-                isLoading={report.isPending}
-                onClick={submit}
-              >
+              <Button type="button" variant="danger" isLoading={report.isPending} onClick={submit}>
                 Kirim laporan
               </Button>
             </footer>

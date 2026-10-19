@@ -22,7 +22,7 @@ export function ProjectDialog({ open, onClose, project = null }: ProjectDialogPr
   const { user } = useAuth();
   const createProject = useCreateProject();
   const updateProject = useUpdateProject();
-  const firstFieldRef = useRef<HTMLInputElement>(null);
+  const firstFieldRef = useRef<HTMLInputElement | null>(null);
   const [collaborators, setCollaborators] = useState<CollaboratorUser[]>([]);
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -83,6 +83,8 @@ export function ProjectDialog({ open, onClose, project = null }: ProjectDialogPr
     onClose();
   });
 
+  const titleField = register('title');
+
   return (
     <Modal
       open={open}
@@ -106,8 +108,11 @@ export function ProjectDialog({ open, onClose, project = null }: ProjectDialogPr
           label="Judul project"
           placeholder="Sistem Reservasi Ruangan"
           error={errors.title?.message}
-          {...register('title')}
-          ref={firstFieldRef}
+          {...titleField}
+          ref={(element) => {
+            titleField.ref(element);
+            firstFieldRef.current = element;
+          }}
         />
 
         <Input

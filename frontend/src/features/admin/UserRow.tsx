@@ -3,12 +3,20 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { RoleBadge, DevBadge } from '@/components/ui/Badge';
 import { Avatar } from '@/components/ui/Avatar';
+import { ConfirmDialog } from '@/components/ui/Modal';
+import { useAdminDeleteUser } from '@/hooks/useApi';
 import { formatDateTime } from '@/lib/utils';
+import { useAuth } from '@/providers/AuthProvider';
 import type { MemberProfile } from '@/types/api';
 import { AdminUserDialog } from './AdminUserDialog';
 
 export function UserRow({ user }: { user: MemberProfile }) {
+  const { user: currentUser } = useAuth();
   const [editOpen, setEditOpen] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState(false);
+  const deleteUser = useAdminDeleteUser();
+
+  const isSelf = currentUser?.id === user.id;
 
   return (
     <>
@@ -40,11 +48,32 @@ export function UserRow({ user }: { user: MemberProfile }) {
             <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
               Edit
             </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              disabled={isSelf}
+              title={isSelf ? 'Anda tidak dapat menghapus akun sendiri' : undefined}
+              onClick={() => setPendingDelete(true)}
+            >
+              Hapus
+            </Button>
           </div>
         </td>
       </tr>
 
       <AdminUserDialog open={editOpen} user={user} onClose={() => setEditOpen(false)} />
+
+      <ConfirmDialog
+        open={pendingDelete}
+        onClose={() => setPendingDelete(false)}
+        onConfirm={() =>
+          deleteUser.mutate(user.id, { onSuccess: () => setPendingDelete(false) })
+        }
+        isLoading={deleteUser.isPending}
+        title="Hapus anggota?"
+        description={`Akun ${user.name} beserta seluruh project dan kenangannya akan dihapus permanen.`}
+        confirmLabel="Hapus permanen"
+      />
     </>
   );
 }

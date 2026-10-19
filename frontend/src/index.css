@@ -10,6 +10,8 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+  /* Display ekspresif untuk kartu NGL — playful, bukan serif formal. */
+  --font-pop: 'Bricolage Grotesque', 'Inter', ui-sans-serif, system-ui, sans-serif;
   /* Tulisan tangan — dipakai untuk label kertas pada section Tentang Kelas. */
   --font-hand: 'Caveat', 'Segoe Script', ui-serif, cursive;
 
@@ -360,8 +362,8 @@
       auto,
       auto,
       auto;
-    background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat,
-      no-repeat;
+    background-repeat:
+      repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
   }
 
   /* Section landing melebur ke kanvas: tanpa latar solid, tanpa tekstur lokal.
@@ -768,8 +770,16 @@
     background-color: #5e1b29;
     background-image:
       var(--grain),
-      radial-gradient(80% 130% at 100% 0%, rgba(141, 165, 139, 0.42) 0%, rgba(141, 165, 139, 0) 55%),
-      radial-gradient(115% 130% at 0% 100%, rgba(255, 252, 244, 0.26) 0%, rgba(255, 252, 244, 0) 58%),
+      radial-gradient(
+        80% 130% at 100% 0%,
+        rgba(141, 165, 139, 0.42) 0%,
+        rgba(141, 165, 139, 0) 55%
+      ),
+      radial-gradient(
+        115% 130% at 0% 100%,
+        rgba(255, 252, 244, 0.26) 0%,
+        rgba(255, 252, 244, 0) 58%
+      ),
       linear-gradient(135deg, #7a2435 0%, #5e1b29 50%, #451a26 100%);
     background-size:
       160px 160px,

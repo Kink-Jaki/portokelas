@@ -3,12 +3,15 @@ import { and, count, desc, eq, ilike, or, type SQL } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import {
   memberProfileColumns,
+  memories,
+  projectImages,
   projects,
   publicUserColumns,
   users,
   type MemberProfile,
   type PublicUser,
 } from '../db/schema.js';
+import { AppError } from '../lib/errors.js';
 import { slugify } from '../lib/slug.js';
 import type { MemberQuery } from '../validators/user.js';
 
@@ -161,6 +164,49 @@ export async function updateProfile(userId: string, data: Partial<typeof users.$
     .where(eq(users.id, userId))
     .returning(memberProfileColumns);
   return rows[0] ?? null;
+}
+
+export type DeletedUser = {
+  user: MemberProfile;
+  /** Path file di storage yang perlu dibersihkan setelah baris DB dihapus. */
+  files: string[];
+};
+
+export async function deleteUserAsAdmin(userId: string): Promise<DeletedUser> {
+  const rows = await db
+    .select(memberProfileColumns)
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  const user = rows[0];
+  if (!user) throw AppError.notFound('Anggota tidak ditemukan');
+
+  const [projectRows, imageRows, memoryRows] = await Promise.all([
+    db
+      .select({ coverImageUrl: projects.coverImageUrl })
+      .from(projects)
+      .where(eq(projects.userId, userId)),
+    db
+      .select({ imageUrl: projectImages.imageUrl })
+      .from(projectImages)
+      .innerJoin(projects, eq(projectImages.projectId, projects.id))
+      .where(eq(projects.userId, userId)),
+    db
+      .select({ imageUrl: memories.imageUrl })
+      .from(memories)
+      .where(eq(memories.userId, userId)),
+  ]);
+
+  await db.delete(users).where(eq(users.id, userId));
+
+  const files = [
+    user.avatarUrl,
+    ...projectRows.map((row) => row.coverImageUrl),
+    ...imageRows.map((row) => row.imageUrl),
+    ...memoryRows.map((row) => row.imageUrl),
+  ].filter((value): value is string => Boolean(value));
+
+  return { user, files };
 }
 
 export async function getPublicStats(): Promise<{ members: number; projects: number }> {

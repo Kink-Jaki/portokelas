@@ -6,9 +6,9 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { useNglSettings } from '@/hooks/useNgl';
 import { useAuth } from '@/providers/AuthProvider';
 import { fadeUp, stagger, staggerItem } from '@/lib/motion';
+import { cn } from '@/lib/utils';
 import { NglCompose } from './NglCompose';
 import { NglDisabled } from './NglDisabled';
-import { NglInbox } from './NglInbox';
 
 export default function NglPage() {
   const settings = useNglSettings();
@@ -70,33 +70,32 @@ export default function NglPage() {
               variants={fadeUp}
               initial="hidden"
               animate="show"
-              className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]"
+              className={cn(
+                'grid items-start gap-10',
+                !user && 'lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]',
+              )}
             >
               <NglCompose />
 
-              <div className="space-y-6">
-                <NglInbox />
-
-                {!user ? (
-                  <div className="border border-line bg-ivory p-6">
-                    <p className="eyebrow">Cara kerja</p>
-                    <ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted">
-                      <li className="flex gap-3">
-                        <span className="font-mono text-burgundy">01</span>
-                        Tulis pesan anonim — identitasmu tidak disimpan.
-                      </li>
-                      <li className="flex gap-3">
-                        <span className="font-mono text-burgundy">02</span>
-                        Pesan muncul di kotak untuk dibaca anggota.
-                      </li>
-                      <li className="flex gap-3">
-                        <span className="font-mono text-burgundy">03</span>
-                        Pesan tidak pantas bisa dilaporkan dan disembunyikan.
-                      </li>
-                    </ul>
-                  </div>
-                ) : null}
-              </div>
+              {!user ? (
+                <div className="border border-line bg-ivory p-6">
+                  <p className="eyebrow">Cara kerja</p>
+                  <ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted">
+                    <li className="flex gap-3">
+                      <span className="font-mono text-burgundy">01</span>
+                      Tulis pesan anonim — identitasmu tidak disimpan.
+                    </li>
+                    <li className="flex gap-3">
+                      <span className="font-mono text-burgundy">02</span>
+                      Pesan muncul di kotak untuk dibaca anggota.
+                    </li>
+                    <li className="flex gap-3">
+                      <span className="font-mono text-burgundy">03</span>
+                      Pesan tidak pantas bisa dilaporkan dan disembunyikan.
+                    </li>
+                  </ul>
+                </div>
+              ) : null}
             </motion.div>
           )}
         </div>

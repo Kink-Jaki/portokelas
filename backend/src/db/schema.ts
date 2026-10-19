@@ -218,6 +218,8 @@ export const nglMessages = pgTable(
     content: text('content'),
     spotifyType: text('spotify_type'),
     spotifyId: text('spotify_id'),
+    spotifyTitle: text('spotify_title'),
+    spotifyArtist: text('spotify_artist'),
     imagePath: text('image_path'),
     isHidden: boolean('is_hidden').notNull().default(false),
     ipHash: text('ip_hash'),

@@ -13,8 +13,7 @@ const inputClass =
   'placeholder:text-muted transition-colors duration-200 focus:border-burgundy focus:outline-none ' +
   'focus:ring-1 focus:ring-burgundy/25';
 
-const labelClass =
-  'block text-xs font-medium uppercase tracking-[0.16em] text-muted';
+const labelClass = 'block text-xs font-medium uppercase tracking-[0.16em] text-muted';
 
 export function NglCompose() {
   const submit = useSubmitNglMessage();

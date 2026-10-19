@@ -14,6 +14,7 @@ import {
   deleteProjectAsAdmin,
   deleteStoredFile,
   deleteTeacher,
+  deleteUserAsAdmin,
   getAbout,
   getHero,
   getProjectAuthor,
@@ -99,6 +100,20 @@ export const adminRoutes = new Hono<AppEnv>()
     if (!updated) throw AppError.notFound('Anggota tidak ditemukan');
 
     return c.json(ok({ user: updated }));
+  })
+
+  .delete('/users/:id', async (c) => {
+    const admin = getCurrentUser(c);
+    const targetId = requireParam(c.req.param('id'), 'id');
+
+    if (targetId === admin.id) {
+      throw AppError.badRequest('Anda tidak dapat menghapus akun sendiri.');
+    }
+
+    const { user, files } = await deleteUserAsAdmin(targetId);
+    for (const file of files) await deleteStoredFile(file);
+
+    return c.json(ok({ id: user.id, deleted: true }));
   })
 
   .get('/projects', zQuery(adminProjectQuerySchema), async (c) => {
