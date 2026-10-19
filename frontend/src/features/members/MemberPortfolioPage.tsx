@@ -2,10 +2,8 @@ import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import { Avatar } from '@/components/ui/Avatar';
 import { DevBadge } from '@/components/ui/Badge';
 import { AnimatedRule, Reveal } from '@/components/ui/Reveal';
-import { SectionHeader } from '@/components/ui/SectionHeader';
 import { CardSkeletonGrid, Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
@@ -13,9 +11,12 @@ import { buttonClasses } from '@/components/ui/Button';
 import { ProjectCardGrid } from '@/components/domain/ProjectCard';
 import { SpotifyPlayer } from '@/components/domain/SpotifyPlayer';
 import { useMember, useMemberProjects } from '@/hooks/usePublic';
+import { assetUrl } from '@/lib/api';
 import { fadeUp } from '@/lib/motion';
-import { themeToCssVars } from '@/lib/theme';
-import { formatDate } from '@/lib/utils';
+import { cn, formatDate, initials, userRoleLabel } from '@/lib/utils';
+
+/** Cadangan deskripsi bila member belum mengisi bio — bukan fakta profil. */
+const ABOUT_FALLBACK = 'Tulisan tentang diri belum diisi. Bagian ini menyusul.';
 
 function InstagramIcon() {
   return (
@@ -48,33 +49,359 @@ function CvIcon() {
   );
 }
 
-/** Tombol yang menjadi link bila ada URL, atau tombol nonaktif bila kosong. */
-function ActionButton({
+function UserIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <circle cx="12" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.4" />
+      <path
+        d="M5 20c.6-3.6 3.4-5.5 7-5.5s6.4 1.9 7 5.5"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function CalendarIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <rect
+        x="4"
+        y="5.5"
+        width="16"
+        height="14.5"
+        rx="1.5"
+        stroke="currentColor"
+        strokeWidth="1.4"
+      />
+      <path
+        d="M4 10h16M8 3.5v4M16 3.5v4"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function FolderIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path
+        d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function LeafIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path
+        d="M5 19C5 11 11 5 20 5c0 9-6 15-14 15Z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+      <path d="M5 19c2-5 6-9 11-11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function SparkIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      <path d="M12 2c.4 5.3 4.7 9.6 10 10-5.3.4-9.6 4.7-10 10-.4-5.3-4.7-9.6-10-10 5.3-.4 9.6-4.7 10-10Z" />
+    </svg>
+  );
+}
+
+function HeartIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path
+        d="M12 20s-7-4.4-7-9.5A4 4 0 0 1 12 7a4 4 0 0 1 7 3.5C19 15.6 12 20 12 20Z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function FlowerIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <g stroke="currentColor" strokeWidth="1.15">
+        <circle cx="12" cy="6.6" r="2.7" />
+        <circle cx="16.8" cy="9.6" r="2.7" />
+        <circle cx="16.8" cy="14.4" r="2.7" />
+        <circle cx="12" cy="17.4" r="2.7" />
+        <circle cx="7.2" cy="14.4" r="2.7" />
+        <circle cx="7.2" cy="9.6" r="2.7" />
+      </g>
+      <circle cx="12" cy="12" r="2" className="fill-maroon-soft" />
+    </svg>
+  );
+}
+
+function Squiggle({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 220 10"
+      className={className}
+      fill="none"
+      preserveAspectRatio="none"
+      aria-hidden
+    >
+      <path
+        d="M2 7c13-6 26 4 39-2s26 4 39-2 26 4 39-2 26 4 39-2 26 4 39-2 12 3 13 3"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function BotanicalSprig({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 120 120"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M12 108 C 46 92, 78 70, 102 34" strokeWidth="1.4" />
+      <g strokeWidth="1.1">
+        <g transform="translate(26 94) rotate(-38)">
+          <path d="M0 0c-8 9-6 24 0 32 6-8 8-23 0-32Z" />
+          <path d="M0 4v26" />
+        </g>
+        <g transform="translate(48 78) rotate(24)">
+          <path d="M0 0c-7 8-5 21 0 28 5-7 7-20 0-28Z" />
+          <path d="M0 3v23" />
+        </g>
+        <g transform="translate(66 58) rotate(-30)">
+          <path d="M0 0c-7 8-5 21 0 28 5-7 7-20 0-28Z" />
+          <path d="M0 3v23" />
+        </g>
+        <g transform="translate(84 42) rotate(18)">
+          <path d="M0 0c-5 6-4 16 0 21 4-5 5-15 0-21Z" />
+          <path d="M0 2v17" />
+        </g>
+        <g transform="translate(98 28) rotate(-12)">
+          <path d="M0 0c-4 5-3 13 0 17 3-4 4-12 0-17Z" />
+          <path d="M0 2v13" />
+        </g>
+      </g>
+    </svg>
+  );
+}
+
+function ColorBand() {
+  return (
+    <span aria-hidden className="absolute inset-x-0 top-0 z-20 flex h-1">
+      <span className="h-full flex-[2.2] bg-maroon" />
+      <span className="h-full flex-1 bg-sage" />
+      <span className="h-full flex-1 bg-maroon-soft" />
+    </span>
+  );
+}
+
+/** Bentuk organik + botanikal di latar halaman (tidak menyentuh teks). */
+function PortfolioOrnaments() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+      <span className="absolute -right-32 -top-28 h-80 w-80 rounded-[58%_42%_46%_54%] bg-sage-soft/70" />
+      <span className="absolute -left-28 top-1/3 h-64 w-64 rounded-[44%_56%_60%_40%] bg-maroon-tint" />
+      <span className="absolute -left-24 top-1/2 h-44 w-44 rounded-full border border-dashed border-sage/45" />
+      <span className="absolute bottom-24 right-10 hidden h-56 w-56 rounded-[52%_48%_38%_62%] bg-sage-soft/50 lg:block" />
+      <FlowerIcon className="absolute -left-6 top-24 h-20 w-20 text-sage/35" />
+      <FlowerIcon className="absolute -right-4 bottom-52 hidden h-14 w-14 text-maroon-soft/25 lg:block" />
+      <BotanicalSprig className="absolute -left-10 bottom-40 hidden h-36 w-36 rotate-[14deg] text-sage/45 lg:block" />
+      <SparkIcon className="absolute right-1/4 top-40 hidden h-3.5 w-3.5 text-gold/60 lg:block" />
+    </div>
+  );
+}
+
+/** Eyebrow: "01 — PORTOFOLIO MEMBER". */
+function SectionLabel({ index, children }: { index: string; children: ReactNode }) {
+  return (
+    <p className="flex items-center gap-2.5 font-mono text-[0.6875rem] uppercase tracking-[0.28em] text-muted">
+      <span className="tnum text-maroon-soft">{index}</span>
+      <span aria-hidden className="text-line-strong">
+        —
+      </span>
+      <span>{children}</span>
+    </p>
+  );
+}
+
+/** Tombol sosial/CV: link aktif bila URL tersedia, tombol nonaktif bila kosong. */
+function PortfolioAction({
   href,
+  label,
   variant = 'outline',
   children,
 }: {
   href: string | null;
+  label: string;
   variant?: 'primary' | 'outline';
   children: ReactNode;
 }) {
-  if (href) {
+  const base =
+    'inline-flex h-11 items-center gap-2.5 rounded-full border px-5 text-sm font-medium tracking-tight transition-[background-color,border-color,color,transform] duration-300 ease-editorial';
+
+  if (!href) {
     return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer nofollow"
-        className={buttonClasses(variant, 'sm')}
+      <button
+        type="button"
+        disabled
+        aria-disabled="true"
+        aria-label={`${label} tidak tersedia`}
+        className={cn(base, 'cursor-not-allowed border-line bg-elevated/50 text-muted/60')}
       >
         {children}
-      </a>
+      </button>
     );
   }
 
   return (
-    <button type="button" disabled className={buttonClasses(variant, 'sm')}>
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      aria-label={label}
+      className={cn(
+        base,
+        'group active:translate-y-px',
+        variant === 'primary'
+          ? 'border-maroon-soft bg-maroon-soft text-ivory-warm hover:border-maroon hover:bg-maroon'
+          : 'border-forest/50 bg-bg/70 text-forest hover:border-forest hover:bg-forest hover:text-ivory-warm',
+      )}
+    >
       {children}
-    </button>
+    </a>
+  );
+}
+
+/** Foto profil ditempel seperti pada scrapbook: bingkai tipis + selotip sage. */
+function PortraitCard({ name, src }: { name: string; src: string | null }) {
+  const url = assetUrl(src);
+
+  return (
+    <div className="relative mx-auto w-full max-w-[17rem] sm:max-w-[19rem] lg:ml-auto lg:max-w-[20.5rem]">
+      <span
+        aria-hidden
+        className="absolute -left-3 -top-3 hidden h-full w-full -rotate-2 rounded-[10px] border border-line bg-sage-soft/70 sm:block"
+      />
+
+      <figure className="relative rounded-[10px] border border-line bg-elevated p-2 shadow-[0_22px_44px_-34px_rgba(104,43,34,0.65)]">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-[6px] bg-subtle">
+          {url ? (
+            <img
+              src={url}
+              alt={`Foto ${name}`}
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="grid h-full w-full place-items-center">
+              <span className="font-display text-6xl font-semibold tracking-[0.06em] text-maroon/70">
+                {initials(name)}
+              </span>
+            </div>
+          )}
+        </div>
+      </figure>
+
+      {/* Selotip dekoratif di bagian atas frame. */}
+      <span
+        aria-hidden
+        className="absolute -top-3 left-1/2 h-6 w-24 -translate-x-1/2 -rotate-3 border-y border-sage/60 bg-sage/70 sm:w-28"
+      />
+
+      {/* Daun kecil di sudut bawah foto. */}
+      <LeafIcon className="pointer-events-none absolute -bottom-5 -left-5 h-11 w-11 rotate-[18deg] text-forest/75" />
+      <SparkIcon className="pointer-events-none absolute -bottom-3 right-6 h-3.5 w-3.5 text-maroon-soft/70" />
+    </div>
+  );
+}
+
+/** Satu kolom pada panel informasi member (`dl > div > dt/dd`). */
+function InfoColumn({
+  icon,
+  iconClassName,
+  label,
+  value,
+  note,
+  className,
+}: {
+  icon: ReactNode;
+  iconClassName: string;
+  label: string;
+  value: ReactNode;
+  note?: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn('relative p-6 sm:p-7', className)}>
+      <dt className="flex items-center gap-3">
+        <span
+          aria-hidden
+          className={cn(
+            'grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line/70',
+            iconClassName,
+          )}
+        >
+          {icon}
+        </span>
+        <span className="font-mono text-[0.625rem] uppercase tracking-[0.26em] text-muted">
+          {label}
+        </span>
+      </dt>
+      <dd className="mt-4 font-display text-xl leading-snug break-words text-maroon sm:text-2xl">
+        {value}
+        {note ? (
+          <span className="mt-1.5 block font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-muted">
+            {note}
+          </span>
+        ) : null}
+      </dd>
+    </div>
+  );
+}
+
+function PortfolioSkeleton() {
+  return (
+    <section className="section-portfolio relative isolate overflow-hidden">
+      <ColorBand />
+      <div className="container-page py-16 lg:py-20">
+        <div className="grid gap-10 lg:grid-cols-12 lg:items-start lg:gap-12">
+          <div className="order-2 space-y-5 lg:order-1 lg:col-span-7 xl:col-span-8">
+            <Skeleton className="h-3 w-56" />
+            <Skeleton className="h-20 w-3/5" />
+            <Skeleton className="h-3 w-52" />
+            <Skeleton className="mt-6 h-11 w-72 rounded-full" />
+          </div>
+          <div className="order-1 flex justify-start lg:order-2 lg:col-span-5 lg:justify-end xl:col-span-4">
+            <Skeleton className="aspect-[4/5] w-full max-w-[17rem] rounded-[10px] lg:max-w-[20.5rem]" />
+          </div>
+        </div>
+        <Skeleton className="mt-14 h-32 w-full rounded-[14px]" />
+        <div className="mt-14">
+          <CardSkeletonGrid count={3} />
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -87,181 +414,215 @@ export default function MemberPortfolioPage() {
   const projects = projectsQuery.data?.projects ?? [];
 
   if (memberQuery.isLoading) {
-    return (
-      <div className="container-page py-16 lg:py-20">
-        <div className="grid gap-10 lg:grid-cols-12">
-          <div className="space-y-5 lg:col-span-8">
-            <Skeleton className="h-3 w-40" />
-            <Skeleton className="h-16 w-3/4" />
-            <Skeleton className="h-4 w-full max-w-xl" />
-            <Skeleton className="h-4 w-2/3 max-w-md" />
-          </div>
-          <div className="lg:col-span-4 lg:flex lg:justify-end">
-            <Skeleton className="h-40 w-40" />
-          </div>
-        </div>
-        <div className="mt-14">
-          <CardSkeletonGrid count={3} />
-        </div>
-      </div>
-    );
+    return <PortfolioSkeleton />;
   }
 
   if (memberQuery.isError || !member) {
     return (
-      <div className="container-page py-20">
-        <div className="mx-auto max-w-2xl border border-line">
-          <EmptyState
-            title="Portofolio tidak ditemukan"
-            description={
-              memberQuery.isError
-                ? memberQuery.error.message
-                : 'Kreator ini belum tersedia atau tautannya salah.'
-            }
-            action={
-              <Link to="/members" className={buttonClasses('outline')}>
-                Kembali ke direktori
-              </Link>
-            }
-          />
+      <section className="section-portfolio relative isolate overflow-hidden">
+        <ColorBand />
+        <div className="container-page py-20">
+          <div className="mx-auto max-w-2xl overflow-hidden rounded-[14px] border border-line bg-elevated">
+            <EmptyState
+              title="Portofolio tidak ditemukan"
+              description={
+                memberQuery.isError
+                  ? memberQuery.error.message
+                  : 'Kreator ini belum tersedia atau tautannya salah.'
+              }
+              action={
+                <Link to="/members" className={buttonClasses('outline')}>
+                  Kembali ke direktori
+                </Link>
+              }
+            />
+          </div>
         </div>
-      </div>
+      </section>
     );
   }
 
   const projectCountLabel = projectsQuery.isLoading ? '—' : String(projects.length);
+  const headline = member.headline?.trim() || null;
+  const roleTitle = headline ?? (member.role === 'admin' ? 'Admin / Developer' : 'Kreator');
+  const roleNote = headline ? (userRoleLabel[member.role] ?? null) : null;
+  const aboutText = member.bio?.trim() || ABOUT_FALLBACK;
 
   return (
-    <div className="portfolio-root bg-bg text-fg" style={themeToCssVars(member.theme)}>
-      <div className="container-page py-16 lg:py-20">
-        <motion.header variants={fadeUp} initial="hidden" animate="show">
-          <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
-            <div className="order-2 min-w-0 lg:order-1 lg:col-span-8">
-              <p className="eyebrow flex items-center gap-3">
-                <span className="index-num">01</span>
-                <span aria-hidden className="h-px w-6 bg-line-strong" />
-                Portofolio Kreator
-              </p>
+    <section className="section-portfolio relative isolate overflow-hidden">
+      <ColorBand />
+      <PortfolioOrnaments />
 
-              <div className="mt-6 flex flex-wrap items-end gap-x-4 gap-y-3">
-                <h1 className="text-balance font-display text-[clamp(2.75rem,7vw,5.25rem)] leading-[0.95] tracking-[-0.035em]">
-                  {member.alias || member.name}
-                </h1>
+      <div className="container-page relative z-10 py-16 lg:py-20">
+        <motion.header variants={fadeUp} initial="hidden" animate="show">
+          <div className="grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-10 xl:gap-16">
+            {/* ——— Kolom kiri: judul + tautan ——— */}
+            <div className="order-2 min-w-0 lg:order-1 lg:col-span-7 xl:col-span-8">
+              <div className="flex flex-wrap items-center gap-3">
+                <SectionLabel index="01">Portofolio Member</SectionLabel>
                 {member.role === 'admin' ? <DevBadge /> : null}
               </div>
 
+              <div className="relative mt-15">
+                <LeafIcon className="pointer-events-none absolute -left-1 -top-14 hidden h-7 w-7 -rotate-12 text-forest/75 sm:block" />
+                <FlowerIcon className="pointer-events-none absolute -top-14 right-6 hidden h-8 w-8 text-maroon-soft/45 sm:block" />
+                <HeartIcon className="pointer-events-none absolute -top-11 right-24 hidden h-5 w-5 text-maroon-soft/70 sm:block" />
+                <SparkIcon className="pointer-events-none absolute -top-12 right-40 hidden h-4 w-4 text-gold sm:block" />
+
+                <h1 className="text-balance break-words font-display text-[clamp(3.1rem,11vw,7.5rem)] font-semibold uppercase leading-[0.94] tracking-[-0.035em] text-maroon [overflow-wrap:anywhere]">
+                  {member.alias || member.name}
+                </h1>
+
+                <Squiggle className="mt-3 h-3 w-full max-w-[26rem] text-forest" />
+              </div>
+
               {member.alias ? (
-                <p className="mt-3 font-mono text-sm uppercase tracking-[0.16em] text-muted">
+                <p className="mt-4 font-mono text-xs uppercase tracking-[0.2em] text-muted sm:text-sm">
                   {member.name}
                 </p>
               ) : null}
 
-              {member.headline ? (
-                <p className="mt-6 max-w-2xl text-lg leading-relaxed text-fg sm:text-xl">
-                  {member.headline}
-                </p>
-              ) : null}
-
               <div className="mt-9 flex flex-wrap items-center gap-3">
-                <ActionButton href={member.instagramUrl}>
+                <PortfolioAction href={member.instagramUrl} label="Instagram">
                   <InstagramIcon />
                   Instagram
-                </ActionButton>
-                <ActionButton href={member.githubUrl}>
+                </PortfolioAction>
+                <PortfolioAction href={member.githubUrl} label="GitHub">
                   <GitHubIcon />
                   GitHub
-                </ActionButton>
-                <ActionButton href={member.cvUrl} variant="primary">
+                </PortfolioAction>
+                <PortfolioAction href={member.cvUrl} label="Buka CV" variant="primary">
                   <CvIcon />
                   Buka CV
-                </ActionButton>
+                </PortfolioAction>
               </div>
             </div>
 
-            <div className="order-1 lg:order-2 lg:col-span-4 lg:flex lg:justify-end">
-              <div className="relative">
-                <span
-                  aria-hidden
-                  className="absolute -left-3 -top-3 hidden h-full w-full border border-line-strong lg:block"
-                />
-                <Avatar
-                  name={member.name}
-                  src={member.avatarUrl}
-                  size="xl"
-                  className="relative border-line-strong"
-                />
-              </div>
+            {/* ——— Kolom kanan: foto seperti ditempel ——— */}
+            <div className="order-1 flex justify-center lg:order-2 lg:col-span-5 lg:justify-end xl:col-span-4">
+              <PortraitCard name={member.name} src={member.avatarUrl} />
             </div>
           </div>
 
-          <dl className="mt-14 grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-3">
-            <div className="bg-bg p-6">
-              <dt className="eyebrow">Peran</dt>
-              <dd className="mt-3 font-display text-lg">
-                {member.role === 'admin' ? 'Admin / Developer' : 'Kreator'}
-              </dd>
-            </div>
-            <div className="bg-bg p-6">
-              <dt className="eyebrow">Bergabung</dt>
-              <dd className="mt-3 font-display text-lg">{formatDate(member.createdAt)}</dd>
-            </div>
-            <div className="bg-bg p-6">
-              <dt className="eyebrow">Project tayang</dt>
-              <dd className="mt-3 font-display text-lg tabular-nums">{projectCountLabel}</dd>
-            </div>
-          </dl>
+          {/* ——— Panel informasi member ——— */}
+          <div className="relative mt-12 overflow-hidden rounded-[14px] border border-line bg-elevated/70 lg:mt-16">
+            <dl className="grid sm:grid-cols-3">
+              <InfoColumn
+                className="border-b border-line sm:border-b-0 sm:border-r"
+                icon={<UserIcon className="h-5 w-5" />}
+                iconClassName="bg-blush text-maroon-soft"
+                label="Peran"
+                value={roleTitle}
+                note={roleNote}
+              />
+              <InfoColumn
+                className="border-b border-line sm:border-b-0 sm:border-r"
+                icon={<CalendarIcon className="h-5 w-5" />}
+                iconClassName="bg-sage/55 text-forest"
+                label="Bergabung"
+                value={formatDate(member.createdAt)}
+              />
+              <InfoColumn
+                icon={<FolderIcon className="h-5 w-5" />}
+                iconClassName="bg-sage-soft text-forest"
+                label="Project tayang"
+                value={<span className="tnum">{projectCountLabel}</span>}
+                note={projectsQuery.isLoading ? undefined : 'Karya yang dipublikasikan'}
+              />
+            </dl>
+            <LeafIcon className="pointer-events-none absolute bottom-4 right-5 hidden h-7 w-7 rotate-[24deg] text-sage/80 lg:block" />
+          </div>
         </motion.header>
 
-        {member.spotify ? (
-          <Reveal className="mt-12">
-            <div className="overflow-hidden border border-line">
-              <div className="flex items-center justify-between gap-4 border-b border-line px-5 py-3">
-                <p className="eyebrow flex items-center gap-2.5">
-                  <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
-                  Sedang didengar
-                </p>
-                <p className="font-mono text-[0.625rem] uppercase tracking-[0.16em] text-muted">
-                  Spotify
-                </p>
-              </div>
-              <div className="p-3 sm:p-4">
-                <SpotifyPlayer spotify={member.spotify} />
-              </div>
-            </div>
-          </Reveal>
-        ) : null}
+        {/* ——— Pemisah ——— */}
+        <div className="mt-14 lg:mt-16">
+          <AnimatedRule className="bg-line" />
+        </div>
 
-        {member.bio ? (
-          <Reveal className={member.spotify ? 'mt-10' : 'mt-12'}>
-            <div className="grid gap-4 lg:grid-cols-12 lg:gap-8">
-              <p className="eyebrow lg:col-span-2">Bio</p>
-              <p className="whitespace-pre-line text-base leading-relaxed text-muted lg:col-span-10 lg:max-w-3xl lg:text-lg lg:leading-[1.75]">
-                {member.bio}
+        {/* ——— 02 — Tentang saya ——— */}
+        <section className="relative mt-12 sm:mt-14" aria-label="Tentang Saya">
+          <Reveal>
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+              <div className="relative min-w-0">
+                <SectionLabel index="02">Tentang Saya</SectionLabel>
+
+                <div className="relative mt-7 inline-block">
+                  <HeartIcon className="pointer-events-none absolute -top-6 right-2 hidden h-5 w-5 text-maroon-soft/70 sm:block" />
+                  <SparkIcon className="pointer-events-none absolute -top-7 right-12 hidden h-3.5 w-3.5 text-gold sm:block" />
+                  <h2 className="font-display text-4xl font-semibold leading-none tracking-[-0.03em] text-maroon sm:text-5xl lg:text-[3.4rem]">
+                    About Me
+                  </h2>
+                  <Squiggle className="mt-3 h-2.5 w-40 text-forest sm:w-56" />
+                </div>
+              </div>
+
+              <p className="inline-flex shrink-0 items-center gap-2 self-start rounded-full border border-line-strong bg-elevated/70 px-4 py-2 font-mono text-[0.6875rem] uppercase tracking-[0.24em] text-maroon">
+                <span className="tnum">{projectCountLabel}</span>
+                <span aria-hidden className="h-px w-4 bg-line-strong" />
+                Project
               </p>
             </div>
           </Reveal>
-        ) : null}
 
-        <AnimatedRule className="mt-16" />
-
-        <section className="mt-12" aria-label="Project">
-          <Reveal>
-            <SectionHeader
-              index="02"
-              eyebrow="Karya"
-              title="Project"
-              description={
-                projects.length > 0
-                  ? 'Kumpulan project yang dikerjakan dan dibagikan secara publik.'
-                  : undefined
-              }
-              action={
-                <p className="font-mono text-xs uppercase tracking-[0.16em] text-muted">
-                  {projects.length} project
-                </p>
-              }
-            />
+          <Reveal delay={0.06}>
+            <div className="relative mt-7 max-w-3xl">
+              <FlowerIcon className="pointer-events-none absolute -right-10 -top-6 hidden h-8 w-8 text-sage/70 lg:block" />
+              <p
+                className={cn(
+                  'whitespace-pre-line text-base leading-[1.9] text-muted sm:text-lg',
+                  member.bio ? '' : 'italic text-muted/80',
+                )}
+              >
+                {aboutText}
+              </p>
+            </div>
           </Reveal>
+
+          {member.spotify ? (
+            <Reveal className="mt-10">
+              <div className="overflow-hidden rounded-[14px] border border-line bg-elevated">
+                <div className="flex items-center justify-between gap-4 bg-maroon px-5 py-3">
+                  <p className="flex items-center gap-2.5 font-mono text-[0.625rem] uppercase tracking-[0.2em] text-ivory-warm">
+                    <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-sage" />
+                    Sedang didengar
+                  </p>
+                  <p className="font-mono text-[0.625rem] uppercase tracking-[0.18em] text-ivory-warm/70">
+                    Spotify
+                  </p>
+                </div>
+                <div className="p-3 sm:p-4">
+                  <SpotifyPlayer spotify={member.spotify} />
+                </div>
+              </div>
+            </Reveal>
+          ) : null}
+        </section>
+
+        {/* ——— Pemisah + 03 — Karya ——— */}
+        <div className="mt-14 lg:mt-16">
+          <AnimatedRule className="bg-line" />
+        </div>
+
+        <section className="relative mt-12 sm:mt-14" aria-label="Project">
+          <BotanicalSprig className="pointer-events-none absolute -bottom-8 right-0 hidden h-24 w-24 rotate-12 text-sage opacity-25 lg:block" />
+
+          <Reveal>
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
+              <div>
+                <SectionLabel index="03">Karya</SectionLabel>
+                <h2 className="mt-4 flex items-center gap-3 font-display text-4xl font-semibold leading-none tracking-[-0.03em] text-maroon sm:text-5xl lg:text-[3.4rem]">
+                  Project
+                  <FlowerIcon className="h-6 w-6 shrink-0 text-sage sm:h-7 sm:w-7" />
+                </h2>
+              </div>
+              <p className="inline-flex items-center gap-2 self-start rounded-full border border-line-strong bg-elevated/70 px-4 py-2 font-mono text-[0.6875rem] uppercase tracking-[0.24em] text-maroon">
+                <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-maroon-soft" />
+                <span className="tnum">{projectCountLabel}</span> Project tayang
+              </p>
+            </div>
+          </Reveal>
+
+          <div className="mt-8 h-px w-full bg-line" />
 
           <div className="mt-10">
             {projectsQuery.isLoading ? (
@@ -272,10 +633,19 @@ export default function MemberPortfolioPage() {
                 onRetry={() => void projectsQuery.refetch()}
               />
             ) : projects.length === 0 ? (
-              <div className="border border-line">
+              <div className="relative overflow-hidden rounded-[14px] border border-dashed border-sage/60 bg-sage-soft/30">
+                <span
+                  aria-hidden
+                  className="absolute -right-6 -top-6 h-24 w-24 rounded-[48%_52%_60%_40%] bg-sage-soft/70"
+                />
+                <span
+                  aria-hidden
+                  className="absolute -bottom-8 -left-8 h-28 w-28 rounded-[55%_45%_40%_60%] bg-maroon-tint"
+                />
                 <EmptyState
                   title="Belum ada project"
                   description={`${member.name} belum menambahkan project yang publik.`}
+                  icon={<FlowerIcon className="h-9 w-9 text-sage" />}
                 />
               </div>
             ) : (
@@ -284,6 +654,6 @@ export default function MemberPortfolioPage() {
           </div>
         </section>
       </div>
-    </div>
+    </section>
   );
 }
