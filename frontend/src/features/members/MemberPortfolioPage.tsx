@@ -221,8 +221,9 @@ function PortfolioOrnaments() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
       <span className="absolute -right-32 -top-28 h-80 w-80 rounded-[58%_42%_46%_54%] bg-sage-soft/70" />
-      <span className="absolute -left-28 top-1/3 h-64 w-64 rounded-[44%_56%_60%_40%] bg-maroon-tint" />
-      <span className="absolute -left-24 top-1/2 h-44 w-44 rounded-full border border-dashed border-sage/45" />
+      <span className="absolute -left-28 top-1/3 h-64 w-64 rounded-full bg-maroon" />
+      <span className="absolute -right-20 top-3/4 h-44 w-44 -translate-y-1/2 rounded-full bg-sage" />
+      <span className="absolute -right-28 top-3/4 h-60 w-60 -translate-y-1/2 rounded-full border border-forest/40" />
       <span className="absolute bottom-24 right-10 hidden h-56 w-56 rounded-[52%_48%_38%_62%] bg-sage-soft/50 lg:block" />
       <FlowerIcon className="absolute -left-6 top-24 h-20 w-20 text-sage/35" />
       <FlowerIcon className="absolute -right-4 bottom-52 hidden h-14 w-14 text-maroon-soft/25 lg:block" />
@@ -353,12 +354,12 @@ function InfoColumn({
   className?: string;
 }) {
   return (
-    <div className={cn('relative p-6 sm:p-7', className)}>
+    <div className={cn('relative p-4 sm:p-5', className)}>
       <dt className="flex items-center gap-3">
         <span
           aria-hidden
           className={cn(
-            'grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line/70',
+            'grid h-9 w-9 shrink-0 place-items-center rounded-full border border-line/70',
             iconClassName,
           )}
         >
@@ -368,10 +369,10 @@ function InfoColumn({
           {label}
         </span>
       </dt>
-      <dd className="mt-4 font-display text-xl leading-snug break-words text-maroon sm:text-2xl">
+      <dd className="mt-2.5 font-display text-lg leading-snug break-words text-maroon sm:text-xl">
         {value}
         {note ? (
-          <span className="mt-1.5 block font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-muted">
+          <span className="mt-1 block font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-muted">
             {note}
           </span>
         ) : null}
@@ -447,6 +448,13 @@ export default function MemberPortfolioPage() {
   const roleTitle = headline ?? (member.role === 'admin' ? 'Admin / Developer' : 'Kreator');
   const roleNote = headline ? (userRoleLabel[member.role] ?? null) : null;
   const aboutText = member.bio?.trim() || ABOUT_FALLBACK;
+  const displayName = (member.alias || member.name).trim();
+  const nameSizeClass =
+    displayName.length > 20
+      ? 'text-[clamp(2rem,7vw,4.4rem)]'
+      : displayName.length > 10
+        ? 'text-[clamp(2.6rem,9vw,5.8rem)]'
+        : 'text-[clamp(3.1rem,11vw,7.5rem)]';
 
   return (
     <section className="section-portfolio relative isolate overflow-hidden">
@@ -469,8 +477,13 @@ export default function MemberPortfolioPage() {
                 <HeartIcon className="pointer-events-none absolute -top-11 right-24 hidden h-5 w-5 text-maroon-soft/70 sm:block" />
                 <SparkIcon className="pointer-events-none absolute -top-12 right-40 hidden h-4 w-4 text-gold sm:block" />
 
-                <h1 className="text-balance break-words font-display text-[clamp(3.1rem,11vw,7.5rem)] font-semibold uppercase leading-[0.94] tracking-[-0.035em] text-maroon [overflow-wrap:anywhere]">
-                  {member.alias || member.name}
+                <h1
+                  className={cn(
+                    'text-balance break-words font-display font-semibold uppercase leading-[0.94] tracking-[-0.035em] text-maroon [overflow-wrap:anywhere]',
+                    nameSizeClass,
+                  )}
+                >
+                  {displayName}
                 </h1>
 
                 <Squiggle className="mt-3 h-3 w-full max-w-[26rem] text-forest" />
@@ -542,39 +555,28 @@ export default function MemberPortfolioPage() {
         {/* ——— 02 — Tentang saya ——— */}
         <section className="relative mt-12 sm:mt-14" aria-label="Tentang Saya">
           <Reveal>
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
-              <div className="relative min-w-0">
+            <div className="flex flex-col gap-7 sm:flex-row sm:items-start sm:gap-10 lg:gap-14">
+              <div className="relative shrink-0">
                 <SectionLabel index="02">Tentang Saya</SectionLabel>
 
                 <div className="relative mt-7 inline-block">
-                  <HeartIcon className="pointer-events-none absolute -top-6 right-2 hidden h-5 w-5 text-maroon-soft/70 sm:block" />
-                  <SparkIcon className="pointer-events-none absolute -top-7 right-12 hidden h-3.5 w-3.5 text-gold sm:block" />
                   <h2 className="font-display text-4xl font-semibold leading-none tracking-[-0.03em] text-maroon sm:text-5xl lg:text-[3.4rem]">
-                    About Me
+                    About
                   </h2>
                   <Squiggle className="mt-3 h-2.5 w-40 text-forest sm:w-56" />
                 </div>
               </div>
 
-              <p className="inline-flex shrink-0 items-center gap-2 self-start rounded-full border border-line-strong bg-elevated/70 px-4 py-2 font-mono text-[0.6875rem] uppercase tracking-[0.24em] text-maroon">
-                <span className="tnum">{projectCountLabel}</span>
-                <span aria-hidden className="h-px w-4 bg-line-strong" />
-                Project
-              </p>
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.06}>
-            <div className="relative mt-7 max-w-3xl">
-              <FlowerIcon className="pointer-events-none absolute -right-10 -top-6 hidden h-8 w-8 text-sage/70 lg:block" />
-              <p
-                className={cn(
-                  'whitespace-pre-line text-base leading-[1.9] text-muted sm:text-lg',
-                  member.bio ? '' : 'italic text-muted/80',
-                )}
-              >
-                {aboutText}
-              </p>
+              <Reveal delay={0.06} className="min-w-0 max-w-3xl sm:mt-11">
+                <p
+                  className={cn(
+                    'whitespace-pre-line text-base leading-[1.9] text-muted sm:text-lg',
+                    member.bio ? '' : 'italic text-muted/80',
+                  )}
+                >
+                  {aboutText}
+                </p>
+              </Reveal>
             </div>
           </Reveal>
 
