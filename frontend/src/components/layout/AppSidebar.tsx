@@ -157,7 +157,7 @@ function SidebarNav({
   const items: NavItem[] = [
     { key: 'home', to: '/', label: 'Beranda', icon: IconHome, end: true },
     { key: 'members', to: '/members', label: 'Anggota', icon: IconUsers },
-    { key: 'ngl', to: '/ngl', label: 'NGL', icon: IconNgl },
+    { key: 'ngl', to: '/ngl', label: 'NGL', icon: IconNgl, end: true },
   ];
 
   if (user) {
