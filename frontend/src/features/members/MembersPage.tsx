@@ -60,18 +60,18 @@ function MembersOrnaments() {
 
 function MemberSkeletonGrid() {
   return (
-    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+    <div className="grid grid-cols-2 gap-2 min-[360px]:gap-2.5 min-[390px]:gap-3 md:gap-5 lg:grid-cols-4 lg:gap-6">
       {Array.from({ length: 12 }).map((_, index) => (
-        <div key={index} className="flex h-full flex-col rounded-2xl border border-line bg-elevated p-5 sm:p-6">
+        <div key={index} className="flex h-full flex-col rounded-2xl border border-line bg-elevated p-2 min-[360px]:p-2.5 min-[390px]:p-3 sm:p-6">
           <Skeleton className="aspect-[4/3] w-full" />
           <Skeleton className="mt-6 h-5 w-2/3" />
           <Skeleton className="mt-3 h-4 w-1/3" />
           <Skeleton className="mt-5 h-3 w-full" />
           <Skeleton className="mt-2.5 h-3 w-4/5" />
           <Skeleton className="mt-2.5 h-3 w-3/5" />
-          <div className="mt-6 flex gap-3">
-            <Skeleton className="h-[42px] w-full" />
-            <Skeleton className="h-[42px] w-full" />
+          <div className="mt-auto flex gap-1.5 pt-5 sm:gap-3">
+            <Skeleton className="h-8 w-full sm:h-[42px]" />
+            <Skeleton className="h-8 w-full sm:h-[42px]" />
           </div>
         </div>
       ))}
@@ -189,7 +189,7 @@ export default function MembersPage() {
             />
             </div>
           ) : (
-            <Stagger className="grid auto-rows-fr grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+            <Stagger className="grid auto-rows-fr grid-cols-2 gap-2 min-[360px]:gap-2.5 min-[390px]:gap-3 md:gap-5 lg:grid-cols-4 lg:gap-6">
               {members.map((member, index) => (
                 <StaggerItem key={member.id} className="h-full">
                   <MemberDirectoryCard member={member} index={index + 1} />
