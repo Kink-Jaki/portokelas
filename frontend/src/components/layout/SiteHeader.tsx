@@ -251,8 +251,8 @@ export function SiteFooter() {
   return (
     <footer className="section-maroon relative overflow-hidden border-t border-line">
       <div className="container-page relative z-10 py-16 lg:py-20">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-5">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-12 lg:gap-8">
+          <div className="col-span-2 lg:col-span-5">
             <Logo />
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted">
               Kumpulan portofolio anggota dalam satu etalase publik. Dibangun oleh dan untuk
@@ -268,7 +268,7 @@ export function SiteFooter() {
             </div>
           </div>
 
-          <nav className="lg:col-span-3 lg:col-start-7" aria-label="Navigasi footer">
+          <nav aria-label="Navigasi footer" className="lg:col-span-3 lg:col-start-7">
             <p className="eyebrow">Jelajahi</p>
             <ul className="mt-5 space-y-3">
               {footerNav.map((item) => (
@@ -311,7 +311,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-4 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-16 flex flex-col items-center gap-4 border-t border-line pt-8 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
           <p className="font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-muted">
             © {year} · Craftly
           </p>
