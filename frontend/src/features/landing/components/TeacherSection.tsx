@@ -63,11 +63,11 @@ function TeacherName({ name }: { name: string }) {
 function TeacherOrnaments() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
-      {/* Kiri atas — lengkung organik maroon */}
+      {/* Kiri atas — lengkung organik maroon (mobile: kecil & samar di sudut) */}
       <svg
         viewBox="0 0 260 260"
         fill="none"
-        className="absolute -left-24 -top-28 hidden h-72 w-72 text-maroon opacity-[0.12] sm:block"
+        className="absolute -left-14 -top-16 h-40 w-40 text-maroon opacity-[0.08] sm:-left-24 sm:-top-28 sm:h-72 sm:w-72 sm:opacity-[0.12]"
       >
         <path d="M8 250C-6 130 60 24 200 8" stroke="currentColor" strokeWidth="2.5" />
         <path d="M40 250C34 150 92 60 214 44" stroke="currentColor" strokeWidth="1.4" opacity="0.7" />
@@ -88,11 +88,11 @@ function TeacherOrnaments() {
       <span className="absolute left-[12%] top-24 hidden h-1.5 w-1.5 rounded-full bg-gold/80 lg:block" />
       <span className="absolute left-[7%] top-40 hidden h-1 w-1 rounded-full bg-maroon/50 lg:block" />
 
-      {/* Kanan bawah — lengkung organik forest green */}
+      {/* Kanan bawah — lengkung organik forest green (mobile: kecil & samar) */}
       <svg
         viewBox="0 0 260 260"
         fill="none"
-        className="absolute -bottom-28 -right-24 hidden h-72 w-72 text-pine opacity-[0.13] sm:block"
+        className="absolute -bottom-16 -right-14 h-40 w-40 text-pine opacity-[0.08] sm:-bottom-28 sm:-right-24 sm:h-72 sm:w-72 sm:opacity-[0.13]"
       >
         <path d="M252 8C266 130 200 236 60 252" stroke="currentColor" strokeWidth="2.5" />
         <path d="M220 8C226 108 168 198 46 214" stroke="currentColor" strokeWidth="1.4" opacity="0.7" />
@@ -223,7 +223,7 @@ export function TeacherSection() {
   const carousel =
     total === 0 ? (
       <div
-        className={`grid place-items-center rounded-[6px] border border-line bg-subtle px-6 text-center ${
+        className={`grid place-items-center rounded-[14px] border border-line bg-subtle px-6 text-center sm:rounded-[6px] ${
           isLoading ? 'aspect-[4/3] lg:aspect-[4/5]' : 'min-h-64 py-16'
         }`}
       >
@@ -240,7 +240,7 @@ export function TeacherSection() {
       </div>
     ) : (
       <div
-        className="relative overflow-hidden rounded-[6px] border border-line bg-subtle shadow-[0_28px_55px_-40px_rgba(32,75,59,0.55)]"
+        className="relative overflow-hidden rounded-[14px] border border-line bg-subtle shadow-[0_28px_55px_-40px_rgba(32,75,59,0.55)] sm:rounded-[6px]"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
         onFocusCapture={() => setPaused(true)}
@@ -278,7 +278,7 @@ export function TeacherSection() {
           {teachers.map((teacher) => (
             <div
               key={teacher.id}
-              className="aspect-[4/5] w-full shrink-0 snap-start"
+              className="h-[17.5rem] w-full shrink-0 snap-start min-[360px]:h-[20rem] min-[390px]:h-[22rem] sm:aspect-[4/5] sm:h-auto"
             >
               <TeacherPhoto teacher={teacher} />
             </div>
@@ -286,7 +286,7 @@ export function TeacherSection() {
         </div>
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-3 p-4">
-          <span className="pointer-events-auto rounded-[3px] bg-pine px-3 py-1.5 font-mono text-[0.6875rem] tracking-[0.2em] text-ivory-warm">
+          <span className="pointer-events-auto rounded-[3px] bg-pine px-3.5 py-2.5 font-mono text-[0.6875rem] tracking-[0.2em] text-ivory-warm sm:px-3 sm:py-1.5">
             {String(active + 1).padStart(2, '0')} / {String(positions).padStart(2, '0')}
           </span>
 
@@ -296,7 +296,7 @@ export function TeacherSection() {
               onClick={() => goTo(active - 1)}
               disabled={active <= 0}
               aria-label="Foto wali kelas sebelumnya"
-              className="grid h-10 w-10 place-items-center rounded-[3px] border border-line bg-bg text-maroon transition-colors duration-200 hover:border-maroon hover:bg-maroon hover:text-ivory-warm disabled:cursor-not-allowed disabled:opacity-40"
+              className="grid h-11 w-11 place-items-center rounded-[3px] border border-line bg-bg text-maroon transition-colors duration-200 hover:border-maroon hover:bg-maroon hover:text-ivory-warm disabled:cursor-not-allowed disabled:opacity-40 sm:h-10 sm:w-10"
             >
               <ArrowIcon direction="left" />
             </button>
@@ -305,7 +305,7 @@ export function TeacherSection() {
               onClick={() => goTo(active + 1)}
               disabled={active >= maxIndex}
               aria-label="Foto wali kelas berikutnya"
-              className="grid h-10 w-10 place-items-center rounded-[3px] border border-pine bg-pine text-ivory-warm transition-colors duration-200 hover:border-pine-deep hover:bg-pine-deep disabled:cursor-not-allowed disabled:opacity-40"
+              className="grid h-11 w-11 place-items-center rounded-[3px] border border-pine bg-pine text-ivory-warm transition-colors duration-200 hover:border-pine-deep hover:bg-pine-deep disabled:cursor-not-allowed disabled:opacity-40 sm:h-10 sm:w-10"
             >
               <ArrowIcon direction="right" />
             </button>
@@ -321,17 +321,16 @@ export function TeacherSection() {
     >
       <TeacherOrnaments />
 
-      <div className="container-page section-pad relative z-10 grid items-center gap-10 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-16">
-        <Reveal>{carousel}</Reveal>
-
-        <Reveal delay={0.08}>
-          <p className="eyebrow flex items-center gap-3 text-pine">
-            <span className="index-num">02</span>
+      <div className="container-page section-pad relative z-10 flex min-w-0 flex-col gap-8 px-4 min-[360px]:px-5 md:px-10 xl:px-14 lg:grid lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:grid-rows-[auto_auto] lg:items-center lg:gap-x-16 lg:gap-y-0">
+        {/* Label, nama, deskripsi — mobile: urutan pertama; lg: kolom kanan atas */}
+        <Reveal className="min-w-0 lg:col-start-2 lg:row-start-1 lg:self-end">
+          <p className="eyebrow flex items-center gap-3 tracking-[0.28em] text-pine sm:tracking-[0.22em]">
+            <span className="index-num tracking-[0.3em] sm:tracking-[0.18em]">02</span>
             <span aria-hidden className="h-px w-6 bg-gold" />
             Wali Kelas
           </p>
 
-          <div className="mt-6 min-h-56 sm:min-h-52">
+          <div className="mt-5 min-h-44 sm:mt-6 sm:min-h-52">
             {current ? (
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
@@ -341,27 +340,35 @@ export function TeacherSection() {
                   exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -12 }}
                   transition={{ duration: reduceMotion ? 0.15 : 0.4, ease }}
                 >
-                  <h2 className="font-display text-3xl leading-[1.12] tracking-[-0.02em] sm:text-4xl lg:text-[2.75rem]">
+                  <h2 className="min-w-0 break-words font-display text-[1.9375rem] leading-[1.12] tracking-[-0.02em] min-[360px]:text-[2rem] min-[390px]:text-[2.1875rem] sm:text-4xl lg:text-[2.75rem]">
                     <TeacherName name={current.name} />
                   </h2>
-                  <p className="mt-6 max-w-xl text-base leading-[1.75] text-moss">
+                  <p className="mt-4 max-w-xl text-[0.9375rem] leading-[1.7] text-moss sm:mt-6 sm:text-base sm:leading-[1.75]">
                     {current.description}
                   </p>
                 </motion.div>
               </AnimatePresence>
             ) : (
-              <p className="max-w-xl text-base leading-[1.75] text-moss">
+              <p className="max-w-xl text-[0.9375rem] leading-[1.7] text-moss sm:text-base sm:leading-[1.75]">
                 {isLoading
                   ? 'Memuat data wali kelas…'
                   : 'Nama dan deskripsi wali kelas akan tampil di sini setelah ditambahkan lewat panel admin.'}
               </p>
             )}
           </div>
+        </Reveal>
 
-          {total > 0 ? (
-            <div className="mt-8 flex flex-wrap items-center gap-4">
+        {/* Carousel foto — mobile: setelah deskripsi; lg: kolom kiri */}
+        <Reveal className="min-w-0 lg:col-start-1 lg:row-start-1 lg:row-span-2 lg:self-center">
+          {carousel}
+        </Reveal>
+
+        {/* Indikator slide + petunjuk — mobile: paling bawah; lg: bawah kolom kanan */}
+        {total > 0 ? (
+          <Reveal className="min-w-0 lg:col-start-2 lg:row-start-2 lg:mt-8 lg:self-start">
+            <div className="flex flex-wrap items-center gap-4">
               {positions > 1 ? (
-                <div className="flex items-center gap-2" role="tablist" aria-label="Pilih wali kelas">
+                <div className="flex items-center gap-2.5 sm:gap-2" role="tablist" aria-label="Pilih wali kelas">
                   {Array.from({ length: positions }).map((_, index) => (
                     <button
                       key={index}
@@ -384,12 +391,14 @@ export function TeacherSection() {
                 aria-hidden
                 className="hidden h-px w-8 bg-gold sm:block"
               />
-              <p className="font-mono text-[0.6875rem] uppercase tracking-[0.2em] text-pine">
-                Slide otomatis · geser foto untuk memilih
+              <p className="font-mono text-[0.625rem] uppercase leading-relaxed tracking-[0.24em] text-pine min-[390px]:text-[0.6875rem] sm:text-[0.6875rem] sm:tracking-[0.2em]">
+                {positions > 1 && !reduceMotion
+                  ? 'Slide otomatis · geser foto untuk memilih'
+                  : 'Geser foto untuk memilih'}
               </p>
             </div>
-          ) : null}
-        </Reveal>
+          </Reveal>
+        ) : null}
       </div>
     </section>
   );
