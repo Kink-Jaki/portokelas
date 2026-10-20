@@ -322,7 +322,49 @@ export function TeacherSection() {
       <TeacherOrnaments />
 
       <div className="container-page section-pad relative z-10 flex min-w-0 flex-col gap-8 px-4 min-[360px]:px-5 md:px-10 xl:px-14 lg:grid lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:grid-rows-[auto_auto] lg:items-center lg:gap-x-16 lg:gap-y-0">
-        {/* Label, nama, deskripsi — mobile: urutan pertama; lg: kolom kanan atas */}
+        {/* Carousel foto — mobile: urutan pertama (foto dulu); lg: kolom kiri */}
+        <Reveal className="min-w-0 lg:col-start-1 lg:row-start-1 lg:row-span-2 lg:self-center">
+          {carousel}
+        </Reveal>
+
+        {/* Indikator slide + petunjuk — mobile: tepat di bawah foto; lg: bawah kolom kanan */}
+        {total > 0 ? (
+          <Reveal className="min-w-0 lg:col-start-2 lg:row-start-2 lg:mt-8 lg:self-start">
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:justify-start">
+              {positions > 1 ? (
+                <div className="flex items-center gap-2.5 sm:gap-2" role="tablist" aria-label="Pilih wali kelas">
+                  {Array.from({ length: positions }).map((_, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      role="tab"
+                      aria-selected={index === active}
+                      aria-label={`Tampilkan ${teachers[index]?.name ?? `wali kelas ${index + 1}`}`}
+                      onClick={() => goTo(index)}
+                      className={cn(
+                        'h-1.5 transition-all duration-300',
+                        index === active
+                          ? 'w-8 bg-maroon'
+                          : 'w-4 bg-line-strong hover:bg-gold',
+                      )}
+                    />
+                  ))}
+                </div>
+              ) : null}
+              <span
+                aria-hidden
+                className="hidden h-px w-8 bg-gold sm:block"
+              />
+              <p className="hidden font-mono text-[0.625rem] uppercase leading-relaxed tracking-[0.24em] text-pine sm:block sm:text-[0.6875rem] sm:tracking-[0.2em]">
+                {positions > 1 && !reduceMotion
+                  ? 'Slide otomatis · geser foto untuk memilih'
+                  : 'Geser foto untuk memilih'}
+              </p>
+            </div>
+          </Reveal>
+        ) : null}
+
+        {/* Label, nama, deskripsi — mobile: di bawah indikator; lg: kolom kanan atas */}
         <Reveal className="min-w-0 lg:col-start-2 lg:row-start-1 lg:self-end">
           <p className="eyebrow flex items-center gap-3 tracking-[0.28em] text-pine sm:tracking-[0.22em]">
             <span className="index-num tracking-[0.3em] sm:tracking-[0.18em]">02</span>
@@ -357,48 +399,6 @@ export function TeacherSection() {
             )}
           </div>
         </Reveal>
-
-        {/* Carousel foto — mobile: setelah deskripsi; lg: kolom kiri */}
-        <Reveal className="min-w-0 lg:col-start-1 lg:row-start-1 lg:row-span-2 lg:self-center">
-          {carousel}
-        </Reveal>
-
-        {/* Indikator slide + petunjuk — mobile: paling bawah; lg: bawah kolom kanan */}
-        {total > 0 ? (
-          <Reveal className="min-w-0 lg:col-start-2 lg:row-start-2 lg:mt-8 lg:self-start">
-            <div className="flex flex-wrap items-center gap-4">
-              {positions > 1 ? (
-                <div className="flex items-center gap-2.5 sm:gap-2" role="tablist" aria-label="Pilih wali kelas">
-                  {Array.from({ length: positions }).map((_, index) => (
-                    <button
-                      key={index}
-                      type="button"
-                      role="tab"
-                      aria-selected={index === active}
-                      aria-label={`Tampilkan ${teachers[index]?.name ?? `wali kelas ${index + 1}`}`}
-                      onClick={() => goTo(index)}
-                      className={cn(
-                        'h-1.5 transition-all duration-300',
-                        index === active
-                          ? 'w-8 bg-maroon'
-                          : 'w-4 bg-line-strong hover:bg-gold',
-                      )}
-                    />
-                  ))}
-                </div>
-              ) : null}
-              <span
-                aria-hidden
-                className="hidden h-px w-8 bg-gold sm:block"
-              />
-              <p className="font-mono text-[0.625rem] uppercase leading-relaxed tracking-[0.24em] text-pine min-[390px]:text-[0.6875rem] sm:text-[0.6875rem] sm:tracking-[0.2em]">
-                {positions > 1 && !reduceMotion
-                  ? 'Slide otomatis · geser foto untuk memilih'
-                  : 'Geser foto untuk memilih'}
-              </p>
-            </div>
-          </Reveal>
-        ) : null}
       </div>
     </section>
   );

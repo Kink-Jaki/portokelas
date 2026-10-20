@@ -217,7 +217,11 @@ export function StructureSection() {
           ) : (
             <Stagger className="grid auto-rows-fr grid-cols-2 gap-2 min-[360px]:gap-2.5 min-[390px]:gap-3 md:gap-5 lg:grid-cols-4 lg:gap-6">
               {orderedMembers.map((member, index) => (
-                <StaggerItem key={member.id} className="h-full">
+                <StaggerItem
+                  key={member.id}
+                  className="h-full"
+                  slide={index % 2 === 0 ? 'left' : 'right'}
+                >
                   <MemberDirectoryCard member={member} index={index + 1} />
                 </StaggerItem>
               ))}

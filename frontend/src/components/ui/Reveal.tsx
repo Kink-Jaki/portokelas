@@ -68,12 +68,28 @@ export function Stagger({
   );
 }
 
-export function StaggerItem({ children, className }: { children: ReactNode; className?: string }) {
+export function StaggerItem({
+  children,
+  className,
+  slide = 'up',
+}: {
+  children: ReactNode;
+  className?: string;
+  /** Arah masuk: 'up' (default), 'left', atau 'right'. */
+  slide?: 'up' | 'left' | 'right';
+}) {
+  const hidden =
+    slide === 'left'
+      ? { opacity: 0, y: 18, x: -40 }
+      : slide === 'right'
+        ? { opacity: 0, y: 18, x: 40 }
+        : { opacity: 0, y: 18 };
+
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 18 },
-        show: { opacity: 1, y: 0, transition: { duration: 0.55, ease } },
+        hidden,
+        show: { opacity: 1, y: 0, x: 0, transition: { duration: 0.55, ease } },
       }}
       className={className}
     >

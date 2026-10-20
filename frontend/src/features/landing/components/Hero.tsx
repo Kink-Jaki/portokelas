@@ -1,5 +1,6 @@
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 
 import { buttonClasses } from '@/components/ui/Button';
 import { Magnetic } from '@/components/ui/Magnetic';
@@ -120,6 +121,21 @@ function ImageCollage({ images }: { images: Collage }) {
 export function Hero() {
   const { data } = useHero();
   const hero = data?.hero ?? null;
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const reduceMotion = useReducedMotion();
+
+  // Scroll-linked: konten hero melambat (lag) + fade halus saat keluar viewport.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  });
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, reduceMotion ? 0 : 72]);
+  const contentOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.75, 1],
+    [1, reduceMotion ? 1 : 0.85, reduceMotion ? 1 : 0.55],
+  );
+  const collageY = useTransform(scrollYProgress, [0, 1], [0, reduceMotion ? 0 : -28]);
 
   const images: Collage = [
     {
@@ -137,10 +153,13 @@ export function Hero() {
   ];
 
   return (
-    <section className="relative isolate overflow-hidden text-forest">
+    <section ref={sectionRef} className="relative isolate overflow-hidden text-forest">
       <EdgeOrnaments />
 
-      <div className="container-wide section-pad relative z-10">
+      <motion.div
+        style={{ y: contentY, opacity: contentOpacity }}
+        className="container-wide section-pad relative z-10"
+      >
         <motion.div
           variants={stagger(0.12, 0.1)}
           initial="hidden"
@@ -203,11 +222,11 @@ export function Hero() {
           </div>
 
           {/* Kolase gambar */}
-          <motion.div variants={staggerItem}>
+          <motion.div variants={staggerItem} style={{ y: collageY }}>
             <ImageCollage images={images} />
           </motion.div>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }
