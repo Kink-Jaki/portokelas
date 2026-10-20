@@ -10,7 +10,7 @@ export default function DocsPage() {
             <p className="eyebrow inline-flex items-center rounded-full border border-line bg-ivory px-3 py-1 shadow-sm">
               Dokumentasi
             </p>
-            <h1 className="mt-4 text-4xl font-display tracking-tight lg:text-5xl xl:text-6xl">
+            <h1 className="mt-4 break-words text-3xl font-display tracking-tight min-[390px]:text-4xl lg:text-5xl xl:text-6xl">
               Panduan Penggunaan <span className="text-burgundy">Craftly</span>
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-muted">
@@ -34,8 +34,8 @@ export default function DocsPage() {
           </header>
 
           <div className="grid gap-8 lg:grid-cols-12">
-            <aside className="lg:col-span-3">
-              <nav className="sticky top-28 rounded-xl border border-line bg-ivory p-6 shadow-sm">
+            <aside className="min-w-0 lg:col-span-3">
+              <nav className="rounded-xl border border-line bg-ivory p-6 shadow-sm lg:sticky lg:top-28">
                 <p className="text-sm font-semibold text-forest">Daftar Isi</p>
                 <ul className="mt-4 space-y-2 text-sm">
                   <li>
@@ -90,8 +90,8 @@ export default function DocsPage() {
               </nav>
             </aside>
 
-            <div className="space-y-10 lg:col-span-9">
-              <section id="pendahuluan" className="rounded-xl border border-line bg-ivory p-8 shadow-sm">
+            <div className="min-w-0 space-y-10 lg:col-span-9">
+              <section id="pendahuluan" className="rounded-xl border border-line bg-ivory p-5 shadow-sm sm:p-8">
                 <h2 className="text-2xl font-display text-forest">Pendahuluan</h2>
                 <p className="mt-4 leading-relaxed text-muted">
                   Platform ini memudahkan anggota untuk membagikan portofolio karya mereka secara terstruktur dan
@@ -100,7 +100,7 @@ export default function DocsPage() {
                 </p>
               </section>
 
-              <section id="menambah-project" className="rounded-xl border border-line bg-ivory p-8 shadow-sm">
+              <section id="menambah-project" className="rounded-xl border border-line bg-ivory p-5 shadow-sm sm:p-8">
                 <h2 className="text-2xl font-display text-forest">Cara Menambah Project</h2>
                 <p className="mt-4 leading-relaxed text-muted">
                   Untuk menambahkan project baru ke portofoliomu, ikuti langkah-langkah berikut:
@@ -135,7 +135,7 @@ export default function DocsPage() {
                 </div>
               </section>
 
-              <section id="spotify-embed" className="rounded-xl border border-line bg-ivory p-8 shadow-sm">
+              <section id="spotify-embed" className="rounded-xl border border-line bg-ivory p-5 shadow-sm sm:p-8">
                 <h2 className="text-2xl font-display text-forest">Spotify Embed + Contoh</h2>
                 <p className="mt-4 leading-relaxed text-muted">
                   Kamu bisa menambahkan Spotify Embed ke dalam deskripsi atau media project untuk menampilkan lagu/playlist
@@ -188,7 +188,7 @@ export default function DocsPage() {
                 </ul>
               </section>
 
-              <section id="display-fitur" className="rounded-xl border border-line bg-ivory p-8 shadow-sm">
+              <section id="display-fitur" className="rounded-xl border border-line bg-ivory p-5 shadow-sm sm:p-8">
                 <h2 className="text-2xl font-display text-forest">Display Fitur</h2>
                 <p className="mt-4 leading-relaxed text-muted">
                   Beberapa fitur tampilan (display) yang bisa kamu manfaatkan untuk mempercantik portofoliomu:
@@ -235,7 +235,7 @@ export default function DocsPage() {
                 </div>
               </section>
 
-              <section id="kartu-kustom" className="rounded-xl border border-line bg-ivory p-8 shadow-sm">
+              <section id="kartu-kustom" className="rounded-xl border border-line bg-ivory p-5 shadow-sm sm:p-8">
                 <h2 className="text-2xl font-display text-forest">Kartu Direktori Kustom</h2>
                 <p className="mt-4 leading-relaxed text-muted">
                   Ubah tampilan kartu yang muncul di direktori anggota dengan HTML &amp; CSS milikmu sendiri. Sandbox
@@ -246,7 +246,7 @@ export default function DocsPage() {
                 </div>
               </section>
 
-              <section id="ngl" className="rounded-xl border border-line bg-ivory p-8 shadow-sm">
+              <section id="ngl" className="rounded-xl border border-line bg-ivory p-5 shadow-sm sm:p-8">
                 <h2 className="text-2xl font-display text-forest">Craftly NGL</h2>
                 <p className="mt-4 leading-relaxed text-muted">
                   Craftly NGL adalah fitur pesan anonim. Siapa pun dapat mengirim pesan tanpa perlu

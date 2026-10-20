@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Textarea } from '@/components/ui/Field';
 import { MemberCustomHtml } from '@/components/ui/MemberCustomHtml';
@@ -96,16 +96,31 @@ export const SAMPLE_CARD_HTML = `<div class="kartu">
  */
 export function CardSandboxPlayground() {
   const [code, setCode] = useState(SAMPLE_CARD_HTML);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 639px)');
+    const sync = () => setIsMobile(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
 
   const safeHtml = useMemo(() => sanitizeCustomHtml(code), [code]);
-  const previewHtml = useMemo(
-    () => (safeHtml.trim() ? fillCardTemplate(safeHtml, SAMPLE_MEMBER) : ''),
-    [safeHtml],
-  );
+  const previewHtml = useMemo(() => {
+    if (!safeHtml.trim()) return '';
+    const filled = fillCardTemplate(safeHtml, SAMPLE_MEMBER);
+    if (!isMobile) return filled;
+    return `${filled}
+<style>
+  .kartu { flex-direction: column; align-items: center; text-align: center; }
+  .kartu-aksi { justify-content: center; }
+</style>`;
+  }, [safeHtml, isMobile]);
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
-      <div>
+      <div className="min-w-0">
         <div className="flex items-center justify-between gap-3">
           <label className="block text-xs font-medium uppercase tracking-[0.16em] text-muted">
             HTML + CSS
@@ -128,7 +143,7 @@ export function CardSandboxPlayground() {
         />
       </div>
 
-      <div>
+      <div className="min-w-0">
         <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted">
           Hasil di sandbox
         </p>

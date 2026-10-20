@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useDeferredValue, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { MemberDirectoryCard } from '@/components/domain/MemberDirectoryCard';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -102,18 +103,38 @@ export default function MembersPage() {
       <MembersOrnaments />
       <div className="container-page relative z-10 py-16 lg:py-20">
         <motion.header variants={fadeUp} initial="hidden" animate="show">
-          <div className="max-w-2xl">
-            <p className="flex items-center gap-3 font-mono text-[0.6875rem] uppercase tracking-[0.3em] text-forest sm:text-xs">
-              <span className="tnum font-medium text-maroon">00</span>
-              <span aria-hidden className="h-px w-10 bg-maroon/50" />
-              <span>Direktori Anggota</span>
-            </p>
-            <h1 className="mt-6 font-display text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.02em] sm:text-[3rem] lg:text-[3.5rem]">
-              <span className="text-maroon">Anggota</span> <span className="text-forest">Craftly</span>
-            </h1>
-            <p className="mt-5 max-w-xl text-[0.9375rem] leading-[1.7] text-muted sm:text-base">
-              Hanya anggota yang sudah dikurasi yang ditampilkan di sini. Klik kartu untuk membuka portofolio pribadi beserta project-nya.
-            </p>
+          <div className="flex flex-col-reverse gap-8 md:flex-row md:items-start md:justify-between md:gap-12">
+            <div className="max-w-2xl">
+              <p className="flex items-center gap-3 font-mono text-[0.6875rem] uppercase tracking-[0.3em] text-forest sm:text-xs">
+                <span className="tnum font-medium text-maroon">00</span>
+                <span aria-hidden className="h-px w-10 bg-maroon/50" />
+                <span>Direktori Anggota</span>
+              </p>
+              <h1 className="mt-6 font-display text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.02em] sm:text-[3rem] lg:text-[3.5rem]">
+                <span className="text-maroon">Anggota</span> <span className="text-forest">Craftly</span>
+              </h1>
+              <p className="mt-5 max-w-xl text-[0.9375rem] leading-[1.7] text-muted sm:text-base">
+                Hanya anggota yang sudah dikurasi yang ditampilkan di sini. Klik kartu untuk membuka portofolio pribadi beserta project-nya.
+              </p>
+            </div>
+
+            {/* Card maroon — mobile: di atas teks; desktop: samping kanan teks */}
+            <Link
+              to="/"
+              className="group/self inline-flex shrink-0 items-center gap-2 self-start rounded-xl border border-burgundy bg-burgundy px-4 py-2.5 text-ivory-warm shadow-[0_14px_26px_-20px_rgba(122,36,53,0.75)] transition-colors duration-200 hover:border-burgundy-dark hover:bg-burgundy-dark md:mt-2"
+            >
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden>
+                <path
+                  d="M19 12H5M11 6l-6 6 6 6"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className="transition-transform duration-200 group-hover/self:-translate-x-0.5"
+                />
+              </svg>
+              <span className="font-mono text-[0.625rem] uppercase tracking-[0.2em]">
+                Kembali ke beranda
+              </span>
+            </Link>
           </div>
         </motion.header>
 
