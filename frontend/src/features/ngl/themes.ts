@@ -123,10 +123,10 @@ export function nglDecorFor(theme: NglTheme): NglDecor {
  */
 export function nglCardFontSize(text: string | null): string {
   const length = (text ?? '').trim().length;
-  if (length <= 70) return 'clamp(1.75rem, 10.5cqw, 2.6rem)';
-  if (length <= 150) return 'clamp(1.5rem, 8cqw, 2.05rem)';
-  if (length <= 260) return 'clamp(1.3rem, 6.4cqw, 1.7rem)';
-  return 'clamp(1.05rem, 5cqw, 1.35rem)';
+  if (length <= 70) return 'clamp(0.95rem, 8.5cqw, 1.85rem)';
+  if (length <= 150) return 'clamp(0.85rem, 7cqw, 1.5rem)';
+  if (length <= 260) return 'clamp(0.75rem, 5.8cqw, 1.25rem)';
+  return 'clamp(0.6875rem, 4.6cqw, 1rem)';
 }
 
 /** Ukuran font pesan untuk template share (px, kanvas 9:16 berukuran tetap). */
