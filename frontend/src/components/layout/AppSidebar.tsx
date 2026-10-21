@@ -7,6 +7,7 @@ import { Avatar } from '@/components/ui/Avatar';
 import { RoleBadge, DevBadge } from '@/components/ui/Badge';
 import { buttonClasses } from '@/components/ui/Button';
 import { useAuth } from '@/providers/AuthProvider';
+import { useNglUnreadCount } from '@/hooks/useNgl';
 import { cn } from '@/lib/utils';
 
 type IconProps = { className?: string };
@@ -119,6 +120,8 @@ type NavItem = {
   label: string;
   icon: (props: IconProps) => ReactNode;
   end?: boolean;
+  /** Angka badge di sebelah kanan menu (mis. pesan NGL belum dibaca). */
+  count?: number;
 };
 
 /** Tautan anchor ke bagian halaman landing (ditampilkan di drawer mobile). */
@@ -148,15 +151,23 @@ function SidebarNav({
 }) {
   const { user, isLoading, logout } = useAuth();
   const navigate = useNavigate();
+  const unreadQuery = useNglUnreadCount(Boolean(user));
+  const unreadCount = unreadQuery.data?.count ?? 0;
 
   const items: NavItem[] = [
     { key: 'home', to: '/', label: 'Beranda', icon: IconHome, end: true },
     { key: 'members', to: '/members', label: 'Anggota', icon: IconUsers },
-    { key: 'ngl', to: '/ngl', label: 'NGL', icon: IconNgl },
+    { key: 'ngl', to: '/ngl', label: 'NGL', icon: IconNgl, end: true },
   ];
 
   if (user) {
-    items.push({ key: 'ngl-box', to: '/ngl/kotak', label: 'Kotak NGL', icon: IconNgl });
+    items.push({
+      key: 'ngl-box',
+      to: '/ngl/kotak',
+      label: 'Kotak NGL',
+      icon: IconNgl,
+      count: unreadCount,
+    });
     items.push({ key: 'profile', to: '/profile', label: 'Profil', icon: IconUser });
     if (user.slug) {
       items.push({
@@ -180,20 +191,38 @@ function SidebarNav({
 
   const linkClass = itemClass(collapsed);
 
-  const renderLink = (item: NavItem) => (
-    <NavLink
-      key={item.key}
-      to={item.to}
-      end={item.end}
-      className={linkClass}
-      onClick={onNavigate}
-      title={collapsed ? item.label : undefined}
-      aria-label={collapsed ? item.label : undefined}
-    >
-      <item.icon />
-      {collapsed ? null : item.label}
-    </NavLink>
-  );
+  const renderLink = (item: NavItem) => {
+    const showBadge = typeof item.count === 'number' && item.count > 0;
+    const accessibleLabel = showBadge
+      ? `${item.label}, ${item.count} pesan belum dibaca`
+      : item.label;
+
+    const badge = showBadge ? (
+      collapsed ? (
+        <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-burgundy" aria-hidden />
+      ) : (
+        <span className="ml-auto rounded-full bg-burgundy px-2 py-0.5 font-mono text-[0.625rem] font-bold leading-none text-ivory-warm tabular-nums">
+          {(item.count ?? 0) > 99 ? '99+' : item.count}
+        </span>
+      )
+    ) : null;
+
+    return (
+      <NavLink
+        key={item.key}
+        to={item.to}
+        end={item.end}
+        className={(state) => cn(linkClass(state), collapsed && showBadge ? 'relative' : undefined)}
+        onClick={onNavigate}
+        title={collapsed ? accessibleLabel : undefined}
+        aria-label={collapsed ? accessibleLabel : undefined}
+      >
+        <item.icon />
+        {collapsed ? null : item.label}
+        {badge}
+      </NavLink>
+    );
+  };
 
   return (
     <div className="flex h-full flex-col justify-between gap-8">

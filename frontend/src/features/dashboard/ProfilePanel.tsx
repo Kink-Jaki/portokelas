@@ -109,11 +109,11 @@ export function ProfilePanel() {
   if (!user) return null;
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[20rem_1fr]">
-      <div className="space-y-6 border border-line p-6">
+    <div className="grid min-w-0 gap-6 sm:gap-8 lg:grid-cols-[20rem_minmax(0,1fr)]">
+      <div className="w-full min-w-0 space-y-6 border border-line p-5 sm:p-6">
         <div className="flex flex-col items-start gap-4">
           <Avatar name={user.name} src={user.avatarUrl} size="xl" />
-          <div className="w-full space-y-2">
+          <div className="w-full min-w-0 space-y-2">
             <label className="block text-xs font-medium uppercase tracking-[0.16em] text-muted">
               Foto profil
             </label>
@@ -122,7 +122,7 @@ export function ProfilePanel() {
               accept={AVATAR_ACCEPT}
               onChange={onAvatarChange}
               disabled={uploadAvatar.isPending}
-              className="block w-full text-xs text-muted file:mr-3 file:rounded-sm file:border file:border-line-strong file:bg-subtle file:px-3 file:py-1.5 file:text-xs file:text-fg hover:file:border-fg"
+              className="block w-full min-w-0 max-w-full text-xs text-muted file:mr-3 file:rounded-sm file:border file:border-line-strong file:bg-subtle file:px-3 file:py-1.5 file:text-xs file:text-fg hover:file:border-fg"
             />
             <p className="text-xs text-muted">
               JPG/PNG/WEBP. Foto bisa dipotong lalu otomatis dikonversi ke WEBP.
@@ -136,17 +136,17 @@ export function ProfilePanel() {
         </div>
 
         <dl className="space-y-3 border-t border-line pt-5 text-sm">
-          <div className="flex items-center justify-between gap-4">
-            <dt className="text-muted">Email</dt>
-            <dd className="truncate font-mono text-xs">{user.email}</dd>
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            <dt className="shrink-0 text-muted">Email</dt>
+            <dd className="min-w-0 break-all font-mono text-xs sm:truncate">{user.email}</dd>
           </div>
-          <div className="flex items-center justify-between gap-4">
-            <dt className="text-muted">URL portofolio</dt>
-            <dd className="truncate font-mono text-xs">/m/{user.slug}</dd>
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            <dt className="shrink-0 text-muted">URL portofolio</dt>
+            <dd className="min-w-0 break-all font-mono text-xs sm:truncate">/m/{user.slug}</dd>
           </div>
-          <div className="flex items-center justify-between gap-4">
-            <dt className="text-muted">Bergabung</dt>
-            <dd className="text-xs">{formatDate(user.createdAt)}</dd>
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            <dt className="shrink-0 text-muted">Bergabung</dt>
+            <dd className="min-w-0 text-xs sm:truncate">{formatDate(user.createdAt)}</dd>
           </div>
         </dl>
 
@@ -155,17 +155,21 @@ export function ProfilePanel() {
             href={`/m/${user.slug}`}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 text-xs text-muted underline underline-offset-4 transition-colors hover:text-fg"
+            className="inline-flex min-w-0 max-w-full items-center gap-2 text-xs text-muted underline underline-offset-4 transition-colors hover:text-fg"
           >
             Lihat halaman publik saya
           </a>
         ) : null}
       </div>
 
-      <form onSubmit={onSubmit} className="space-y-5 border border-line p-6" noValidate>
-        <div>
-          <h2 className="font-display text-2xl">Profil publik</h2>
-          <p className="mt-1 text-sm text-muted">
+      <form
+        onSubmit={onSubmit}
+        className="w-full min-w-0 space-y-5 border border-line p-5 sm:p-6"
+        noValidate
+      >
+        <div className="min-w-0">
+          <h2 className="font-display text-2xl leading-tight">Profil publik</h2>
+          <p className="mt-1 text-sm leading-relaxed text-muted">
             Data ini yang tampil di halaman portofolio kamu.
           </p>
         </div>
@@ -204,7 +208,7 @@ export function ProfilePanel() {
           {...register('bio')}
         />
 
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid min-w-0 gap-5 sm:grid-cols-2">
           <Input
             label="GitHub"
             placeholder="https://github.com/username"
@@ -239,7 +243,7 @@ export function ProfilePanel() {
           {...register('cvUrl')}
         />
 
-        <div className="flex items-center gap-3 border-t border-line pt-5">
+        <div className="flex flex-wrap items-center gap-3 border-t border-line pt-5">
           <Button type="submit" isLoading={updateProfile.isPending} disabled={!isDirty}>
             Simpan perubahan
           </Button>

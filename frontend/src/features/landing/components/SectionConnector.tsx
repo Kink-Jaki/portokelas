@@ -1,5 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 
+import { ease } from '@/lib/motion';
+
 import { Flower, LeafSprig, PaperPlane, Sparkle } from './ornaments';
 
 /**
@@ -14,6 +16,63 @@ const palette = {
   beige: '#D8C6A2',
 } as const;
 
+/** Garis pita yang menggambar dirinya sendiri (pathLength) saat masuk viewport. */
+function RibbonPath({
+  d,
+  stroke,
+  strokeWidth,
+  opacity,
+  delay,
+  animated,
+  scaled = false,
+}: {
+  d: string;
+  stroke: string;
+  strokeWidth: number;
+  opacity?: number;
+  delay: number;
+  animated: boolean;
+  /** true = tanpa non-scaling-stroke (untuk salinan di dalam mask, sesuai desain asli). */
+  scaled?: boolean;
+}) {
+  return (
+    <motion.path
+      d={d}
+      fill="none"
+      stroke={stroke}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin={scaled ? undefined : 'round'}
+      opacity={opacity}
+      vectorEffect={scaled ? undefined : 'non-scaling-stroke'}
+      initial={animated ? { pathLength: 0 } : undefined}
+      whileInView={animated ? { pathLength: 1 } : undefined}
+      viewport={{ once: true, margin: '-8% 0px' }}
+      transition={animated ? { duration: 1.6, ease, delay } : undefined}
+    />
+  );
+}
+
+const RIBBONS = [
+  {
+    d: 'M -40 200 C 80 140 160 100 320 120 C 560 150 760 60 1000 80 C 1240 100 1400 40 1480 30',
+    stroke: palette.sage,
+    strokeWidth: 2.0,
+  },
+  {
+    d: 'M -30 180 C 90 120 170 80 330 100 C 570 130 770 40 1010 60 C 1250 80 1410 20 1490 10',
+    stroke: palette.maroon,
+    strokeWidth: 1.6,
+    opacity: 0.9,
+  },
+  {
+    d: 'M -50 220 C 70 160 150 120 310 140 C 550 170 750 80 990 100 C 1230 120 1390 60 1470 50',
+    stroke: palette.beige,
+    strokeWidth: 1.8,
+    opacity: 0.95,
+  },
+] as const;
+
 /**
  * Dekorasi penghubung organic flowing ribbon — mengalir diagonal dan bergelombang
  * dari bagian bawah About menuju sekitar area foto Teacher. Tidak membentuk
@@ -27,44 +86,19 @@ export function SectionConnector() {
       aria-hidden="true"
       className="pointer-events-none relative isolate h-24 w-full overflow-hidden sm:h-32 lg:h-40"
     >
-      {/* Organic flowing ribbon — tiga garis tipis dengan arah diagonal+bergelombang. */}
+      {/* Organic flowing ribbon — tiga garis tipis dengan arah diagonal+bergelombang.
+          Setiap garis menggambar dirinya sendiri (pathLength) sekali saat masuk viewport. */}
       <svg
         viewBox="0 0 1440 280"
         preserveAspectRatio="none"
         className="absolute inset-0 h-full w-full"
       >
         {/* Sage green — jalur utama: dari samping kiri foto About menuju pojok kanan Teacher */}
-        <path
-          d="M -40 200 C 80 140 160 100 320 120 C 560 150 760 60 1000 80 C 1240 100 1400 40 1480 30"
-          fill="none"
-          stroke={palette.sage}
-          strokeWidth="2.0"
-          strokeLinecap="round"
-          vectorEffect="non-scaling-stroke"
-          strokeLinejoin="round"
-        />
+        <RibbonPath {...RIBBONS[0]} delay={0} animated={!reduceMotion} />
         {/* Maroon — aksen lengkung mengikuti jalur */}
-        <path
-          d="M -30 180 C 90 120 170 80 330 100 C 570 130 770 40 1010 60 C 1250 80 1410 20 1490 10"
-          fill="none"
-          stroke={palette.maroon}
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          vectorEffect="non-scaling-stroke"
-          strokeLinejoin="round"
-          opacity="0.9"
-        />
+        <RibbonPath {...RIBBONS[1]} delay={0.12} animated={!reduceMotion} />
         {/* Beige — garis pendamping */}
-        <path
-          d="M -50 220 C 70 160 150 120 310 140 C 550 170 750 80 990 100 C 1230 120 1390 60 1470 50"
-          fill="none"
-          stroke={palette.beige}
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          vectorEffect="non-scaling-stroke"
-          strokeLinejoin="round"
-          opacity="0.95"
-        />
+        <RibbonPath {...RIBBONS[2]} delay={0.24} animated={!reduceMotion} />
         {/* Fade out pada ujung kanan */}
         <defs>
           <linearGradient id="connectorFade" x1="0" x2="1" y1="0" y2="0">
@@ -77,29 +111,9 @@ export function SectionConnector() {
           </mask>
         </defs>
         <g mask="url(#connectorMask)">
-          <path
-            d="M -40 200 C 80 140 160 100 320 120 C 560 150 760 60 1000 80 C 1240 100 1400 40 1480 30"
-            fill="none"
-            stroke={palette.sage}
-            strokeWidth="2.0"
-            strokeLinecap="round"
-          />
-          <path
-            d="M -30 180 C 90 120 170 80 330 100 C 570 130 770 40 1010 60 C 1250 80 1410 20 1490 10"
-            fill="none"
-            stroke={palette.maroon}
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            opacity="0.9"
-          />
-          <path
-            d="M -50 220 C 70 160 150 120 310 140 C 550 170 750 80 990 100 C 1230 120 1390 60 1470 50"
-            fill="none"
-            stroke={palette.beige}
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            opacity="0.95"
-          />
+          <RibbonPath {...RIBBONS[0]} delay={0} animated={!reduceMotion} />
+          <RibbonPath {...RIBBONS[1]} delay={0.12} animated={!reduceMotion} />
+          <RibbonPath {...RIBBONS[2]} delay={0.24} animated={!reduceMotion} />
         </g>
       </svg>
 

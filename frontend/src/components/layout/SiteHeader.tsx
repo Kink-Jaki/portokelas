@@ -179,13 +179,13 @@ export function SiteHeader() {
         isLanding && 'page-landing',
       )}
     >
-      <div className="container-wide flex h-20 items-center justify-between gap-6 lg:h-[6.3rem]">
-        <div className="flex items-center gap-3">
+      <div className="container-wide flex h-16 items-center justify-between gap-3 sm:h-20 lg:h-[6.3rem]">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <MobileSidebar sections={isLanding ? landingSections : undefined} />
           <Logo variant="editorial" />
         </div>
 
-        <div className="flex items-center gap-8">
+        <div className="flex min-w-0 items-center justify-end gap-4 lg:gap-8">
           {isLanding ? (
             <SectionNav />
           ) : user ? (
@@ -201,27 +201,21 @@ export function SiteHeader() {
             </nav>
           ) : null}
 
-          <div className="flex items-center gap-2">
-            <NavLink
-              to="/ngl"
-              className={(args) => cn(navClass(args), 'mr-2 hidden sm:inline-flex')}
-            >
+          <div className="flex min-w-0 items-center gap-2">
+            <NavLink to="/ngl" className={(args) => cn(navClass(args), 'mr-2 max-sm:hidden')}>
               NGL
             </NavLink>
-            <Link
-              to="/docs"
-              className={buttonClasses('ghost', 'sm', 'hidden sm:inline-flex')}
-            >
+            <Link to="/docs" className={buttonClasses('ghost', 'sm', 'max-[479px]:hidden')}>
               Docs
             </Link>
             {isLoading ? (
-              <div className="h-9 w-24 animate-pulse rounded-sm bg-ivory-alt" />
+              <div className="h-9 w-16 animate-pulse rounded-sm bg-ivory-alt sm:w-24" />
             ) : user ? (
               <Link
                 to={user.role === 'admin' ? '/admin' : '/dashboard'}
-                className={buttonClasses('forest', 'sm', 'hidden sm:inline-flex')}
+                className={buttonClasses('forest', 'sm', 'min-w-0 shrink')}
               >
-                {user.name.split(' ')[0]}
+                <span className="min-w-0 truncate">{user.name.split(' ')[0]}</span>
               </Link>
             ) : null}
           </div>
@@ -251,8 +245,8 @@ export function SiteFooter() {
   return (
     <footer className="section-maroon relative overflow-hidden border-t border-line">
       <div className="container-page relative z-10 py-16 lg:py-20">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-5">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-12 lg:gap-8">
+          <div className="col-span-2 lg:col-span-5">
             <Logo />
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted">
               Kumpulan portofolio anggota dalam satu etalase publik. Dibangun oleh dan untuk
@@ -268,7 +262,7 @@ export function SiteFooter() {
             </div>
           </div>
 
-          <nav className="lg:col-span-3 lg:col-start-7" aria-label="Navigasi footer">
+          <nav aria-label="Navigasi footer" className="lg:col-span-3 lg:col-start-7">
             <p className="eyebrow">Jelajahi</p>
             <ul className="mt-5 space-y-3">
               {footerNav.map((item) => (
@@ -311,7 +305,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-4 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-16 flex flex-col items-center gap-4 border-t border-line pt-8 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
           <p className="font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-muted">
             © {year} · Craftly
           </p>

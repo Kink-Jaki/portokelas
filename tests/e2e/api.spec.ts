@@ -124,4 +124,71 @@ test.describe('API backend', () => {
       await ctx.dispose();
     }
   });
+
+  test('GET /api/ngl/messages/unread-count: 401 anonim, angka bila login member', async () => {
+    const anon = await playwrightRequest.newContext({ baseURL: API_BASE });
+    try {
+      const res = await anon.get('/api/ngl/messages/unread-count');
+      expect(res.status()).toBe(401);
+    } finally {
+      await anon.dispose();
+    }
+
+    const ctx = await playwrightRequest.newContext({ baseURL: API_BASE });
+    try {
+      await ctx.post('/api/auth/login', {
+        data: { identity: MEMBER.nis, password: MEMBER.password },
+      });
+      const res = await ctx.get('/api/ngl/messages/unread-count');
+      expect(res.status()).toBe(200);
+      const body = await res.json();
+      expect(body.success).toBe(true);
+      expect(Number.isInteger(body.data.count)).toBe(true);
+      expect(body.data.count).toBeGreaterThanOrEqual(0);
+    } finally {
+      await ctx.dispose();
+    }
+  });
+
+  test('siklus baca ↔ belum dibaca pada pesan NGL member', async () => {
+    const ctx = await playwrightRequest.newContext({ baseURL: API_BASE });
+    try {
+      await ctx.post('/api/auth/login', {
+        data: { identity: MEMBER.nis, password: MEMBER.password },
+      });
+
+      const countOf = async () => {
+        const res = await ctx.get('/api/ngl/messages/unread-count');
+        expect(res.status()).toBe(200);
+        return (await res.json()).data.count as number;
+      };
+
+      const created = await ctx.post('/api/ngl', {
+        multipart: { content: 'E2E siklus baca/unread' },
+      });
+      expect(created.status()).toBe(201);
+      const messageId = (await created.json()).data.message.id as string;
+
+      const before = await countOf();
+      expect(before).toBeGreaterThan(0);
+
+      const read = await ctx.post(`/api/ngl/messages/${messageId}/read`);
+      expect(read.status()).toBe(200);
+      expect((await read.json()).data).toMatchObject({ id: messageId, read: true });
+      expect(await countOf()).toBe(before - 1);
+
+      const unread = await ctx.post(`/api/ngl/messages/${messageId}/unread`);
+      expect(unread.status()).toBe(200);
+      expect((await unread.json()).data).toMatchObject({ id: messageId, read: false });
+      expect(await countOf()).toBe(before);
+
+      const inbox = await ctx.get('/api/ngl/messages?page=1');
+      expect(inbox.status()).toBe(200);
+      const target = ((await inbox.json()).data.items as Array<{ id: string; isRead?: boolean }>)
+        .find((item) => item.id === messageId);
+      expect(target?.isRead).toBe(false);
+    } finally {
+      await ctx.dispose();
+    }
+  });
 });

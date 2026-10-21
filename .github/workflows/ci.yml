@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependensi
+        run: bun install --frozen-lockfile
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Build
+        run: bun run build
+
+      - name: Pastikan menu NGL ikut ter-bundle
+        run: |
+          if ! grep -q "Kotak NGL" frontend/dist/assets/*.js; then
+            echo "::error::Menu NGL tidak ada di bundle hasil build. Periksa AppSidebar.tsx / build basi."
+            exit 1
+          fi
+          echo "Bundle OK: menu NGL ditemukan."
+
+      - name: Pastikan index.html tidak di-cache agresif
+        run: |
+          if [ ! -f frontend/dist/_headers ]; then
+            echo "::error::frontend/dist/_headers hilang (memicu index.html basi di browser)."
+            exit 1
+          fi
+          grep -q "max-age=0, must-revalidate" frontend/dist/_headers
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: frontend/dist
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: frontend/dist
+
+      - name: Deploy ke Cloudflare Pages (branch ${{ github.ref_name }})
+        if: ${{ env.CLOUDFLARE_API_TOKEN != '' }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy frontend/dist --project-name portofolio-kelas --branch ${{ github.ref_name }}
+
+      - name: Lewati deploy (token belum di-set)
+        if: ${{ env.CLOUDFLARE_API_TOKEN == '' }}
+        run: echo "::notice::Secret CLOUDFLARE_API_TOKEN belum di-set di GitHub — build tetap divalidasi, deploy dilewati."

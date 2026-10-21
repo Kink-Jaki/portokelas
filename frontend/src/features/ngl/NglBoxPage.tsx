@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 import { Button, buttonClasses } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { useMarkNglRead, useNglInbox, useNglSettings } from '@/hooks/useNgl';
+import { useMarkNglRead, useMarkNglUnread, useNglInbox, useNglSettings } from '@/hooks/useNgl';
 import { useAuth } from '@/providers/AuthProvider';
 import { fadeUp, stagger, staggerItem } from '@/lib/motion';
 import { cn } from '@/lib/utils';
@@ -26,11 +26,11 @@ const BOUNCE_EMOJI = ['💌', '✨', '💬', '🔥', '🫧', '💫'];
 /** Grid skeleton playful saat memuat — kartu gradient berkedip dengan emoji. */
 function NglLoadingGrid() {
   return (
-    <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-      {Array.from({ length: 6 }).map((_, index) => (
+    <div className="grid grid-cols-3 gap-2 min-[360px]:gap-2.5 min-[390px]:gap-2.5 sm:gap-4 lg:grid-cols-4 lg:gap-5">
+      {Array.from({ length: 8 }).map((_, index) => (
         <div
           key={index}
-          className="relative h-[16rem] overflow-hidden rounded-[1.5rem] border border-line bg-subtle"
+          className="relative aspect-square min-w-0 overflow-hidden rounded-2xl border border-line bg-subtle sm:aspect-auto sm:h-[14.5rem] sm:rounded-[1.5rem] lg:h-[15.5rem]"
         >
           <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-subtle via-line/30 to-subtle" />
           <div className="absolute inset-0 grid place-items-center text-4xl">
@@ -54,18 +54,17 @@ export default function NglBoxPage() {
   const [reportTarget, setReportTarget] = useState<NglMessage | null>(null);
   const [shareTarget, setShareTarget] = useState<NglMessage | null>(null);
   const shareRef = useRef<HTMLDivElement>(null);
-  const revealed = useRef(new Set<string>());
 
   const inbox = useNglInbox(page, enabled);
   const markRead = useMarkNglRead();
+  const markUnread = useMarkNglUnread();
 
   const messages = inbox.data?.items ?? [];
   const meta = inbox.data?.meta;
   const unread = inbox.data?.unread ?? 0;
 
   const handleReveal = (message: NglMessage) => {
-    if (revealed.current.has(message.id)) return;
-    revealed.current.add(message.id);
+    if (message.isRead) return;
     markRead.mutate(message.id);
   };
 
@@ -236,7 +235,7 @@ export default function NglBoxPage() {
                     variants={reduceMotion ? undefined : nglGridVariants}
                     initial={reduceMotion ? false : 'hidden'}
                     animate={reduceMotion ? false : 'show'}
-                    className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
+                    className="grid grid-cols-3 gap-2 min-[360px]:gap-2.5 min-[390px]:gap-2.5 sm:gap-4 lg:grid-cols-4 lg:gap-5"
                   >
                     {messages.map((message, index) => (
                       <NglBoxCard
@@ -248,6 +247,10 @@ export default function NglBoxPage() {
                         onReveal={handleReveal}
                         onReport={setReportTarget}
                         onRepost={setShareTarget}
+                        onToggleRead={(message, read) => {
+                          if (read) markRead.mutate(message.id);
+                          else markUnread.mutate(message.id);
+                        }}
                       />
                     ))}
                   </motion.div>
