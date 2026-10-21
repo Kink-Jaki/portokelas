@@ -48,10 +48,6 @@ export function AdminMemoriesPanel() {
     if (!allowedTypes.includes(f.type)) {
       return 'Format video harus MP4 atau WEBM.';
     }
-    const maxSize = 50 * 1024 * 1024; // 50MB
-    if (f.size > maxSize) {
-      return `Ukuran file maksimal 50MB (file Anda ${(f.size / 1024 / 1024).toFixed(2)}MB).`;
-    }
     return null;
   };
 
@@ -102,7 +98,7 @@ export function AdminMemoriesPanel() {
           <h3 className="font-display text-xl">Video section Kenangan</h3>
           <p className="text-sm text-muted">
             Video ini ditampilkan di panel video section Kenangan di landing page. Hanya satu video yang bisa aktif.
-            Format: MP4/WEBM, maksimal 50MB.
+            Format: MP4/WEBM (tanpa batas ukuran).
           </p>
         </div>
 

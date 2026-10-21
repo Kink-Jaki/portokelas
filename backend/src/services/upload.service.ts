@@ -113,8 +113,8 @@ export function detectVideoMime(bytes: Uint8Array): string | null {
   return null;
 }
 
-/** Batas unggahan video kenangan (50MB). */
-export const VIDEO_MAX_BYTES = 50 * 1024 * 1024;
+/** Batas unggahan video kenangan (2GB - praktis tidak terbatas). */
+export const VIDEO_MAX_BYTES = 2 * 1024 * 1024 * 1024;
 
 function assertUploadShape(file: File, maxBytes: number): void {
   if (file.size > maxBytes) {
