@@ -6,7 +6,7 @@ import { AppError } from '../lib/errors.js';
 import { stripImageMetadata } from '../lib/image-metadata.js';
 import { getBindings, type KVNamespaceBinding, type R2BucketBinding } from '../runtime.js';
 
-export type UploadKind = 'avatars' | 'projects' | 'content' | 'memories' | 'ngl';
+export type UploadKind = 'avatars' | 'projects' | 'content' | 'memories' | 'ngl' | 'videos';
 
 const CACHE_CONTROL = 'public, max-age=31536000, immutable';
 
@@ -14,12 +14,16 @@ const ALLOWED_MIME = new Map<string, string>([
   ['image/jpeg', 'jpg'],
   ['image/png', 'png'],
   ['image/webp', 'webp'],
+  ['video/mp4', 'mp4'],
+  ['video/webm', 'webm'],
 ]);
 
 const MIME_BY_EXTENSION: Record<string, string> = {
   jpg: 'image/jpeg',
   png: 'image/png',
   webp: 'image/webp',
+  mp4: 'video/mp4',
+  webm: 'video/webm',
 };
 
 /** Binding R2 bila tersedia (produksi); null untuk penyimpanan lokal. */
@@ -90,6 +94,28 @@ export function detectImageMime(bytes: Uint8Array): string | null {
   return null;
 }
 
+export function detectVideoMime(bytes: Uint8Array): string | null {
+  if (bytes.length < 12) return null;
+
+  if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
+    return 'video/mp4';
+  }
+
+  if (
+    bytes[0] === 0x1a &&
+    bytes[1] === 0x45 &&
+    bytes[2] === 0xdf &&
+    bytes[3] === 0xa3
+  ) {
+    return 'video/webm';
+  }
+
+  return null;
+}
+
+/** Batas unggahan video kenangan (50MB). */
+export const VIDEO_MAX_BYTES = 50 * 1024 * 1024;
+
 function assertUploadShape(file: File, maxBytes: number): void {
   if (file.size > maxBytes) {
     throw AppError.badRequest(
@@ -101,7 +127,7 @@ function assertUploadShape(file: File, maxBytes: number): void {
   }
   const genericTypes = new Set(['', 'application/octet-stream', 'binary/octet-stream']);
   if (!ALLOWED_MIME.has(file.type) && !genericTypes.has(file.type.toLowerCase())) {
-    throw AppError.badRequest('Format file harus JPG, PNG, atau WEBP.');
+    throw AppError.badRequest('Format file harus JPG, PNG, WEBP, MP4, atau WEBM.');
   }
 }
 
@@ -189,6 +215,41 @@ export async function saveImage(
 
   const stripped = stripImageMetadata(bytes, realMime);
   return storeBytes(stripped, kind, extension, realMime);
+}
+
+/**
+ * Simpan file video (R2 bila tersedia, jika tidak ke disk lokal) dengan nama
+ * acak. Mengembalikan path relatif `/uploads/...` yang siap dipakai sebagai URL.
+ * `options.maxBytes` menimpa batas ukuran default untuk unggahan tertentu.
+ */
+export async function saveVideo(
+  file: File,
+  kind: UploadKind,
+  options: { maxBytes?: number } = {},
+): Promise<string> {
+  assertUploadShape(file, options.maxBytes ?? VIDEO_MAX_BYTES);
+
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const realMime = detectVideoMime(bytes.subarray(0, 16));
+
+  if (!realMime) {
+    throw AppError.badRequest('Isi file bukan video MP4/WEBM yang valid.');
+  }
+
+  const declaredMime = file.type.toLowerCase();
+  if (
+    ALLOWED_MIME.has(declaredMime) &&
+    declaredMime !== realMime
+  ) {
+    throw AppError.badRequest(
+      `Tipe file tidak cocok dengan isinya (kiriman: ${file.type}, isi: ${realMime}).`,
+    );
+  }
+
+  const extension = ALLOWED_MIME.get(realMime);
+  if (!extension) throw AppError.badRequest('Format video tidak didukung (hanya MP4/WEBM).');
+
+  return storeBytes(bytes, kind, extension, realMime);
 }
 
 export type StoredUpload = {

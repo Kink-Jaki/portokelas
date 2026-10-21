@@ -6,6 +6,7 @@ import type {
   About,
   Hero,
   MemberWithSpotify,
+  MemoryVideo,
   MemoryWithAuthor,
   Paginated,
   Project,
@@ -50,6 +51,14 @@ export function usePublicMemories() {
   return useQuery({
     queryKey: queryKeys.publicMemories,
     queryFn: () => api.get<{ memories: MemoryWithAuthor[] }>('/memories'),
+    staleTime: 60_000,
+  });
+}
+
+export function usePublicMemoryVideo() {
+  return useQuery({
+    queryKey: queryKeys.memoryVideo,
+    queryFn: () => api.get<{ video: MemoryVideo | null }>('/memories/video'),
     staleTime: 60_000,
   });
 }

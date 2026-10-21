@@ -1,6 +1,6 @@
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { db } from '../db/index.js';
-import { memories, users, type Memory } from '../db/schema.js';
+import { memories, memoryVideos, users, type Memory, type MemoryVideo } from '../db/schema.js';
 import { AppError } from '../lib/errors.js';
 
 export type MemoryWithAuthor = Memory & {
@@ -73,4 +73,28 @@ export async function listMemoriesForAdmin(limit = 100): Promise<MemoryWithAutho
     .orderBy(desc(memories.createdAt))
     .limit(limit);
   return rows.map((row) => ({ ...row.memory, author: row.author }));
+}
+
+export async function getMemoryVideo(): Promise<MemoryVideo | null> {
+  const rows = await db.select().from(memoryVideos).limit(1);
+  return rows[0] ?? null;
+}
+
+export async function upsertMemoryVideo(videoUrl: string, caption: string | null = null): Promise<MemoryVideo> {
+  const existing = await getMemoryVideo();
+  if (existing) {
+    const rows = await db
+      .update(memoryVideos)
+      .set({ videoUrl, caption, updatedAt: new Date() })
+      .where(eq(memoryVideos.id, existing.id))
+      .returning();
+    return rows[0]!;
+  }
+  const rows = await db.insert(memoryVideos).values({ videoUrl, caption }).returning();
+  return rows[0]!;
+}
+
+export async function removeMemoryVideo(): Promise<MemoryVideo | null> {
+  const rows = await db.delete(memoryVideos).returning();
+  return rows[0] ?? null;
 }

@@ -55,6 +55,14 @@ export type MemoryAuthor = Pick<
 
 export type MemoryWithAuthor = Memory & { author: MemoryAuthor | null };
 
+/** Video kenangan pada section landing (single row, khusus admin). */
+export type MemoryVideo = {
+  id: string;
+  videoUrl: string;
+  caption: string | null;
+  updatedAt: string;
+};
+
 export type ProjectImage = {
   id: string;
   projectId: string;

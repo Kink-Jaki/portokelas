@@ -17,17 +17,22 @@ import {
   deleteUserAsAdmin,
   getAbout,
   getHero,
+  getMemoryVideo,
   getProjectAuthor,
   listAllProjects,
   listMemoriesForAdmin,
   listTeachers,
   listUsersForAdmin,
+  removeMemoryVideo,
   saveImage,
+  saveVideo,
   setProjectHidden,
   updateProfile,
   updateTeacher,
   upsertAbout,
   upsertHero,
+  upsertMemoryVideo,
+  VIDEO_MAX_BYTES,
 } from '../services/index.js';
 import type { HeroInput } from '../services/index.js';
 import { aboutFormSchema, teacherFormSchema, teacherUpdateFormSchema } from '../validators/content.js';
@@ -153,9 +158,38 @@ export const adminRoutes = new Hono<AppEnv>()
 
   /* --------------------------------- Kenangan --------------------------------- */
 
+  .get('/memories/video', async (c) => {
+    const video = await getMemoryVideo();
+    return c.json(ok({ video }));
+  })
+
   .get('/memories', async (c) => {
     const result = await listMemoriesForAdmin();
     return c.json(ok({ memories: result }));
+  })
+
+  .post('/memories/video', async (c) => {
+    const form = await readForm(c);
+    const file = formFile(form, ['video', 'file']);
+    const caption = formText(form, 'caption');
+
+    if (!file) throw AppError.badRequest('File video wajib diunggah (field "video").');
+
+    const videoUrl = await saveVideo(file, 'videos', { maxBytes: VIDEO_MAX_BYTES });
+
+    try {
+      const video = await upsertMemoryVideo(videoUrl, caption?.trim() || null);
+      return c.json(ok({ video }), 201);
+    } catch (error) {
+      await deleteStoredFile(videoUrl);
+      throw error;
+    }
+  })
+
+  .delete('/memories/video', async (c) => {
+    const removed = await removeMemoryVideo();
+    if (removed) await deleteStoredFile(removed.videoUrl);
+    return c.json(ok({ id: removed?.id, deleted: true }));
   })
 
   .delete('/memories/:id', async (c) => {

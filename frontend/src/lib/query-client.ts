@@ -24,6 +24,7 @@ export const queryKeys = {
   about: ['public', 'about'] as const,
   hero: ['public', 'hero'] as const,
   teachers: ['public', 'teachers'] as const,
+  memoryVideo: ['public', 'memories', 'video'] as const,
   members: (search: string, page: number) => ['public', 'members', { search, page }] as const,
   membersAll: ['public', 'members'] as const,
   landingMembers: ['public', 'members', 'landing'] as const,
@@ -34,6 +35,7 @@ export const queryKeys = {
   publicMemories: ['public', 'memories'] as const,
   myMemories: ['me', 'memories'] as const,
   adminMemories: ['admin', 'memories'] as const,
+  adminMemoryVideo: ['admin', 'memories', 'video'] as const,
   adminUsers: (search: string, page: number) => ['admin', 'users', { search, page }] as const,
   adminProjects: (search: string, hidden: string | undefined, page: number) =>
     ['admin', 'projects', { search, hidden, page }] as const,

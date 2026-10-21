@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { Reveal } from '@/components/ui/Reveal';
-import { usePublicMemories as _usePublicMemories } from '@/hooks/usePublic';
+import { usePublicMemories as _usePublicMemories, usePublicMemoryVideo } from '@/hooks/usePublic';
 import { assetUrl } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/providers/AuthProvider';
@@ -382,8 +382,15 @@ function MemoriesOrnaments() {
 
 /* ------------------------------ Panel video ----------------------------- */
 
+type VideoPanelProps = {
+  videoUrl: string | null;
+  caption: string | null;
+};
+
 /** Panel video persegi panjang (16:9) sebagai focal point section kenangan. */
-function VideoPanel() {
+function VideoPanel({ videoUrl, caption }: VideoPanelProps) {
+  const src = videoUrl ? assetUrl(videoUrl) : null;
+
   return (
     <div className="relative mx-auto w-full max-w-4xl">
       {/* Lapisan organik sage & maroon di belakang panel */}
@@ -411,44 +418,57 @@ function VideoPanel() {
           <Sparkle className="pointer-events-none absolute right-5 top-4 h-4 w-4 text-[#d7ad5d]/70" />
           <HeartDoodle className="pointer-events-none absolute bottom-4 left-5 h-6 w-6 -rotate-6 text-ivory-warm/35" />
 
-          {/* Tombol play + teks */}
-          <div className="relative z-10 flex h-full flex-col items-center justify-center gap-2.5 px-5 text-center sm:gap-3.5 sm:px-8">
-            <div className="relative">
-              <span className="relative z-10 grid h-14 w-14 place-items-center rounded-full border border-[#d7ad5d] bg-maroon text-ivory-warm shadow-[0_18px_40px_-16px_rgba(118,38,61,0.95)] transition duration-300 ease-out group-hover/video:scale-105 group-hover/video:bg-[#8b2f49] motion-reduce:transform-none sm:h-[4.5rem] sm:w-[4.5rem]">
-                <PlayIcon />
-              </span>
+          {src ? (
+            <video
+              src={src}
+              controls
+              playsInline
+              preload="metadata"
+              className="w-full h-full object-cover"
+              poster={caption ? undefined : undefined}
+            />
+          ) : (
+            <>
+              {/* Tombol play + teks */}
+              <div className="relative z-10 flex h-full flex-col items-center justify-center gap-2.5 px-5 text-center sm:gap-3.5 sm:px-8">
+                <div className="relative">
+                  <span className="relative z-10 grid h-14 w-14 place-items-center rounded-full border border-[#d7ad5d] bg-maroon text-ivory-warm shadow-[0_18px_40px_-16px_rgba(118,38,61,0.95)] transition duration-300 ease-out group-hover/video:scale-105 group-hover/video:bg-[#8b2f49] motion-reduce:transform-none sm:h-[4.5rem] sm:w-[4.5rem]">
+                    <PlayIcon />
+                  </span>
 
-              {/* Tiga garis pendek seperti sinar di sekitar tombol */}
-              <span
-                aria-hidden
-                className="absolute left-1/2 top-[-14px] h-1.5 w-5 -translate-x-1/2 rounded-full bg-ivory-warm/60"
-              />
-              <span
-                aria-hidden
-                className="absolute -left-7 top-1/2 hidden h-1.5 w-5 -translate-y-1/2 -rotate-12 rounded-full bg-[#d7ad5d]/80 sm:block"
-              />
-              <span
-                aria-hidden
-                className="absolute -right-7 top-1/2 hidden h-1.5 w-5 -translate-y-1/2 rotate-12 rounded-full bg-[#d7ad5d]/80 sm:block"
-              />
-            </div>
+                  {/* Tiga garis pendek seperti sinar di sekitar tombol */}
+                  <span
+                    aria-hidden
+                    className="absolute left-1/2 top-[-14px] h-1.5 w-5 -translate-x-1/2 rounded-full bg-ivory-warm/60"
+                  />
+                  <span
+                    aria-hidden
+                    className="absolute -left-7 top-1/2 hidden h-1.5 w-5 -translate-y-1/2 -rotate-12 rounded-full bg-[#d7ad5d]/80 sm:block"
+                  />
+                  <span
+                    aria-hidden
+                    className="absolute -right-7 top-1/2 hidden h-1.5 w-5 -translate-y-1/2 rotate-12 rounded-full bg-[#d7ad5d]/80 sm:block"
+                  />
+                </div>
 
-            <p className="font-hand text-[1.5rem] leading-none text-ivory-warm sm:text-[2rem]">
-              Video Kenangan
-            </p>
+                <p className="font-hand text-[1.5rem] leading-none text-ivory-warm sm:text-[2rem]">
+                  Video Kenangan
+                </p>
 
-            <p className="hidden max-w-md font-display text-[0.9375rem] italic leading-snug text-ivory-warm/80 sm:block">
-              “Potongan cerita yang akan selalu kita ingat.”
-            </p>
+                <p className="hidden max-w-md font-display text-[0.9375rem] italic leading-snug text-ivory-warm/80 sm:block">
+                  “Potongan cerita yang akan selalu kita ingat.”
+                </p>
 
-            <div className="mt-0.5 flex items-center gap-2.5 sm:mt-1">
-              <span aria-hidden className="h-px w-7 bg-[#d7ad5d]/80 sm:w-10" />
-              <span className="font-mono text-[0.5625rem] uppercase tracking-[0.34em] text-ivory-warm sm:text-[0.625rem]">
-                Segera Hadir
-              </span>
-              <span aria-hidden className="h-px w-7 bg-[#d7ad5d]/80 sm:w-10" />
-            </div>
-          </div>
+                <div className="mt-0.5 flex items-center gap-2.5 sm:mt-1">
+                  <span aria-hidden className="h-px w-7 bg-[#d7ad5d]/80 sm:w-10" />
+                  <span className="font-mono text-[0.5625rem] uppercase tracking-[0.34em] text-ivory-warm sm:text-[0.625rem]">
+                    Segera Hadir
+                  </span>
+                  <span aria-hidden className="h-px w-7 bg-[#d7ad5d]/80 sm:w-10" />
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -459,6 +479,7 @@ function VideoPanel() {
 
 export function MemoriesSection() {
   void _usePublicMemories();
+  const { data: videoData } = usePublicMemoryVideo();
   void useAuth().user;
 
   /** Baris bawah: masih memakai gambar fallback sampai foto berikutnya tersedia. */
@@ -471,6 +492,9 @@ export function MemoriesSection() {
       })),
     [],
   );
+
+  const videoUrl = videoData?.video?.videoUrl ?? null;
+  const videoCaption = videoData?.video?.caption ?? null;
 
   return (
     <section
@@ -504,7 +528,7 @@ export function MemoriesSection() {
           </div>
 
           <Reveal delay={0.1}>
-            <VideoPanel />
+            <VideoPanel videoUrl={videoUrl} caption={videoCaption} />
           </Reveal>
         </div>
       </div>

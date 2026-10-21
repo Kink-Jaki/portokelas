@@ -6,6 +6,7 @@ import {
   getAbout,
   getHero,
   getMemberBySlug,
+  getMemoryVideo,
   getPublicStats,
   listMemoriesRandom,
   listMembers,
@@ -38,6 +39,10 @@ export const publicRoutes = new Hono()
   .get('/memories', async (c) => {
     const memories = await listMemoriesRandom();
     return c.json(ok({ memories }));
+  })
+  .get('/memories/video', async (c) => {
+    const video = await getMemoryVideo();
+    return c.json(ok({ video }));
   })
   .get('/members', zQuery(memberQuerySchema), async (c) => {
     const members = await listMembers(c.req.valid('query'));

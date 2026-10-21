@@ -194,6 +194,14 @@ export const memories = pgTable(
   ],
 );
 
+/** Video kenangan pada section landing (single row, khusus admin). */
+export const memoryVideos = pgTable('memory_videos', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  videoUrl: text('video_url').notNull(),
+  caption: text('caption'),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
 /* ------------------------------- Craftly NGL ------------------------------- */
 
 /** Status laporan pesan NGL. */
@@ -335,6 +343,8 @@ export type Teacher = typeof teachers.$inferSelect;
 export type NewTeacher = typeof teachers.$inferInsert;
 export type Memory = typeof memories.$inferSelect;
 export type NewMemory = typeof memories.$inferInsert;
+export type MemoryVideo = typeof memoryVideos.$inferSelect;
+export type NewMemoryVideo = typeof memoryVideos.$inferInsert;
 export type AppSetting = typeof appSettings.$inferSelect;
 export type NewAppSetting = typeof appSettings.$inferInsert;
 export type NglMessage = typeof nglMessages.$inferSelect;

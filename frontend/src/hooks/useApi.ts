@@ -10,6 +10,7 @@ import type {
   Hero,
   MemberProfile,
   Memory,
+  MemoryVideo,
   MemoryWithAuthor,
   Paginated,
   Project,
@@ -270,6 +271,44 @@ export function useAdminDeleteMemory() {
       toast.success('Kenangan dihapus.');
     },
     onError: (error) => toastApiError(error, 'Gagal menghapus kenangan.'),
+  });
+}
+
+export function useAdminMemoryVideo() {
+  return useQuery({
+    queryKey: queryKeys.adminMemoryVideo,
+    queryFn: () => api.get<{ video: MemoryVideo | null }>('/admin/memories/video'),
+  });
+}
+
+export function useUploadMemoryVideo() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ video, caption }: { video: File; caption?: string }) => {
+      const form = new FormData();
+      form.append('video', video);
+      if (caption && caption.trim()) form.append('caption', caption.trim());
+      return api.post<{ video: MemoryVideo }>('/admin/memories/video', form);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.adminMemoryVideo });
+      queryClient.invalidateQueries({ queryKey: queryKeys.memoryVideo });
+      toast.success('Video kenangan berhasil diunggah.');
+    },
+    onError: (error) => toastApiError(error, 'Gagal mengunggah video kenangan.'),
+  });
+}
+
+export function useDeleteMemoryVideo() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => api.delete<{ id: string; deleted: boolean }>('/admin/memories/video'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.adminMemoryVideo });
+      queryClient.invalidateQueries({ queryKey: queryKeys.memoryVideo });
+      toast.success('Video kenangan dihapus.');
+    },
+    onError: (error) => toastApiError(error, 'Gagal menghapus video kenangan.'),
   });
 }
 
