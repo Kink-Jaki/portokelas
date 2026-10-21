@@ -19,7 +19,7 @@ export function EmptyState({
       variants={stagger(0.06)}
       initial="hidden"
       animate="show"
-      className="flex flex-col items-center justify-center gap-4 px-6 py-16 text-center"
+      className="flex flex-col items-center justify-center gap-4 px-4 py-6 text-center sm:px-6 sm:py-16"
     >
       {icon ? (
         <motion.div variants={staggerItem} className="text-muted">

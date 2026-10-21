@@ -179,13 +179,13 @@ export function SiteHeader() {
         isLanding && 'page-landing',
       )}
     >
-      <div className="container-wide flex h-20 items-center justify-between gap-6 lg:h-[6.3rem]">
-        <div className="flex items-center gap-3">
+      <div className="container-wide flex h-16 items-center justify-between gap-3 sm:h-20 lg:h-[6.3rem]">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <MobileSidebar sections={isLanding ? landingSections : undefined} />
           <Logo variant="editorial" />
         </div>
 
-        <div className="flex items-center gap-8">
+        <div className="flex min-w-0 items-center justify-end gap-4 lg:gap-8">
           {isLanding ? (
             <SectionNav />
           ) : user ? (
@@ -201,27 +201,21 @@ export function SiteHeader() {
             </nav>
           ) : null}
 
-          <div className="flex items-center gap-2">
-            <NavLink
-              to="/ngl"
-              className={(args) => cn(navClass(args), 'mr-2 hidden sm:inline-flex')}
-            >
+          <div className="flex min-w-0 items-center gap-2">
+            <NavLink to="/ngl" className={(args) => cn(navClass(args), 'mr-2 max-sm:hidden')}>
               NGL
             </NavLink>
-            <Link
-              to="/docs"
-              className={buttonClasses('ghost', 'sm', 'hidden sm:inline-flex')}
-            >
+            <Link to="/docs" className={buttonClasses('ghost', 'sm', 'max-[479px]:hidden')}>
               Docs
             </Link>
             {isLoading ? (
-              <div className="h-9 w-24 animate-pulse rounded-sm bg-ivory-alt" />
+              <div className="h-9 w-16 animate-pulse rounded-sm bg-ivory-alt sm:w-24" />
             ) : user ? (
               <Link
                 to={user.role === 'admin' ? '/admin' : '/dashboard'}
-                className={buttonClasses('forest', 'sm', 'hidden sm:inline-flex')}
+                className={buttonClasses('forest', 'sm', 'min-w-0 shrink')}
               >
-                {user.name.split(' ')[0]}
+                <span className="min-w-0 truncate">{user.name.split(' ')[0]}</span>
               </Link>
             ) : null}
           </div>

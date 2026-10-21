@@ -78,8 +78,12 @@ export function AccountSecurityPanel() {
   if (!user) return null;
 
   return (
-    <section className="grid gap-8 lg:grid-cols-2">
-      <form onSubmit={onSubmitEmail} className="space-y-5 border border-line p-6" noValidate>
+    <section className="grid min-w-0 gap-6 sm:gap-8 lg:grid-cols-2">
+      <form
+        onSubmit={onSubmitEmail}
+        className="min-w-0 space-y-5 border border-line p-5 sm:p-6"
+        noValidate
+      >
         <div>
           <h2 className="font-display text-2xl">Ubah email</h2>
           <p className="mt-1 text-sm text-muted">
@@ -120,7 +124,11 @@ export function AccountSecurityPanel() {
         </div>
       </form>
 
-      <form onSubmit={onSubmitPassword} className="space-y-5 border border-line p-6" noValidate>
+      <form
+        onSubmit={onSubmitPassword}
+        className="min-w-0 space-y-5 border border-line p-5 sm:p-6"
+        noValidate
+      >
         <div>
           <h2 className="font-display text-2xl">Ubah password</h2>
           <p className="mt-1 text-sm text-muted">

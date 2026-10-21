@@ -196,15 +196,16 @@ export function ProjectsPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
+      <div className="flex min-w-0 flex-col items-start gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+        <div className="min-w-0 max-w-full">
           <h2 className="font-display text-2xl">Project saya</h2>
-          <p className="mt-1 text-sm text-muted">
+          <p className="mt-1 text-sm leading-relaxed text-muted">
             Project yang Anda buat atau ikut kerjakan tampil di portofolio publik (kecuali
             disembunyikan admin).
           </p>
         </div>
         <Button
+          className="max-w-full"
           onClick={() => {
             setEditing(null);
             setDialogOpen(true);

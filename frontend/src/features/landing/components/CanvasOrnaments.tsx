@@ -21,7 +21,13 @@ export function CanvasOrnaments() {
 
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
-      <motion.div className="absolute inset-0" style={{ y: cloudsY }}>
+      {/* will-change-transform: kedua layer ini `absolute inset-0` sehingga setinggi
+          seluruh kanvas landing, dan lapisan clouds membawa gradien radial besar.
+          Tanpa promosi ke composited layer, tiap update `y` saat scroll memaksa
+          main-thread me-repaint layer utuh → frame drop → animasi terasa patah.
+          Dengan promosi, gerakan ditangani kompositor (translate murni), tampilan
+          dan parallax tetap identik. */}
+      <motion.div className="absolute inset-0 will-change-transform" style={{ y: cloudsY }}>
         {/* "Awan warna" lembut — blur radial tanpa tepi tajam, mengisi ruang kosong. */}
         <span className="absolute -left-[14%] top-[5%] h-[34rem] w-[34rem] rounded-full bg-[radial-gradient(circle,rgba(141,165,139,0.2),transparent_68%)]" />
         <span className="absolute -right-[16%] top-[26%] h-[30rem] w-[30rem] rounded-full bg-[radial-gradient(circle,rgba(201,165,106,0.14),transparent_68%)]" />
@@ -30,7 +36,7 @@ export function CanvasOrnaments() {
         <span className="absolute left-[28%] top-[86%] h-[30rem] w-[30rem] rounded-full bg-[radial-gradient(circle,rgba(215,173,93,0.14),transparent_70%)]" />
       </motion.div>
 
-      <motion.div className="absolute inset-0" style={{ y: decorY }}>
+      <motion.div className="absolute inset-0 will-change-transform" style={{ y: decorY }}>
         {/* Ornamen tersebar merata dengan variasi ukuran, rotasi, dan opacity. */}
         <LeafSprig className="absolute left-[5%] top-[17%] h-24 w-24 -rotate-12 text-sage opacity-25" />
         <LeafSprig className="absolute right-[7%] top-[42%] h-20 w-20 rotate-[18deg] text-sage opacity-20" />
