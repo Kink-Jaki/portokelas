@@ -27,7 +27,7 @@ function UserManagement() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-end">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-end">
         <input
           type="search"
           value={search}
@@ -37,7 +37,7 @@ function UserManagement() {
           }}
           placeholder="Cari nama, email, atau NIM…"
           aria-label="Cari anggota"
-          className="w-full rounded-sm border border-line bg-bg py-2.5 pl-3.5 pr-3 text-sm placeholder:text-muted/70 focus:border-line-strong focus:outline-none focus:ring-1 focus:ring-line-strong lg:max-w-xs"
+          className="w-full min-w-0 rounded-sm border border-line bg-bg py-2.5 pl-3.5 pr-3 text-sm placeholder:text-muted/70 focus:border-line-strong focus:outline-none focus:ring-1 focus:ring-line-strong md:max-w-xs"
         />
       </div>
 
@@ -89,7 +89,7 @@ function UserManagement() {
 
       {meta && meta.totalPages > 1 ? (
         <nav
-          className="flex items-center justify-between gap-4"
+          className="flex flex-wrap items-center justify-between gap-3"
           aria-label="Navigasi halaman anggota"
         >
           <Button
@@ -131,24 +131,30 @@ export default function AdminPage() {
 
   return (
     <div className="container-page py-14">
-      <motion.header variants={fadeUp} initial="hidden" animate="show" className="max-w-2xl">
+      <motion.header
+        variants={fadeUp}
+        initial="hidden"
+        animate="show"
+        className="w-full min-w-0 max-w-2xl"
+      >
         <p className="eyebrow">Panel admin</p>
-        <h1 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">
+        <h1 className="mt-4 break-words font-display text-[clamp(2rem,7vw,3rem)] leading-[1.15]">
           Moderasi Craftly.
         </h1>
-        <p className="mt-4 text-sm leading-relaxed text-muted">
+        <p className="mt-4 max-w-full text-sm leading-relaxed text-muted">
           Kelola anggota dan perannya, moderasi project yang tayang, serta kelola konten landing page.
         </p>
       </motion.header>
 
       <AnimatedRule className="mt-10" />
 
+      {/* Desktop: satu baris. Mobile (<540px): grid dua kolom agar tidak overflow. */}
       <div
-        className="mt-8 inline-flex border border-line"
+        className="mt-8 grid w-full min-w-0 max-w-full grid-cols-2 gap-px border border-line bg-line min-[540px]:inline-flex min-[540px]:w-auto min-[540px]:max-w-none min-[540px]:gap-0 min-[540px]:bg-transparent"
         role="tablist"
         aria-label="Section admin"
       >
-        {tabs.map((item) => (
+        {tabs.map((item, index) => (
           <button
             key={item.id}
             role="tab"
@@ -158,9 +164,9 @@ export default function AdminPage() {
             aria-selected={tab === item.id}
             tabIndex={tab === item.id ? 0 : -1}
             onClick={() => setTab(item.id)}
-            className={`relative px-5 py-2.5 text-sm transition-colors duration-200 ${
-              tab === item.id ? 'text-invert-fg' : 'text-muted hover:text-fg'
-            }`}
+            className={`relative flex min-w-0 items-center justify-center whitespace-normal bg-bg px-5 py-3 text-center text-sm transition-colors duration-200 min-[540px]:min-w-max min-[540px]:bg-transparent min-[540px]:py-2.5 ${
+              index === tabs.length - 1 ? 'col-span-2 min-[540px]:col-span-1' : ''
+            } ${tab === item.id ? 'text-invert-fg' : 'text-muted hover:text-fg'}`}
           >
             {tab === item.id ? (
               <motion.span

@@ -164,7 +164,10 @@ export function AdminNglPanel() {
       )}
 
       {meta && meta.totalPages > 1 ? (
-        <nav className="flex items-center justify-between gap-4" aria-label="Navigasi halaman NGL">
+        <nav
+          className="flex flex-wrap items-center justify-between gap-3"
+          aria-label="Navigasi halaman NGL"
+        >
           <Button
             variant="outline"
             size="sm"
