@@ -107,7 +107,7 @@ export function ProjectModerationList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <input
           type="search"
           value={search}
@@ -117,9 +117,9 @@ export function ProjectModerationList() {
           }}
           placeholder="Cari judul project atau nama anggota…"
           aria-label="Cari project"
-          className="w-full rounded-sm border border-line bg-bg py-2.5 pl-3.5 pr-3 text-sm placeholder:text-muted/70 focus:border-line-strong focus:outline-none focus:ring-1 focus:ring-line-strong sm:max-w-sm"
+          className="w-full min-w-0 rounded-sm border border-line bg-bg py-2.5 pl-3.5 pr-3 text-sm placeholder:text-muted/70 focus:border-line-strong focus:outline-none focus:ring-1 focus:ring-line-strong md:max-w-sm"
         />
-        <div className="inline-flex border border-line">
+        <div className="grid w-full min-w-0 max-w-full grid-cols-3 border border-line md:inline-flex md:w-auto md:max-w-none">
           {filters.map((filter) => (
             <button
               key={filter.id}
@@ -128,8 +128,10 @@ export function ProjectModerationList() {
                 setHiddenFilter(filter.id);
                 setPage(1);
               }}
-              className={`px-3.5 py-2 text-xs transition-colors duration-200 ${
-                hiddenFilter === filter.id ? 'bg-invert text-invert-fg' : 'text-muted hover:text-fg'
+              className={`min-w-0 whitespace-normal px-2 py-2 text-center text-xs transition-colors duration-200 [overflow-wrap:anywhere] md:px-3.5 ${
+                hiddenFilter === filter.id
+                  ? 'bg-invert text-invert-fg'
+                  : 'text-muted hover:text-fg'
               }`}
             >
               {filter.label}
@@ -173,7 +175,7 @@ export function ProjectModerationList() {
 
       {meta && meta.totalPages > 1 ? (
         <nav
-          className="flex items-center justify-between gap-4"
+          className="flex flex-wrap items-center justify-between gap-3"
           aria-label="Navigasi halaman project"
         >
           <Button
