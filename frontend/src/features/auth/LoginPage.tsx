@@ -11,6 +11,7 @@ import { ApiError } from '@/lib/api';
 import { fadeUp } from '@/lib/motion';
 import { useAuth } from '@/providers/AuthProvider';
 import { loginSchema, type LoginFormValues } from './schemas';
+import type { LoginPayload } from '@/types/api';
 
 function EyeIcon() {
   return (
@@ -65,9 +66,9 @@ export default function LoginPage() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const onSubmit = handleSubmit(async (values) => {
+  const onSubmit = handleSubmit(async (values: LoginFormValues) => {
     try {
-      const user = await login(values);
+      const user = await login(values as LoginPayload);
       if (user.role === 'admin') navigate('/admin', { replace: true });
       else navigate(redirectTo, { replace: true });
     } catch (error) {
