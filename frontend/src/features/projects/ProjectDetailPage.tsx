@@ -13,6 +13,10 @@ import { useProject } from '@/hooks/usePublic';
 import { assetUrl } from '@/lib/api';
 import { fadeUp } from '@/lib/motion';
 import { formatDate } from '@/lib/utils';
+import { LikeButton } from '@/components/project/LikeButton';
+import { CommentForm } from '@/components/project/CommentForm';
+import { CommentList } from '@/components/project/CommentList';
+import { useAuth } from '@/providers/AuthProvider';
 
 function Gallery({ images, title }: { images: string[]; title: string }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -81,6 +85,7 @@ function Gallery({ images, title }: { images: string[]; title: string }) {
 export default function ProjectDetailPage() {
   const { projectSlug = '' } = useParams();
   const { data, isLoading, isError, error } = useProject(projectSlug);
+  const { user } = useAuth();
 
   if (isLoading) {
     return (
@@ -224,6 +229,28 @@ export default function ProjectDetailPage() {
 
       {gallery.length > 0 ? <Gallery images={gallery} title={project.title} /> : null}
 
+      <section className="mt-16 max-w-3xl" aria-labelledby="interactions-heading">
+        <h2 id="interactions-heading" className="eyebrow">
+          Interaksi
+        </h2>
+        <div className="mt-4 flex flex-wrap items-center gap-4 border-t border-line pt-6">
+          <LikeButton
+            projectId={project.id}
+            initialLiked={project.userLiked ?? false}
+            initialCount={project.likeCount ?? 0}
+          />
+          <button
+            type="button"
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-muted hover:text-fg hover:bg-muted/30 transition-colors"
+          >
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+              <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.514 15.418 3 14.628 3 13.695a9 9 0 0118 0z" />
+            </svg>
+            <span className="tabular-nums">{project.commentCount ?? 0}</span>
+          </button>
+        </div>
+      </section>
+
       <div className="mt-16 grid gap-12 lg:grid-cols-[1fr_18rem]">
         <div>
           {project.description ? (
@@ -286,6 +313,22 @@ export default function ProjectDetailPage() {
           </div>
         </aside>
       </div>
+
+      <section className="mt-20 max-w-3xl" aria-labelledby="comments-heading">
+        <h2 id="comments-heading" className="eyebrow">
+          Komentar & Feedback
+        </h2>
+        <div className="mt-6">
+          <CommentForm projectId={project.id} />
+        </div>
+        <div className="mt-10 border-t border-line pt-6">
+          <CommentList
+            projectId={project.id}
+            currentUserId={user?.id}
+            isAdmin={user?.role === 'admin'}
+          />
+        </div>
+      </section>
     </article>
   );
 }

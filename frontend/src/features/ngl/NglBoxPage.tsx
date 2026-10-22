@@ -13,7 +13,6 @@ import type { NglMessage } from '@/types/api';
 import { captureNglShareNode } from './capture';
 import { NglBoxCard } from './NglBoxCard';
 import { NglDisabled } from './NglDisabled';
-import { NglReportDialog } from './NglReportDialog';
 import { NglShareTemplate } from './NglShareTemplate';
 import { shareNglImage } from './share';
 import { nglThemeFor } from './themes';
@@ -51,7 +50,6 @@ export default function NglBoxPage() {
   const reduceMotion = useReducedMotion();
   const settings = useNglSettings();
   const [page, setPage] = useState(1);
-  const [reportTarget, setReportTarget] = useState<NglMessage | null>(null);
   const [shareTarget, setShareTarget] = useState<NglMessage | null>(null);
   const shareRef = useRef<HTMLDivElement>(null);
 
@@ -142,9 +140,8 @@ export default function NglBoxPage() {
             variants={staggerItem}
             className="mt-6 max-w-[34rem] text-[1.0625rem] leading-[1.65] text-forest-soft"
           >
-            Semua pesan anonim masuk ke sini sebagai kartu warna-warni. Ketuk{' '}
-            <span className="font-semibold text-forest">Bagikan</span> buat posting ke Instagram
-            Story-mu 💌
+            Semua pesan anonim buat rpl2 hammer angkatan 40 masuk sini jadi kartu warna-warni 🎨
+            Ketuk <span className="font-semibold text-forest">Bagikan</span> buat posting ke IG Story 📸✨
           </motion.p>
         </motion.header>
 
@@ -174,7 +171,7 @@ export default function NglBoxPage() {
                 Kotak masih terkunci
               </h2>
               <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">
-                Login dulu sebagai anggota buat buka kotak dan baca semua pesan anonim yang masuk 🫢
+                Login dulu sebagai anggota rpl2 hammer angkatan 40 buat buka kotak & baca pesan anonim 🫢
               </p>
               <Link to="/login" className={cn(buttonClasses('burgundy', 'md'), 'mt-8')}>
                 Masuk untuk membuka
@@ -219,11 +216,10 @@ export default function NglBoxPage() {
                     📭
                   </span>
                   <h3 className="mt-5 font-pop text-2xl font-extrabold text-forest">
-                    Kotak kamu masih kosong nih
+                    Kotak rpl2 hammer angkatan 40 masih kosong nih
                   </h3>
                   <p className="mt-3 max-w-md text-sm leading-relaxed text-muted">
-                    Belum ada yang kirim pesan anonim. Share link NGL kamu ke temen-temen biar rame
-                    🔥
+                    Belum ada yang kirim pesan anonim. Share link NGL ke temen-temen biar rame 🔥✨
                   </p>
                   <Link to="/ngl" className={cn(buttonClasses('burgundy', 'lg'), 'mt-8')}>
                     Ambil link NGL kamu
@@ -245,7 +241,6 @@ export default function NglBoxPage() {
                         total={meta?.total ?? messages.length}
                         repostPending={shareTarget?.id === message.id}
                         onReveal={handleReveal}
-                        onReport={setReportTarget}
                         onRepost={setShareTarget}
                         onToggleRead={(message, read) => {
                           if (read) markRead.mutate(message.id);
@@ -289,8 +284,6 @@ export default function NglBoxPage() {
           )}
         </div>
       </div>
-
-      <NglReportDialog message={reportTarget} onClose={() => setReportTarget(null)} />
 
       {shareTarget ? (
         <div ref={shareRef} aria-hidden className="pointer-events-none fixed left-[-30000px] top-0">

@@ -26,7 +26,7 @@ test.describe('Autentikasi', () => {
   test('kredensial salah ditolak', async ({ page }) => {
     await page.goto('/login');
     await page.getByLabel('NIS').fill('000000');
-    await page.getByLabel('Password').fill('password-salah');
+    await page.getByRole('textbox', { name: 'Password' }).fill('password-salah');
     await page.getByRole('button', { name: 'Masuk' }).click();
 
     await expect(page).toHaveURL(/\/login$/);

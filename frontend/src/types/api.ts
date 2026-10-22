@@ -76,6 +76,35 @@ export type CollaboratorUser = Pick<
   'id' | 'name' | 'alias' | 'slug' | 'avatarUrl' | 'headline' | 'role'
 >;
 
+export type ProjectLikeUser = Pick<
+  PublicUser,
+  'id' | 'name' | 'alias' | 'slug' | 'avatarUrl' | 'headline' | 'role' | 'createdAt'
+>;
+
+export type ProjectLike = {
+  id: string;
+  projectId: string;
+  userId: string;
+  createdAt: string;
+  user?: ProjectLikeUser;
+};
+
+export type ProjectCommentUser = Pick<
+  PublicUser,
+  'id' | 'name' | 'alias' | 'slug' | 'avatarUrl' | 'headline' | 'role' | 'createdAt'
+>;
+
+export type ProjectComment = {
+  id: string;
+  projectId: string;
+  userId: string;
+  content: string;
+  isHidden: boolean;
+  createdAt: string;
+  updatedAt: string;
+  user?: ProjectCommentUser;
+};
+
 export type Project = {
   id: string;
   userId: string;
@@ -92,6 +121,9 @@ export type Project = {
   updatedAt: string;
   images: ProjectImage[];
   collaborators: CollaboratorUser[];
+  likeCount?: number;
+  commentCount?: number;
+  userLiked?: boolean;
 };
 
 export type ProjectWithAuthor = Project & {

@@ -39,6 +39,9 @@ export const queryKeys = {
   adminUsers: (search: string, page: number) => ['admin', 'users', { search, page }] as const,
   adminProjects: (search: string, hidden: string | undefined, page: number) =>
     ['admin', 'projects', { search, hidden, page }] as const,
+  projectLikes: (projectId: string) => ['project', projectId, 'likes'] as const,
+  projectComments: (projectId: string, page: number, limit: number) =>
+    ['project', projectId, 'comments', { page, limit }] as const,
   nglSettings: ['public', 'ngl', 'settings'] as const,
   nglInbox: (page: number) => ['ngl', 'messages', { page }] as const,
   nglUnread: ['ngl', 'unread'] as const,

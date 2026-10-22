@@ -13,6 +13,8 @@ export type NglTheme = {
   ink: string;
   /** Kartu gelap? menentukan warna chip, scrim, dan tombol primer. */
   isDark: boolean;
+  /** Tampilan abu-abu — dipakai untuk pesan yang sudah dibaca. */
+  muted?: boolean;
 };
 
 export type NglDecor = {
@@ -90,8 +92,54 @@ export function nglThemeFor(id: string): NglTheme {
   return NGL_THEMES[hashString(id) % NGL_THEMES.length] ?? NGL_THEMES[0]!;
 }
 
+/**
+ * Versi abu-abu dari sebuah tema — dipakai untuk pesan yang sudah dibaca
+ * supaya jelas bedanya dari pesan baru yang masih berwarna-warni.
+ */
+export function nglReadThemeFor(theme: NglTheme): NglTheme {
+  return theme.isDark
+    ? {
+        id: `${theme.id}-read`,
+        gradient: 'linear-gradient(135deg, #4C4C56 0%, #383841 55%, #27272E 100%)',
+        ink: '#EFEFF3',
+        isDark: true,
+        muted: true,
+      }
+    : {
+        id: `${theme.id}-read`,
+        gradient: 'linear-gradient(135deg, #EDEDF0 0%, #D2D2D8 52%, #B6B6BE 100%)',
+        ink: '#33333C',
+        isDark: false,
+        muted: true,
+      };
+}
+
 /** Turunan warna (chip, scrim, glow) dari sebuah tema. */
 export function nglDecorFor(theme: NglTheme): NglDecor {
+  if (theme.muted) {
+    return theme.isDark
+      ? {
+          scrim: 'radial-gradient(120% 90% at 50% 44%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 74%)',
+          chipBg: 'rgba(255,255,255,0.12)',
+          chipInk: '#E6E6EC',
+          chipBorder: 'rgba(255,255,255,0.24)',
+          decor: 'rgba(255,255,255,0.18)',
+          glow: 'rgba(255,255,255,0.18)',
+          textShadow: '0 2px 24px rgba(0,0,0,0.45)',
+          shadow: '0 26px 60px -26px rgba(15,15,22,0.7)',
+        }
+      : {
+          scrim:
+            'radial-gradient(120% 90% at 50% 44%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 74%)',
+          chipBg: 'rgba(90,90,104,0.12)',
+          chipInk: '#3A3A44',
+          chipBorder: 'rgba(255,255,255,0.6)',
+          decor: 'rgba(58,58,68,0.14)',
+          glow: 'rgba(255,255,255,0.5)',
+          textShadow: '0 2px 20px rgba(255,255,255,0.45)',
+          shadow: '0 26px 60px -28px rgba(90,90,105,0.45)',
+        };
+  }
   if (theme.isDark) {
     return {
       scrim: 'radial-gradient(120% 90% at 50% 44%, rgba(6,4,20,0.42) 0%, rgba(6,4,20,0) 74%)',

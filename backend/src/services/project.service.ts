@@ -3,11 +3,16 @@ import { and, asc, count, desc, eq, ilike, inArray, ne, or, type SQL } from 'dri
 import { db } from '../db/index.js';
 import {
   projectCollaborators,
+  projectComments,
   projectImages,
+  projectLikes,
   projects,
   users,
   type Project,
+  type ProjectComment,
   type ProjectImage,
+  type ProjectLike,
+  type PublicUser,
   type UserRole,
 } from '../db/schema.js';
 import { AppError } from '../lib/errors.js';
@@ -75,18 +80,25 @@ async function groupCollaborators(rows: Project[]): Promise<Map<string, Collabor
 }
 
 /** Lampirkan gambar galeri + daftar kolaborator ke tiap project. */
-export async function hydrateProjects(rows: Project[]): Promise<ProjectWithImages[]> {
+export async function hydrateProjects(rows: Project[], userId?: string): Promise<ProjectWithImages[]> {
   if (rows.length === 0) return [];
 
   const projectIds = rows.map((row) => row.id);
-  const [images, collaborators] = await Promise.all([
+  const [images, collaborators, likeCounts, commentCounts] = await Promise.all([
     db
       .select()
       .from(projectImages)
       .where(inArray(projectImages.projectId, projectIds))
       .orderBy(asc(projectImages.sortOrder)),
     groupCollaborators(rows),
+    getProjectLikeCounts(projectIds),
+    getProjectCommentCounts(projectIds),
   ]);
+
+  let userLiked: Set<string> = new Set();
+  if (userId) {
+    userLiked = await getUserLikedProjects(userId, projectIds);
+  }
 
   const imagesByProject = groupImages(images);
 
@@ -94,6 +106,9 @@ export async function hydrateProjects(rows: Project[]): Promise<ProjectWithImage
     ...row,
     images: imagesByProject.get(row.id) ?? [],
     collaborators: collaborators.get(row.id) ?? [],
+    likeCount: likeCounts.get(row.id) ?? 0,
+    commentCount: commentCounts.get(row.id) ?? 0,
+    userLiked: userLiked.has(row.id),
   }));
 }
 
@@ -171,7 +186,7 @@ export async function createProject(userId: string, input: CreateProjectInput) {
       .values(collaboratorIds.map((collaboratorId) => ({ projectId: project.id, userId: collaboratorId })));
   }
 
-  const [hydrated] = await hydrateProjects([project]);
+  const [hydrated] = await hydrateProjects([project], userId);
   return hydrated ?? { ...project, images: [], collaborators: [] };
 }
 
@@ -199,7 +214,7 @@ async function collectProjectsForUser(userId: string, onlyVisible: boolean): Pro
 }
 
 export async function listProjectsByUser(userId: string): Promise<ProjectWithImages[]> {
-  return hydrateProjects(await collectProjectsForUser(userId, false));
+  return hydrateProjects(await collectProjectsForUser(userId, false), userId);
 }
 
 export async function listProjectsByMemberSlug(slug: string): Promise<ProjectWithImages[]> {
@@ -212,7 +227,7 @@ export async function listProjectsByMemberSlug(slug: string): Promise<ProjectWit
   const member = rows[0];
   if (!member) return [];
 
-  return hydrateProjects(await collectProjectsForUser(member.id, true));
+  return hydrateProjects(await collectProjectsForUser(member.id, true), member.id);
 }
 
 export async function listAllProjects(
@@ -436,4 +451,229 @@ export async function deleteProjectAsAdmin(projectId: string): Promise<Project> 
   await deleteProjectImages(projectId);
   await db.delete(projects).where(eq(projects.id, projectId));
   return project;
+}
+
+/* ------------------------------ Project Likes ------------------------------ */
+
+export type ProjectLikeUser = Pick<
+  PublicUser,
+  'id' | 'name' | 'alias' | 'slug' | 'avatarUrl' | 'headline' | 'role' | 'createdAt'
+>;
+
+export type ProjectLikeWithUser = ProjectLike & { user: ProjectLikeUser };
+
+const likeUserColumns = {
+  id: users.id,
+  name: users.name,
+  alias: users.alias,
+  slug: users.slug,
+  avatarUrl: users.avatarUrl,
+  headline: users.headline,
+  role: users.role,
+  createdAt: users.createdAt,
+};
+
+export async function getProjectLikeCounts(projectIds: string[]): Promise<Map<string, number>> {
+  if (projectIds.length === 0) return new Map();
+
+  const rows = await db
+    .select({ projectId: projectLikes.projectId, count: count() })
+    .from(projectLikes)
+    .where(inArray(projectLikes.projectId, projectIds))
+    .groupBy(projectLikes.projectId);
+
+  const map = new Map<string, number>();
+  for (const row of rows) map.set(row.projectId, row.count);
+  return map;
+}
+
+export async function getUserLikedProjects(userId: string, projectIds: string[]): Promise<Set<string>> {
+  if (projectIds.length === 0) return new Set();
+
+  const rows = await db
+    .select({ projectId: projectLikes.projectId })
+    .from(projectLikes)
+    .where(and(eq(projectLikes.userId, userId), inArray(projectLikes.projectId, projectIds)));
+
+  return new Set(rows.map((row) => row.projectId));
+}
+
+export async function toggleProjectLike(projectId: string, userId: string): Promise<{ liked: boolean; count: number }> {
+  // Check if project exists and is not hidden
+  const projectRows = await db.select({ id: projects.id }).from(projects).where(eq(projects.id, projectId)).limit(1);
+  if (projectRows.length === 0) throw AppError.notFound('Project tidak ditemukan');
+
+  const existing = await db
+    .select({ id: projectLikes.id })
+    .from(projectLikes)
+    .where(and(eq(projectLikes.projectId, projectId), eq(projectLikes.userId, userId)))
+    .limit(1);
+
+  let liked: boolean;
+  if (existing[0]) {
+    await db.delete(projectLikes).where(eq(projectLikes.id, existing[0].id));
+    liked = false;
+  } else {
+    await db.insert(projectLikes).values({ projectId, userId });
+    liked = true;
+  }
+
+  const countRows = await db
+    .select({ value: count() })
+    .from(projectLikes)
+    .where(eq(projectLikes.projectId, projectId));
+
+  return { liked, count: countRows[0]?.value ?? 0 };
+}
+
+export async function listProjectLikes(projectId: string): Promise<ProjectLikeWithUser[]> {
+  const rows = await db
+    .select({ like: projectLikes, user: likeUserColumns })
+    .from(projectLikes)
+    .innerJoin(users, eq(projectLikes.userId, users.id))
+    .where(eq(projectLikes.projectId, projectId))
+    .orderBy(desc(projectLikes.createdAt));
+
+  return rows.map((row) => ({ ...row.like, user: row.user }));
+}
+
+/* ---------------------------- Project Comments ---------------------------- */
+
+export type ProjectCommentUser = Pick<
+  PublicUser,
+  'id' | 'name' | 'alias' | 'slug' | 'avatarUrl' | 'headline' | 'role' | 'createdAt'
+>;
+
+export type ProjectCommentWithUser = ProjectComment & { user: ProjectCommentUser };
+
+const commentUserColumns = {
+  id: users.id,
+  name: users.name,
+  alias: users.alias,
+  slug: users.slug,
+  avatarUrl: users.avatarUrl,
+  headline: users.headline,
+  role: users.role,
+  createdAt: users.createdAt,
+};
+
+export type PaginatedComments = Paginated<ProjectCommentWithUser>;
+
+export async function listProjectComments(
+  projectId: string,
+  page = 1,
+  limit = 20,
+): Promise<PaginatedComments> {
+  const offset = (page - 1) * limit;
+
+  const rows = await db
+    .select({ comment: projectComments, user: commentUserColumns })
+    .from(projectComments)
+    .innerJoin(users, eq(projectComments.userId, users.id))
+    .where(and(eq(projectComments.projectId, projectId), eq(projectComments.isHidden, false)))
+    .orderBy(desc(projectComments.createdAt))
+    .limit(limit)
+    .offset(offset);
+
+  const totalRows = await db
+    .select({ value: count() })
+    .from(projectComments)
+    .where(and(eq(projectComments.projectId, projectId), eq(projectComments.isHidden, false)));
+
+  return {
+    items: rows.map((row) => ({ ...row.comment, user: row.user })),
+    meta: {
+      page,
+      limit,
+      total: totalRows[0]?.value ?? 0,
+      totalPages: Math.max(1, Math.ceil((totalRows[0]?.value ?? 0) / limit)),
+    },
+  };
+}
+
+export async function createProjectComment(
+  projectId: string,
+  userId: string,
+  content: string,
+): Promise<ProjectCommentWithUser> {
+  // Check if project exists and is not hidden
+  const projectRows = await db.select({ id: projects.id }).from(projects).where(eq(projects.id, projectId)).limit(1);
+  if (projectRows.length === 0) throw AppError.notFound('Project tidak ditemukan');
+
+  const trimmed = content.trim();
+  if (!trimmed) throw AppError.badRequest('Komentar tidak boleh kosong.');
+  if (trimmed.length > 2000) throw AppError.badRequest('Komentar terlalu panjang (maksimal 2000 karakter).');
+
+  const rows = await db
+    .insert(projectComments)
+    .values({ projectId, userId, content: trimmed })
+    .returning();
+
+  const comment = rows[0];
+  if (!comment) throw AppError.internal('Gagal membuat komentar');
+
+  const userRows = await db.select(commentUserColumns).from(users).where(eq(users.id, userId)).limit(1);
+  return { ...comment, user: userRows[0]! };
+}
+
+export async function updateProjectComment(
+  commentId: string,
+  userId: string,
+  content: string,
+): Promise<ProjectCommentWithUser> {
+  const trimmed = content.trim();
+  if (!trimmed) throw AppError.badRequest('Komentar tidak boleh kosong.');
+  if (trimmed.length > 2000) throw AppError.badRequest('Komentar terlalu panjang (maksimal 2000 karakter).');
+
+  // Verify ownership
+  const existing = await db.select().from(projectComments).where(eq(projectComments.id, commentId)).limit(1);
+  const comment = existing[0];
+  if (!comment) throw AppError.notFound('Komentar tidak ditemukan');
+  if (comment.userId !== userId) throw AppError.forbidden('Tidak berhak mengedit komentar ini.');
+
+  const rows = await db
+    .update(projectComments)
+    .set({ content: trimmed, updatedAt: new Date() })
+    .where(eq(projectComments.id, commentId))
+    .returning();
+
+  const updated = rows[0];
+  if (!updated) throw AppError.internal('Gagal memperbarui komentar');
+
+  const userRows = await db.select(commentUserColumns).from(users).where(eq(users.id, userId)).limit(1);
+  return { ...updated, user: userRows[0]! };
+}
+
+export async function deleteProjectComment(commentId: string, userId: string, isAdmin = false): Promise<void> {
+  const existing = await db.select().from(projectComments).where(eq(projectComments.id, commentId)).limit(1);
+  const comment = existing[0];
+  if (!comment) throw AppError.notFound('Komentar tidak ditemukan');
+  if (!isAdmin && comment.userId !== userId) throw AppError.forbidden('Tidak berhak menghapus komentar ini.');
+
+  await db.delete(projectComments).where(eq(projectComments.id, commentId));
+}
+
+export async function hideProjectComment(commentId: string, hidden: boolean): Promise<ProjectComment> {
+  const rows = await db
+    .update(projectComments)
+    .set({ isHidden: hidden, updatedAt: new Date() })
+    .where(eq(projectComments.id, commentId))
+    .returning();
+  const updated = rows[0];
+  if (!updated) throw AppError.notFound('Komentar tidak ditemukan');
+  return updated;
+}
+
+export async function getProjectCommentCounts(projectIds: string[]): Promise<Map<string, number>> {
+  if (projectIds.length === 0) return new Map();
+
+  const rows = await db
+    .select({ projectId: projectComments.projectId, count: count() })
+    .from(projectComments)
+    .where(and(inArray(projectComments.projectId, projectIds), eq(projectComments.isHidden, false)))
+    .groupBy(projectComments.projectId);
+
+  const map = new Map<string, number>();
+  for (const row of rows) map.set(row.projectId, row.count);
+  return map;
 }

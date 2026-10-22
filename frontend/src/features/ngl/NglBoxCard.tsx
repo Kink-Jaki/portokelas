@@ -5,7 +5,13 @@ import { assetUrl } from '@/lib/api';
 import { cn, formatDateTime } from '@/lib/utils';
 import type { NglMessage } from '@/types/api';
 import { Sparkle } from './NglDecor';
-import { nglCardFontSize, nglDecorFor, nglThemeFor, type NglDecor } from './themes';
+import {
+  nglCardFontSize,
+  nglDecorFor,
+  nglReadThemeFor,
+  nglThemeFor,
+  type NglDecor,
+} from './themes';
 import { nglCardVariants } from './variants';
 
 /** Event global supaya hanya satu pemutar Spotify yang aktif di Kotak NGL. */
@@ -28,25 +34,10 @@ type Props = {
   total: number;
   repostPending: boolean;
   onReveal: (message: NglMessage) => void;
-  onReport: (message: NglMessage) => void;
   onRepost: (message: NglMessage) => void;
   /** Ubah status baca: `true` = tandai sudah dibaca, `false` = kembali belum dibaca. */
   onToggleRead: (message: NglMessage, read: boolean) => void;
 };
-
-function ReportIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden>
-      <path
-        d="M5 21V4m0 0h11l-2 3 2 3H5"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 function SendIcon() {
   return (
@@ -156,12 +147,16 @@ export function NglBoxCard({
   total,
   repostPending,
   onReveal,
-  onReport,
   onRepost,
   onToggleRead,
 }: Props) {
   const reduceMotion = useReducedMotion();
-  const theme = useMemo(() => nglThemeFor(message.id), [message.id]);
+  const baseTheme = useMemo(() => nglThemeFor(message.id), [message.id]);
+  // Pesan yang sudah dibaca tampil abu-abu agar jelas bedanya dari yang baru.
+  const theme = useMemo(
+    () => (message.isRead ? nglReadThemeFor(baseTheme) : baseTheme),
+    [baseTheme, message.isRead],
+  );
   const decor = useMemo(() => nglDecorFor(theme), [theme]);
   const [open, setOpen] = useState(false);
   const [playerOpen, setPlayerOpen] = useState(false);
@@ -304,7 +299,12 @@ export function NglBoxCard({
             ) : message.isReported ? (
               <span
                 className="inline-flex items-center gap-1 rounded-full px-1 py-px text-[0.4375rem] font-bold uppercase tracking-wide min-[360px]:px-1.5 min-[360px]:py-0.5 min-[360px]:text-[0.5rem] sm:px-2 sm:py-1 sm:text-[0.5625rem] lg:text-[0.625rem]"
-                style={chipStyle}
+                style={{
+                  ...chipStyle,
+                  background: theme.isDark ? 'rgba(220,38,38,0.2)' : 'rgba(220,38,38,0.12)',
+                  color: theme.isDark ? '#FFC9C9' : '#8A1C1C',
+                  border: '1px solid rgba(220,38,38,0.4)',
+                }}
               >
                 ⚠️ Dilaporkan
               </span>
@@ -428,21 +428,6 @@ export function NglBoxCard({
 
                   <button
                     type="button"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setActionsOpen(false);
-                      onReport(message);
-                    }}
-                    aria-label="Laporkan pesan"
-                    title="Laporkan"
-                    className="grid h-7 w-7 place-items-center rounded-full transition-transform hover:scale-105 active:scale-90"
-                    style={chipStyle}
-                  >
-                    <ReportIcon />
-                  </button>
-
-                  <button
-                    type="button"
                     disabled={repostPending}
                     onClick={(event) => {
                       event.stopPropagation();
@@ -467,7 +452,7 @@ export function NglBoxCard({
               ) : null}
             </div>
 
-            {/* sm+: 3 tombol aksi tampil langsung */}
+            {/* sm+: 2 tombol aksi tampil langsung */}
             <div className="hidden shrink-0 items-center gap-1.5 sm:flex">
               <button
                 type="button"
@@ -481,20 +466,6 @@ export function NglBoxCard({
                 style={chipStyle}
               >
                 {unread ? <CheckIcon /> : <MailIcon />}
-              </button>
-
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  onReport(message);
-                }}
-                aria-label="Laporkan pesan"
-                title="Laporkan"
-                className="grid h-9 w-9 place-items-center rounded-full backdrop-blur-sm transition-transform hover:scale-105 active:scale-90 lg:h-10 lg:w-10"
-                style={chipStyle}
-              >
-                <ReportIcon />
               </button>
 
               <button

@@ -10,6 +10,7 @@ import type {
   NglReportStatus,
   NglSettings,
   NglSubmitPayload,
+  PublicUser,
 } from '@/types/api';
 
 function toastApiError(error: unknown, fallback: string) {
@@ -111,6 +112,14 @@ export function useNglUnreadCount(enabled = true) {
     staleTime: 15_000,
     refetchInterval: 60_000,
     retry: false,
+  });
+}
+
+export function useMembersForMention() {
+  return useQuery({
+    queryKey: ['members', 'mention'],
+    queryFn: () => api.get<{ members: Pick<PublicUser, 'id' | 'name' | 'alias' | 'slug' | 'avatarUrl'>[] }>('/members/mention'),
+    staleTime: 5 * 60 * 1000,
   });
 }
 

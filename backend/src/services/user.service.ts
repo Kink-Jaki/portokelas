@@ -224,3 +224,19 @@ export async function getPublicStats(): Promise<{ members: number; projects: num
     projects: projectTotals[0]?.value ?? 0,
   };
 }
+
+export async function listMembersForMention(): Promise<
+  Pick<PublicUser, 'id' | 'name' | 'alias' | 'slug' | 'avatarUrl'>[]
+> {
+  const rows = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      alias: users.alias,
+      slug: users.slug,
+      avatarUrl: users.avatarUrl,
+    })
+    .from(users)
+    .orderBy(users.name);
+  return rows;
+}

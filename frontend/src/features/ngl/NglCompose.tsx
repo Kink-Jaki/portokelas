@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { Button } from '@/components/ui/Button';
-import { useSubmitNglMessage } from '@/hooks/useNgl';
+import { Avatar } from '@/components/ui/Avatar';
+import { useSubmitNglMessage, useMembersForMention } from '@/hooks/useNgl';
 import { convertImageToWebp, isSupportedImage } from '@/lib/image';
 import { fadeUp } from '@/lib/motion';
 import { cn } from '@/lib/utils';
@@ -15,8 +16,18 @@ const inputClass =
 
 const labelClass = 'block text-xs font-medium uppercase tracking-[0.16em] text-muted';
 
+type Member = {
+  id: string;
+  name: string;
+  alias: string | null;
+  slug: string;
+  avatarUrl: string | null;
+};
+
 export function NglCompose() {
   const submit = useSubmitNglMessage();
+  const { data: membersData } = useMembersForMention();
+  const members: Member[] = (membersData?.members ?? []) as Member[];
   const [content, setContent] = useState('');
   const [spotify, setSpotify] = useState('');
   const [image, setImage] = useState<File | null>(null);
@@ -24,7 +35,20 @@ export function NglCompose() {
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   const [honeypot, setHoneypot] = useState('');
+  const [showMentions, setShowMentions] = useState(false);
+  const [mentionQuery, setMentionQuery] = useState('');
+  const [mentionIndex, setMentionIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const mentionRef = useRef<HTMLDivElement>(null);
+  const lastAtPosition = useRef<number>(-1);
+
+  const filteredMembers = members
+    .filter((m) =>
+      m.name.toLowerCase().includes(mentionQuery.toLowerCase()) ||
+      (m.alias && m.alias.toLowerCase().includes(mentionQuery.toLowerCase()))
+    )
+    .slice(0, 8);
 
   useEffect(() => {
     if (!image) {
@@ -42,6 +66,9 @@ export function NglCompose() {
     setImage(null);
     setError(null);
     setHoneypot('');
+    setShowMentions(false);
+    setMentionQuery('');
+    setMentionIndex(0);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -57,6 +84,68 @@ export function NglCompose() {
     }
     setError(null);
     setImage(file);
+  };
+
+  const handleTextChange = (value: string) => {
+    const trimmed = value.slice(0, NGL_TEXT_MAX);
+    setContent(trimmed);
+
+    const cursorPos = textareaRef.current?.selectionStart ?? trimmed.length;
+    const textBeforeCursor = trimmed.slice(0, cursorPos);
+    const lastAt = textBeforeCursor.lastIndexOf('@');
+
+    if (lastAt !== -1 && (lastAt === 0 || /\s/.test(textBeforeCursor.charAt(lastAt - 1)))) {
+      const query = textBeforeCursor.slice(lastAt + 1);
+      if (!/\s/.test(query)) {
+        lastAtPosition.current = lastAt;
+        setMentionQuery(query);
+        setShowMentions(true);
+        setMentionIndex(0);
+        return;
+      }
+    }
+    setShowMentions(false);
+    lastAtPosition.current = -1;
+  };
+
+  const selectMention = (member: Member) => {
+    const atPos = lastAtPosition.current;
+    if (atPos === -1) return;
+
+    const beforeAt = content.slice(0, atPos);
+    const afterCursor = content.slice(textareaRef.current?.selectionStart ?? content.length);
+    const displayName = member.alias || member.name;
+    const mentionText = `@${displayName} `;
+
+    const newContent = beforeAt + mentionText + afterCursor;
+    setContent(newContent.slice(0, NGL_TEXT_MAX));
+    setShowMentions(false);
+    setMentionQuery('');
+    lastAtPosition.current = -1;
+
+    setTimeout(() => {
+      textareaRef.current?.focus();
+      const newPos = atPos + mentionText.length;
+      textareaRef.current?.setSelectionRange(newPos, newPos);
+    }, 0);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (!showMentions || filteredMembers.length === 0) return;
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setMentionIndex((prev) => (prev + 1) % filteredMembers.length);
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setMentionIndex((prev) => (prev - 1 + filteredMembers.length) % filteredMembers.length);
+    } else if (event.key === 'Enter' || event.key === 'Tab') {
+      event.preventDefault();
+      const selectedMember = filteredMembers[mentionIndex];
+      if (selectedMember) selectMention(selectedMember);
+    } else if (event.key === 'Escape') {
+      setShowMentions(false);
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -117,15 +206,13 @@ export function NglCompose() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-5 border border-line bg-ivory-warm p-6 shadow-[0_30px_60px_-52px_rgba(25,61,50,0.6)] sm:p-8"
-    >
+    <form onSubmit={handleSubmit} className="relative flex flex-col gap-5 border border-line bg-ivory-warm p-6 shadow-[0_30px_60px_-52px_rgba(25,61,50,0.6)] sm:p-8">
       <div className="space-y-1">
         <p className="eyebrow">Pesan anonim</p>
         <h2 className="font-display text-2xl text-forest">Tulis sesuatu</h2>
         <p className="text-sm leading-relaxed text-muted">
           Nama dan identitasmu tidak akan terlihat. Boleh berupa teks, tautan Spotify, atau foto.
+          Ketik @ untuk tag temen! 💫
         </p>
       </div>
 
@@ -143,10 +230,12 @@ export function NglCompose() {
         />
       </div>
 
-      <div className="space-y-2">
+      <div className="relative space-y-2">
         <textarea
+          ref={textareaRef}
           value={content}
-          onChange={(event) => setContent(event.target.value.slice(0, NGL_TEXT_MAX))}
+          onChange={(event) => handleTextChange(event.target.value)}
+          onKeyDown={handleKeyDown}
           rows={4}
           maxLength={NGL_TEXT_MAX}
           placeholder="Tulis pesan… (opsional bila ada lampiran)"
@@ -159,6 +248,63 @@ export function NglCompose() {
             {content.length}/{NGL_TEXT_MAX}
           </span>
         </div>
+
+        {/* Mention dropdown */}
+        <AnimatePresence>
+          {showMentions && filteredMembers.length > 0 && (
+            <motion.div
+              ref={mentionRef}
+              initial={{ opacity: 0, y: -8, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="absolute bottom-full left-0 right-0 mb-2 z-50"
+            >
+              <div className="rounded-xl border border-line bg-ivory-warm shadow-[0_20px_40px_-20px_rgba(25,61,50,0.5)] overflow-hidden">
+                <div className="px-3 py-2 text-[0.625rem] font-medium uppercase tracking-[0.16em] text-muted border-b border-line">
+                  Tag temen (@{mentionQuery})
+                </div>
+                <div className="max-h-48 overflow-y-auto">
+                  {filteredMembers.map((member, index) => {
+                    if (!member) return null;
+                    return (
+                      <button
+                        key={member.id}
+                        type="button"
+                        onClick={() => selectMention(member)}
+                        onMouseEnter={() => setMentionIndex(index)}
+                        className={cn(
+                          'w-full flex items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors',
+                          index === mentionIndex
+                            ? 'bg-burgundy/10 text-forest'
+                            : 'text-muted hover:bg-subtle hover:text-fg'
+                        )}
+                      >
+                        <Avatar
+                          name={member.name}
+                          src={member.avatarUrl ?? undefined}
+                          size="sm"
+                          className="shrink-0"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium truncate">{member.name}</p>
+                          {member.alias && (
+                            <p className="text-[0.625rem] text-muted truncate">@{member.alias}</p>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+                {filteredMembers.length === 0 && (
+                  <div className="px-3 py-4 text-center text-sm text-muted">
+                    Tidak ada anggota yang cocok
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="space-y-2">

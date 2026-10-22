@@ -10,6 +10,7 @@ import {
   getPublicStats,
   listMemoriesRandom,
   listMembers,
+  listMembersForMention,
   listProjectsByMemberSlug,
   getProjectAuthor,
   getPublicProject,
@@ -47,6 +48,10 @@ export const publicRoutes = new Hono()
   .get('/members', zQuery(memberQuerySchema), async (c) => {
     const members = await listMembers(c.req.valid('query'));
     return c.json(ok(members));
+  })
+  .get('/members/mention', async (c) => {
+    const members = await listMembersForMention();
+    return c.json(ok({ members }));
   })
   .get('/members/:slug', async (c) => {
     const member = await getMemberBySlug(c.req.param('slug'));

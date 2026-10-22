@@ -41,7 +41,7 @@ export default function NglPage() {
             variants={staggerItem}
             className="mt-6 max-w-[34rem] text-[1.0625rem] leading-[1.65] text-forest-soft"
           >
-            Kirim pesan anonim. Not Gonna Lie by Craftly.
+            Kirim pesan anonim untuk rpl2 hammer angkatan 40 💌✨
           </motion.p>
         </motion.header>
 
@@ -78,20 +78,24 @@ export default function NglPage() {
               <NglCompose />
 
               {!user ? (
-                <div className="border border-line bg-ivory p-6">
+                <div className="border border-line bg-ivory p-6 rounded-2xl">
                   <p className="eyebrow">Cara kerja</p>
                   <ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted">
                     <li className="flex gap-3">
                       <span className="font-mono text-burgundy">01</span>
-                      Tulis pesan anonim — identitasmu tidak disimpan.
+                      Tulis pesan anonim — identitasmu tidak disimpan 🤫
                     </li>
                     <li className="flex gap-3">
                       <span className="font-mono text-burgundy">02</span>
-                      Pesan muncul di kotak untuk dibaca anggota.
+                      Pesan muncul di kotak sebagai kartu warna-warni 🎨
                     </li>
                     <li className="flex gap-3">
                       <span className="font-mono text-burgundy">03</span>
-                      Pesan tidak pantas bisa dilaporkan dan disembunyikan.
+                      Tag temen pakai @ biar mereka ke-notif 🔔
+                    </li>
+                    <li className="flex gap-3">
+                      <span className="font-mono text-burgundy">04</span>
+                      Share ke IG Story biar makin viral 📸✨
                     </li>
                   </ul>
                 </div>

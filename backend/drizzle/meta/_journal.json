@@ -120,6 +120,13 @@
       "when": 1792558113656,
       "tag": "0016_special_roulette",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1792634139230,
+      "tag": "0017_lush_thunderbird",
+      "breakpoints": true
     }
   ]
 }

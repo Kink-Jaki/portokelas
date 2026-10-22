@@ -9,6 +9,7 @@ import { notFound, onError } from './middleware/error-handler.js';
 import { adminRoutes } from './routes/admin.routes.js';
 import { authRoutes } from './routes/auth.routes.js';
 import { meRoutes } from './routes/me.routes.js';
+import { projectInteractionRoutes } from './routes/project-interaction.routes.js';
 import {
   adminNglRoutes,
   adminNglSettingsRoutes,
@@ -59,6 +60,7 @@ app.route('/api/admin/ngl', adminNglRoutes);
 app.route('/api/admin/settings', adminNglSettingsRoutes);
 app.route('/api/ngl', nglRoutes);
 app.route('/api/settings', nglSettingsRoutes);
+app.route('/api/projects', projectInteractionRoutes);
 // Rute publik (members, projects, stats).
 app.route('/api', publicRoutes);
 

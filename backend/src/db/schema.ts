@@ -143,6 +143,50 @@ export const projectCollaborators = pgTable(
   ],
 );
 
+/** Like project — satu user hanya bisa like sekali per project. */
+export const projectLikes = pgTable(
+  'project_likes',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    projectId: uuid('project_id')
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('project_likes_project_user_unique').on(table.projectId, table.userId),
+    index('project_likes_project_id_idx').on(table.projectId),
+    index('project_likes_user_id_idx').on(table.userId),
+  ],
+);
+
+/** Komentar/feedback pada project — thread flat, tanpa reply nested. */
+export const projectComments = pgTable(
+  'project_comments',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    projectId: uuid('project_id')
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    content: text('content').notNull(),
+    isHidden: boolean('is_hidden').notNull().default(false),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('project_comments_project_id_idx').on(table.projectId),
+    index('project_comments_user_id_idx').on(table.userId),
+    index('project_comments_created_at_idx').on(table.createdAt),
+    index('project_comments_is_hidden_idx').on(table.isHidden),
+  ],
+);
+
 /** Konten statis halaman landing — baris "Tentang" (single row). */
 export const abouts = pgTable('abouts', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -291,12 +335,16 @@ export const usersRelations = relations(users, ({ many }) => ({
   projects: many(projects),
   memories: many(memories),
   collaborations: many(projectCollaborators),
+  projectLikes: many(projectLikes),
+  projectComments: many(projectComments),
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
   author: one(users, { fields: [projects.userId], references: [users.id] }),
   images: many(projectImages),
   collaborators: many(projectCollaborators),
+  likes: many(projectLikes),
+  comments: many(projectComments),
 }));
 
 export const projectImagesRelations = relations(projectImages, ({ one }) => ({
@@ -306,6 +354,16 @@ export const projectImagesRelations = relations(projectImages, ({ one }) => ({
 export const projectCollaboratorsRelations = relations(projectCollaborators, ({ one }) => ({
   project: one(projects, { fields: [projectCollaborators.projectId], references: [projects.id] }),
   user: one(users, { fields: [projectCollaborators.userId], references: [users.id] }),
+}));
+
+export const projectLikesRelations = relations(projectLikes, ({ one }) => ({
+  project: one(projects, { fields: [projectLikes.projectId], references: [projects.id] }),
+  user: one(users, { fields: [projectLikes.userId], references: [users.id] }),
+}));
+
+export const projectCommentsRelations = relations(projectComments, ({ one }) => ({
+  project: one(projects, { fields: [projectComments.projectId], references: [projects.id] }),
+  user: one(users, { fields: [projectComments.userId], references: [users.id] }),
 }));
 
 export const memoriesRelations = relations(memories, ({ one }) => ({
@@ -335,6 +393,10 @@ export type ProjectImage = typeof projectImages.$inferSelect;
 export type NewProjectImage = typeof projectImages.$inferInsert;
 export type ProjectCollaborator = typeof projectCollaborators.$inferSelect;
 export type NewProjectCollaborator = typeof projectCollaborators.$inferInsert;
+export type ProjectLike = typeof projectLikes.$inferSelect;
+export type NewProjectLike = typeof projectLikes.$inferInsert;
+export type ProjectComment = typeof projectComments.$inferSelect;
+export type NewProjectComment = typeof projectComments.$inferInsert;
 export type About = typeof abouts.$inferSelect;
 export type NewAbout = typeof abouts.$inferInsert;
 export type Hero = typeof heroes.$inferSelect;

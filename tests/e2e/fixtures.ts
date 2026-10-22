@@ -50,6 +50,6 @@ export { expect };
 export async function loginViaUi(page: Page, identity: string, password: string) {
   await page.goto('/login');
   await page.getByLabel('NIS').fill(identity);
-  await page.getByLabel('Password').fill(password);
+  await page.getByRole('textbox', { name: 'Password' }).fill(password);
   await page.getByRole('button', { name: 'Masuk' }).click();
 }
