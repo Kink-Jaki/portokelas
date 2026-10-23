@@ -2,7 +2,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
 
 import { getEnv } from '../env.js';
-import { getBindings } from '../runtime.js';
+import { getBindings, getStore } from '../runtime.js';
 import * as schema from './schema.js';
 
 const { Pool } = pg;
@@ -42,30 +42,62 @@ function resolveConnection(): ConnectionConfig {
   };
 }
 
-let pool: PoolInstance | null = null;
-let database: Database | null = null;
-let cacheKey = '';
-
-function ensureDatabase(): Database {
-  const { connectionString, ssl } = resolveConnection();
-  const key = `${connectionString}::${ssl ? 'ssl' : 'plain'}`;
-
-  if (database && pool && cacheKey === key) return database;
-
-  if (pool) void pool.end().catch(() => undefined);
-
-  pool = new Pool({
+function createPool(
+  connectionString: string,
+  ssl: ConnectionConfig['ssl'],
+  max: number,
+): PoolInstance {
+  const pool = new Pool({
     connectionString,
-    max: 5,
+    max,
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 10_000,
     ...(ssl ? { ssl } : {}),
   });
   pool.on('error', (error) => console.error('[db] Pool error:', error));
+  return pool;
+}
 
-  database = createDatabase(pool);
-  cacheKey = key;
-  return database;
+/**
+ * Di Workers, koneksi tidak boleh dipakai lintas request: runtime menolak I/O
+ * dari socket yang dibuat oleh request lain. Karena itu setiap request memakai
+ * pool sendiri (maks 1 koneksi) yang ditutup di akhir request. Hyperdrive tetap
+ * yang menjaga connection pool ke database asli, jadi membuat koneksi baru
+ * per request tetap murah.
+ *
+ * Di luar request (script seed/migrate, dev Bun) dipakai singleton agar
+ * koneksi bisa dipakai ulang.
+ */
+let localPool: PoolInstance | null = null;
+let localDatabase: Database | null = null;
+let localCacheKey = '';
+
+function ensureDatabase(): Database {
+  const { connectionString, ssl } = resolveConnection();
+  const key = `${connectionString}::${ssl ? 'ssl' : 'plain'}`;
+  const store = getStore();
+
+  if (store) {
+    if (store.db && store.dbKey === key) return store.db as Database;
+
+    const previous = store.closeDb;
+    if (previous) void previous().catch(() => undefined);
+
+    const pool = createPool(connectionString, ssl, 1);
+    store.db = createDatabase(pool);
+    store.dbKey = key;
+    store.closeDb = () => pool.end();
+    return store.db as Database;
+  }
+
+  if (localDatabase && localPool && localCacheKey === key) return localDatabase;
+
+  if (localPool) void localPool.end().catch(() => undefined);
+
+  localPool = createPool(connectionString, ssl, 5);
+  localDatabase = createDatabase(localPool);
+  localCacheKey = key;
+  return localDatabase;
 }
 
 /**
@@ -80,15 +112,23 @@ export const db = new Proxy({} as Database, {
   },
 });
 
-export function getPool(): PoolInstance {
-  ensureDatabase();
-  return pool as PoolInstance;
+/** Tutup koneksi milik request yang sedang berjalan (dipanggil via waitUntil). */
+export async function closeRequestDatabase(): Promise<void> {
+  const store = getStore();
+  const close = store?.closeDb;
+  if (!store || !close) return;
+
+  store.db = undefined;
+  store.dbKey = undefined;
+  store.closeDb = undefined;
+  await close().catch((error) => console.error('[db] Gagal menutup koneksi:', error));
 }
 
+/** Tutup singleton lokal (script & shutdown server Bun). */
 export async function closePool(): Promise<void> {
-  const current = pool;
-  pool = null;
-  database = null;
-  cacheKey = '';
+  const current = localPool;
+  localPool = null;
+  localDatabase = null;
+  localCacheKey = '';
   if (current) await current.end().catch(() => undefined);
 }

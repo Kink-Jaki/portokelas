@@ -5,7 +5,7 @@ lalu mempublikasikan profil dan projectnya. Admin mengkurasi anggota dan project
 
 - **Frontend** — React 18 + TypeScript + Vite, React Router, TanStack Query, Tailwind CSS v4, Framer Motion.
 - **Backend** — Hono + Drizzle ORM + PostgreSQL. Dijalankan di **Cloudflare Workers** (produksi) atau Bun (pengembangan lokal). Autentikasi cookie JWT.
-- **Upload** — **Cloudflare R2** (produksi) / penyimpanan lokal saat dev (JPG/PNG/WEBP, maks 2 MB) dengan validasi magic bytes.
+- **Upload** — gambar: **Workers KV** (produksi, atau R2 bila binding diaktifkan) / penyimpanan lokal saat dev (JPG/PNG/WEBP, maks 2 MB) dengan validasi magic bytes. Video kenangan: unggah **langsung dari browser ke Cloudflare R2** via presigned POST (MP4/WEBM, maks 1 menit & 50 MB), tanpa melewati server.
 
 ## Fitur
 
@@ -161,6 +161,8 @@ Semua respons memakai bentuk `{ success, data, error }`; `error` berisi `{ code,
 | `GET` | `/api/admin/users`, `/api/admin/projects` | Admin |
 | `PATCH` | `/api/admin/users/:id/status` | Admin (tidak bisa mengubah akun sendiri) |
 | `PATCH` `DELETE` | `/api/admin/projects/:id/hide`, `/api/admin/projects/:id` | Admin |
+| `POST` | `/api/upload/video-url` | Admin — buat presigned POST R2 |
+| `POST` | `/api/admin/memories/video/complete` | Admin — simpan URL video kenangan |
 
 Kode error: `BAD_REQUEST` (400), `UNAUTHORIZED` (401), `FORBIDDEN` (403), `NOT_FOUND` (404),
 `CONFLICT` (409), `VALIDATION_ERROR` (422), `RATE_LIMITED` (429), `INTERNAL_ERROR` (500).
@@ -171,6 +173,34 @@ Kode error: `BAD_REQUEST` (400), `UNAUTHORIZED` (401), `FORBIDDEN` (403), `NOT_F
 - Format dan MIME diverifikasi lewat magic bytes, bukan sekadar ekstensi/header. Maksimal 2 MB per file.
 - Nama file diganti UUID acak dan path disimpan relatif (`/uploads/projects/<uuid>.png`) sehingga mudah dipindah server.
 - Mengganti avatar/cover atau menghapus project otomatis menghapus file lama (di Workers KV saat produksi, di disk saat dev lokal). R2 juga didukung bila binding `UPLOADS_BUCKET` dipakai.
+
+### Video kenangan — upload langsung ke R2
+
+Alur (khusus admin, satu video aktif di landing):
+
+1. Frontend memvalidasi tipe (MP4/WEBM), ukuran (maks 50 MB), dan durasi (maks 1 menit).
+2. `POST /api/upload/video-url` membuat presigned POST dengan key `videos/<uuid>.<ext>`, masa berlaku **5 menit**, dan policy `content-length-range` 1–50 MB.
+3. Browser mengunggah file langsung ke R2 memakai `XMLHttpRequest` (progress bar), lalu `POST /api/admin/memories/video/complete` menyimpan public URL ke tabel `memory_videos`.
+4. Backend hanya menerima URL yang berasal dari `R2_PUBLIC_URL` milik kita dan berpola `videos/<uuid>.(mp4|webm)`; video lama otomatis dihapus dari R2 saat diganti/dihapus.
+
+> Catatan: `createPresignedPost` menghasilkan policy **POST multipart**, bukan PUT. Ini yang membuat batas 50 MB benar-benar ditegakkan di sisi R2, bukan hanya di frontend.
+
+Environment yang dibutuhkan:
+
+| Variabel | Keterangan |
+| --- | --- |
+| `R2_ACCOUNT_ID` | Account ID Cloudflare. |
+| `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` | Token S3 API R2 (Object Read & Write). Set via `wrangler secret put`. |
+| `R2_BUCKET` | Nama bucket video. |
+| `R2_PUBLIC_URL` | Custom domain bucket atau URL publik `r2.dev`, tanpa `/` di akhir. |
+
+Contoh CORS bucket ada di `backend/r2-cors.json` (izinkan `POST`/`PUT` dan header `Content-Type` dari origin frontend). Terapkan lewat Dashboard R2 → bucket → Settings → CORS Policy, atau:
+
+```bash
+bunx wrangler r2 bucket cors set <NAMA_BUCKET> --file backend/r2-cors.json
+```
+
+**Menghubungkan custom domain ke bucket:** Dashboard Cloudflare → R2 → bucket → Settings → Custom Domains → Connect Domain, masukkan subdomain (mis. `cdn.portokelas.com`), lalu ikuti petunjuk DNS. Setelah aktif, set `R2_PUBLIC_URL=https://cdn.portokelas.com` dan pastikan domain dapat diakses publik lewat HTTPS agar `<video>` bisa memutar file.
 
 ## Alur Branch, CI & Rilis
 
@@ -208,12 +238,26 @@ Kode error: `BAD_REQUEST` (400), `UNAUTHORIZED` (401), `FORBIDDEN` (403), `NOT_F
 ### Backend — Cloudflare Workers
 
 Backend berjalan sebagai Cloudflare Worker (Hono). Database **Neon (PostgreSQL)**
-diakses via **Hyperdrive** — cara yang direkomendasikan Cloudflare untuk `pg` — dan
-gambar unggahan disimpan di **Workers KV** (tanpa perlu mengaktifkan R2/billing).
+diakses via **Hyperdrive** — cara yang direkomendasikan Cloudflare untuk `pg`.
+Gambar unggahan disimpan di **Workers KV**, sedangkan video kenangan diunggah
+langsung dari browser ke **Cloudflare R2** (butuh bucket + API token R2).
 
-> Penting: Hyperdrive tidak boleh memakai koneksi yang sama lintas request. Pool DB
-> dibuka per request dan ditutup di akhir request via `ctx.waitUntil` (lihat
-> `backend/src/worker.ts`). Jangan meng-cache `Pool` secara global.
+> Penting: **query caching Hyperdrive harus dimatikan** untuk aplikasi ini.
+> Hyperdrive secara default men-cache hasil `SELECT` (default `max_age` 60 detik +
+> `stale_while_revalidate` 15 detik) dan **tidak meng-invalidate cache itu saat
+> aplikasi menulis ke database**. Akibatnya data yang baru ditambahkan/diubah/
+> dihapus tidak langsung terlihat di daftar (_admin panel, dashboard anggota_,
+> dst.) sampai cache kedaluwarsa — persis gejala "di production gabisa tambah/hapus
+> data". Buat/ubah Hyperdrive dengan `--caching-disabled`:
+> ```bash
+> bunx wrangler hyperdrive update <HYPERDRIVE_CONFIG_ID> --caching-disabled
+> ```
+>
+> Setiap request membuat pool DB sendiri (maks 1 koneksi) di dalam konteks
+> `AsyncLocalStorage` dan menutupnya lewat `ctx.waitUntil` (lihat
+> `backend/src/worker.ts` dan `backend/src/runtime.ts`). Workers melarang socket
+> dipakai lintas request; Hyperdrive tetap melakukan connection pooling ke
+> database asli, jadi membuat koneksi baru per request tetap murah.
 
 1. **Prasyarat**: akun Cloudflare + `wrangler` (sudah ada di `devDependencies`).
    Login sekali: `bunx wrangler login`.
@@ -224,7 +268,8 @@ gambar unggahan disimpan di **Workers KV** (tanpa perlu mengaktifkan R2/billing)
 3. **Buat Hyperdrive** menuju Neon:
    ```bash
    bunx wrangler hyperdrive create portofolio-kelas-db \
-     --connection-string="postgresql://hyperdrive-user:PASSWORD@ep-xxx.<region>.aws.neon.tech/<db>?sslmode=require"
+     --connection-string="postgresql://hyperdrive-user:PASSWORD@ep-xxx.<region>.aws.neon.tech/<db>?sslmode=require" \
+     --caching-disabled
    ```
    Salin `id` hasilnya ke `backend/wrangler.jsonc` (binding `HYPERDRIVE`).
 4. **Buat namespace KV** untuk unggahan:
@@ -232,8 +277,9 @@ gambar unggahan disimpan di **Workers KV** (tanpa perlu mengaktifkan R2/billing)
    bunx wrangler kv namespace create UPLOADS_KV
    ```
    Salin `id` hasilnya ke `backend/wrangler.jsonc` (binding `UPLOADS_KV`).
-   (Alternatif R2: aktifkan R2 lalu ganti blok `kv_namespaces` dengan
-   `r2_buckets` bertipe `UPLOADS_BUCKET`.)
+   (Alternatif untuk gambar: aktifkan R2 lalu ganti blok `kv_namespaces` dengan
+   `r2_buckets` bertipe `UPLOADS_BUCKET`. Ini terpisah dari bucket video yang
+   diakses lewat S3 API dan variabel `R2_*`.)
 5. **Set secret** (jangan simpan di `wrangler.jsonc`):
    ```bash
    bunx wrangler secret put JWT_SECRET

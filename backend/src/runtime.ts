@@ -2,11 +2,14 @@
  * Penyimpan binding runtime Cloudflare (per request) agar modul lain bisa
  * membacanya tanpa harus menerima `c.env` di setiap fungsi.
  *
- * - Di Cloudflare Workers, entry (`worker.ts`) memanggil `setBindings(env)`
- *   sebelum meneruskan request.
- * - Di lokal (Bun/`bun run dev`), binding null sehingga `env.ts` membaca
+ * - Di Cloudflare Workers, entry (`worker.ts`) menjalankan request di dalam
+ *   `runWithBindings()`. AsyncLocalStorage memastikan binding & koneksi DB
+ *   tidak bocor antar request yang berjalan bersamaan di isolate yang sama.
+ * - Di lokal (Bun/`bun run dev`), tidak ada store sehingga `env.ts` membaca
  *   `process.env` dan unggahan memakai filesystem.
  */
+
+import { AsyncLocalStorage } from 'node:async_hooks';
 
 /** Subset binding Hyperdrive yang dipakai. */
 export interface HyperdriveBinding {
@@ -44,12 +47,28 @@ export type AppBindings = {
   [key: string]: unknown;
 };
 
-let current: AppBindings | null = null;
+/**
+ * State per request. `db`/`closeDb` diisi lazy oleh `db/index.ts` saat query
+ * pertama; tipe `unknown` dipakai agar modul ini tidak mengimpor Drizzle.
+ */
+export interface RequestStore {
+  bindings: AppBindings;
+  db?: unknown;
+  dbKey?: string;
+  closeDb?: () => Promise<void>;
+}
 
-export function setBindings(bindings: AppBindings | null): void {
-  current = bindings;
+const storage = new AsyncLocalStorage<RequestStore>();
+
+/** Jalankan handler di dalam konteks request (binding + koneksi DB terisolasi). */
+export function runWithBindings<T>(bindings: AppBindings, fn: () => T): T {
+  return storage.run({ bindings }, fn);
+}
+
+export function getStore(): RequestStore | undefined {
+  return storage.getStore();
 }
 
 export function getBindings(): AppBindings | null {
-  return current;
+  return storage.getStore()?.bindings ?? null;
 }

@@ -26,6 +26,17 @@ const booleanish = z
   .string()
   .transform((value) => ['1', 'true', 'yes', 'on'].includes(value.toLowerCase()));
 
+/** Anggap string kosong (mis. `R2_BUCKET=`) sebagai tidak diisi. */
+const optionalString = z.preprocess(
+  (value) => (typeof value === 'string' && value.trim() === '' ? undefined : value),
+  z.string().min(1).optional(),
+);
+
+const optionalUrl = z.preprocess(
+  (value) => (typeof value === 'string' && value.trim() === '' ? undefined : value),
+  z.string().url().optional(),
+);
+
 const envSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
@@ -46,6 +57,15 @@ const envSchema = z
     UPLOAD_DIR: z.string().min(1).default('uploads'),
     PUBLIC_URL: z.string().url().default('http://localhost:8787'),
     MAX_UPLOAD_SIZE_MB: z.coerce.number().positive().max(20).default(2),
+
+    // Cloudflare R2 untuk upload video langsung dari browser (presigned POST).
+    // Opsional agar dev lokal tanpa R2 tetap berjalan; endpoint video akan
+    // mengembalikan error konfigurasi bila nilainya belum diisi.
+    R2_ACCOUNT_ID: optionalString,
+    R2_ACCESS_KEY_ID: optionalString,
+    R2_SECRET_ACCESS_KEY: optionalString,
+    R2_BUCKET: optionalString,
+    R2_PUBLIC_URL: optionalUrl,
 
     // Salt untuk hash IP di fitur NGL (anonim). Ganti di produksi.
     NGL_IP_SALT: z.string().min(8).default('craftly-ngl-salt-ganti-di-produksi'),
@@ -76,6 +96,11 @@ export type Env = {
   UPLOAD_DIR: string;
   PUBLIC_URL: string;
   MAX_UPLOAD_SIZE_MB: number;
+  R2_ACCOUNT_ID?: string | undefined;
+  R2_ACCESS_KEY_ID?: string | undefined;
+  R2_SECRET_ACCESS_KEY?: string | undefined;
+  R2_BUCKET?: string | undefined;
+  R2_PUBLIC_URL?: string | undefined;
   NGL_IP_SALT: string;
   ADMIN_NAME: string;
   ADMIN_EMAIL: string;

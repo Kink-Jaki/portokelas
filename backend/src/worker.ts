@@ -4,15 +4,16 @@
  * `wrangler.jsonc` menunjuk ke file ini. Aplikasi Hono yang sama dipakai
  * ulang untuk `bun run dev` (lihat `index.ts`).
  *
- * Hyperdrive tidak boleh memakai koneksi/pool yang sama lintas request. Karena
- * itu pool DB ditutup di akhir setiap request (`ctx.waitUntil`) sehingga request
- * berikutnya selalu membuat koneksi baru.
+ * Setiap request dijalankan dalam konteks AsyncLocalStorage (lihat
+ * `runtime.ts`). Koneksi DB dibuat per request lalu ditutup lewat
+ * `ctx.waitUntil` — Workers melarang socket dipakai lintas request. Hyperdrive
+ * tetap menjaga pool koneksi ke database asli, jadi ini tetap murah.
  */
 import type { ExecutionContext } from 'hono';
 
 import { app } from './app.js';
-import { closePool } from './db/index.js';
-import { type AppBindings, setBindings } from './runtime.js';
+import { closeRequestDatabase } from './db/index.js';
+import { type AppBindings, runWithBindings } from './runtime.js';
 
 export default {
   async fetch(
@@ -20,11 +21,12 @@ export default {
     env: AppBindings,
     ctx: ExecutionContext,
   ): Promise<Response> {
-    setBindings(env);
-    try {
-      return await app.fetch(request, env, ctx);
-    } finally {
-      ctx.waitUntil(closePool());
-    }
+    return runWithBindings(env, async () => {
+      try {
+        return await app.fetch(request, env, ctx);
+      } finally {
+        ctx.waitUntil(closeRequestDatabase());
+      }
+    });
   },
 };

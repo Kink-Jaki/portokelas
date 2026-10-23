@@ -9,12 +9,14 @@ import { ok, requireParam } from '../lib/http.js';
 import { zJson, zQuery } from '../lib/validate.js';
 import { getCurrentUser, requireAdmin, requireAuth, type AppEnv } from '../middleware/auth.js';
 import {
+  assertOwnedVideoUrl,
   createTeacher,
   deleteMemoryAsAdmin,
   deleteProjectAsAdmin,
   deleteStoredFile,
   deleteTeacher,
   deleteUserAsAdmin,
+  deleteVideoFromR2,
   getAbout,
   getHero,
   getMemoryVideo,
@@ -32,11 +34,16 @@ import {
   upsertAbout,
   upsertHero,
   upsertMemoryVideo,
-  VIDEO_MAX_BYTES,
+  VIDEO_UPLOAD_MAX_BYTES,
 } from '../services/index.js';
 import type { HeroInput } from '../services/index.js';
-import { aboutFormSchema, teacherFormSchema, teacherUpdateFormSchema } from '../validators/content.js';
+import {
+  aboutFormSchema,
+  teacherFormSchema,
+  teacherUpdateFormSchema,
+} from '../validators/content.js';
 import { adminProjectQuerySchema, hideProjectSchema } from '../validators/project.js';
+import { saveVideoUrlSchema } from '../validators/upload.js';
 import { adminUpdateUserSchema, adminUserQuerySchema } from '../validators/user.js';
 
 type FormValues = Record<string, string | File | (string | File)[]>;
@@ -175,20 +182,55 @@ export const adminRoutes = new Hono<AppEnv>()
 
     if (!file) throw AppError.badRequest('File video wajib diunggah (field "video").');
 
-    const videoUrl = await saveVideo(file, 'videos', { maxBytes: VIDEO_MAX_BYTES });
+    const previous = await getMemoryVideo();
+    const videoUrl = await saveVideo(file, 'videos', { maxBytes: VIDEO_UPLOAD_MAX_BYTES });
 
     try {
       const video = await upsertMemoryVideo(videoUrl, caption?.trim() || null);
+
+      if (previous?.videoUrl && previous.videoUrl !== videoUrl) {
+        await deleteStoredFile(previous.videoUrl);
+        await deleteVideoFromR2(previous.videoUrl);
+      }
+
       return c.json(ok({ video }), 201);
     } catch (error) {
       await deleteStoredFile(videoUrl);
+      await deleteVideoFromR2(videoUrl);
+      throw error;
+    }
+  })
+
+  /**
+   * Simpan URL video yang sudah diunggah langsung ke R2. URL wajib berasal
+   * dari R2_PUBLIC_URL milik kita dan memakai key `videos/<uuid>.<ext>`.
+   */
+  .post('/memories/video/complete', zJson(saveVideoUrlSchema), async (c) => {
+    const input = c.req.valid('json');
+    const owned = assertOwnedVideoUrl(input.videoUrl);
+    const previous = await getMemoryVideo();
+
+    try {
+      const video = await upsertMemoryVideo(owned.publicUrl, input.caption?.trim() || null);
+
+      if (previous?.videoUrl && previous.videoUrl !== owned.publicUrl) {
+        await deleteStoredFile(previous.videoUrl);
+        await deleteVideoFromR2(previous.videoUrl);
+      }
+
+      return c.json(ok({ video }), 201);
+    } catch (error) {
+      await deleteVideoFromR2(owned.publicUrl);
       throw error;
     }
   })
 
   .delete('/memories/video', async (c) => {
     const removed = await removeMemoryVideo();
-    if (removed) await deleteStoredFile(removed.videoUrl);
+    if (removed) {
+      await deleteStoredFile(removed.videoUrl);
+      await deleteVideoFromR2(removed.videoUrl);
+    }
     return c.json(ok({ id: removed?.id, deleted: true }));
   })
 

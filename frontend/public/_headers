@@ -5,3 +5,7 @@
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Respons API memuat data autentik — jangan disimpan cache browser/proxy.
+/api/*
+  Cache-Control: no-store

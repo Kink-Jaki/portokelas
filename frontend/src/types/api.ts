@@ -63,6 +63,14 @@ export type MemoryVideo = {
   updatedAt: string;
 };
 
+/** Tiket presigned POST untuk unggah video langsung ke R2. */
+export type VideoUploadTicket = {
+  uploadUrl: string;
+  publicUrl: string;
+  fields: Record<string, string>;
+  expiresIn: number;
+};
+
 export type ProjectImage = {
   id: string;
   projectId: string;

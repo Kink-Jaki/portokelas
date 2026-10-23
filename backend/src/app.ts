@@ -17,6 +17,7 @@ import {
   nglSettingsRoutes,
 } from './routes/ngl.routes.js';
 import { publicRoutes } from './routes/public.routes.js';
+import { uploadRoutes } from './routes/upload.routes.js';
 import { readUpload } from './services/upload.service.js';
 
 export const app = new Hono<AppEnv>();
@@ -33,6 +34,12 @@ app.use(
     exposeHeaders: ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset'],
   }),
 );
+
+// Respons API memakai data autentik: jangan pernah di-cache browser/proxy.
+app.use('/api/*', async (c, next) => {
+  await next();
+  c.res.headers.set('Cache-Control', 'no-store');
+});
 
 // Penyimpanan file (R2 di Workers, filesystem saat dev lokal).
 app.get('/uploads/*', async (c) => {
@@ -55,6 +62,7 @@ app.get('/api/health', (c) =>
 
 app.route('/api/auth', authRoutes);
 app.route('/api/me', meRoutes);
+app.route('/api/upload', uploadRoutes);
 app.route('/api/admin', adminRoutes);
 app.route('/api/admin/ngl', adminNglRoutes);
 app.route('/api/admin/settings', adminNglSettingsRoutes);
