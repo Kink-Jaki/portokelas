@@ -90,6 +90,7 @@ const cardHtmlField = htmlField('Kode HTML kartu');
 const profileFields = {
   name: z.string().trim().min(3, 'Nama minimal 3 karakter').max(80).optional(),
   alias: nullableText(40, 'Alias').optional(),
+  nim: z.string().trim().max(20, 'NIS maksimal 20 karakter').optional().nullable(),
   spotifyUrl: spotifyUrlField.optional(),
   headline: nullableText(120, 'Headline').optional(),
   bio: nullableText(1500, 'Bio').optional(),

@@ -13,6 +13,7 @@ import type { MemberProfile } from '@/types/api';
 
 const adminUserSchema = profileSchema.extend({
   role: z.enum(['member', 'admin']),
+  nim: z.string().trim().max(20, 'NIS maksimal 20 karakter').nullable().optional(),
 });
 
 type AdminUserFormValues = z.infer<typeof adminUserSchema>;
@@ -39,6 +40,7 @@ export function AdminUserDialog({
     defaultValues: {
       name: '',
       alias: '',
+      nim: '',
       spotifyUrl: '',
       headline: '',
       bio: '',
@@ -56,6 +58,7 @@ export function AdminUserDialog({
     reset({
       name: user.name,
       alias: user.alias ?? '',
+      nim: user.nim ?? '',
       spotifyUrl: user.spotifyUrl ?? '',
       headline: user.headline ?? '',
       bio: user.bio ?? '',
@@ -77,6 +80,7 @@ export function AdminUserDialog({
         payload: {
           name: values.name,
           alias: values.alias || null,
+          nim: values.nim || null,
           spotifyUrl: values.spotifyUrl || null,
           headline: values.headline || null,
           bio: values.bio || null,
@@ -94,6 +98,7 @@ export function AdminUserDialog({
         const fieldErrors = error.fieldErrors;
         if (fieldErrors.name) setError('name', { message: fieldErrors.name });
         if (fieldErrors.alias) setError('alias', { message: fieldErrors.alias });
+        if (fieldErrors.nim) setError('nim', { message: fieldErrors.nim });
         if (fieldErrors.spotifyUrl) setError('spotifyUrl', { message: fieldErrors.spotifyUrl });
         if (fieldErrors.bio) setError('bio', { message: fieldErrors.bio });
         if (fieldErrors.headline) setError('headline', { message: fieldErrors.headline });
@@ -130,6 +135,14 @@ export function AdminUserDialog({
             {...register('alias')}
           />
         </div>
+
+        <Input
+          label="NIS"
+          placeholder="Contoh: 17858"
+          hint="Nomor Induk Siswa. Digunakan untuk login. Bila dikosongkan, login pakai email."
+          error={errors.nim?.message}
+          {...register('nim')}
+        />
 
         <Input
           label="Spotify"

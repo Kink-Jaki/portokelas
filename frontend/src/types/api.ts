@@ -229,7 +229,7 @@ export type ProjectPayload = {
 export type ProjectPatchPayload = Partial<ProjectPayload>;
 
 /** Update profil + role oleh admin (PATCH /admin/users/:id). */
-export type AdminUpdateUserPayload = ProfilePayload & { role?: UserRole };
+export type AdminUpdateUserPayload = ProfilePayload & { role?: UserRole; nim?: string | null };
 
 export type UpdateEmailPayload = {
   email: string;
