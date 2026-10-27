@@ -81,8 +81,7 @@ export function ProfilePanel() {
         if (fieldErrors.name) setError('name', { message: fieldErrors.name });
         if (fieldErrors.bio) setError('bio', { message: fieldErrors.bio });
         if (fieldErrors.headline) setError('headline', { message: fieldErrors.headline });
-        if (fieldErrors.spotifyUrl)
-          setError('spotifyUrl', { message: fieldErrors.spotifyUrl });
+        if (fieldErrors.spotifyUrl) setError('spotifyUrl', { message: fieldErrors.spotifyUrl });
       }
     }
   });

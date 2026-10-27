@@ -16,11 +16,7 @@ import { closeRequestDatabase } from './db/index.js';
 import { type AppBindings, runWithBindings } from './runtime.js';
 
 export default {
-  async fetch(
-    request: Request,
-    env: AppBindings,
-    ctx: ExecutionContext,
-  ): Promise<Response> {
+  async fetch(request: Request, env: AppBindings, ctx: ExecutionContext): Promise<Response> {
     return runWithBindings(env, async () => {
       try {
         return await app.fetch(request, env, ctx);

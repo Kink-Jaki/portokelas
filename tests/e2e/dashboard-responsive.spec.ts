@@ -36,10 +36,9 @@ test.describe('Dashboard responsif', () => {
         );
         for (const box of boxes) {
           expect(box.left, `tab "${box.text}" keluar kiri (${width}px)`).toBeGreaterThanOrEqual(0);
-          expect(
-            box.right,
-            `tab "${box.text}" keluar kanan (${width}px)`,
-          ).toBeLessThanOrEqual(width + 1);
+          expect(box.right, `tab "${box.text}" keluar kanan (${width}px)`).toBeLessThanOrEqual(
+            width + 1,
+          );
         }
 
         const main = page.locator('main');
@@ -84,9 +83,9 @@ test.describe('Dashboard responsif', () => {
     // Di atas 480px kembali menjadi satu baris.
     await page.setViewportSize({ width: 640, height: 800 });
     await page.waitForTimeout(400);
-    const wide = await page.getByRole('tab').evaluateAll((els) =>
-      els.map((el) => Math.round(el.getBoundingClientRect().top)),
-    );
+    const wide = await page
+      .getByRole('tab')
+      .evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
     expect(new Set(wide).size).toBe(1);
   });
 
@@ -99,7 +98,9 @@ test.describe('Dashboard responsif', () => {
       page.locator('header').getByRole('link', { name: 'Craftly — beranda' }),
     ).toBeVisible();
 
-    const headerHeight = await page.locator('header').evaluate((el) => el.getBoundingClientRect().height);
+    const headerHeight = await page
+      .locator('header')
+      .evaluate((el) => el.getBoundingClientRect().height);
     expect(headerHeight).toBeGreaterThanOrEqual(60);
     expect(headerHeight).toBeLessThanOrEqual(78);
 

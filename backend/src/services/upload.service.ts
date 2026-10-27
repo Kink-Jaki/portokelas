@@ -101,12 +101,7 @@ export function detectVideoMime(bytes: Uint8Array): string | null {
     return 'video/mp4';
   }
 
-  if (
-    bytes[0] === 0x1a &&
-    bytes[1] === 0x45 &&
-    bytes[2] === 0xdf &&
-    bytes[3] === 0xa3
-  ) {
+  if (bytes[0] === 0x1a && bytes[1] === 0x45 && bytes[2] === 0xdf && bytes[3] === 0xa3) {
     return 'video/webm';
   }
 
@@ -237,10 +232,7 @@ export async function saveVideo(
   }
 
   const declaredMime = file.type.toLowerCase();
-  if (
-    ALLOWED_MIME.has(declaredMime) &&
-    declaredMime !== realMime
-  ) {
+  if (ALLOWED_MIME.has(declaredMime) && declaredMime !== realMime) {
     throw AppError.badRequest(
       `Tipe file tidak cocok dengan isinya (kiriman: ${file.type}, isi: ${realMime}).`,
     );

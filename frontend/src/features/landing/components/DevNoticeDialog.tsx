@@ -30,8 +30,8 @@ export function DevNoticeDialog({ open, onClose }: { open: boolean; onClose: () 
       <div className="space-y-5 text-sm leading-relaxed text-muted">
         <p>
           Situs ini sedang dalam tahap pengembangan. Sebagian konten, fitur, dan tampilan dapat
-          mengalami perubahan atau belum sepenuhnya optimal. Kami memohon maaf atas
-          ketidaknyamanan yang ditimbulkan.
+          mengalami perubahan atau belum sepenuhnya optimal. Kami memohon maaf atas ketidaknyamanan
+          yang ditimbulkan.
         </p>
         <div className="space-y-2 border-t border-line pt-4">
           <p className="eyebrow">Hubungi developer :</p>

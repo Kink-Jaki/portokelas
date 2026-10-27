@@ -141,7 +141,8 @@ export default function NglBoxPage() {
             className="mt-6 max-w-[34rem] text-[1.0625rem] leading-[1.65] text-forest-soft"
           >
             Semua pesan anonim buat rpl2 hammer angkatan 40 masuk sini jadi kartu warna-warni 🎨
-            Ketuk <span className="font-semibold text-forest">Bagikan</span> buat posting ke IG Story 📸✨
+            Ketuk <span className="font-semibold text-forest">Bagikan</span> buat posting ke IG
+            Story 📸✨
           </motion.p>
         </motion.header>
 
@@ -171,7 +172,8 @@ export default function NglBoxPage() {
                 Kotak masih terkunci
               </h2>
               <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">
-                Login dulu sebagai anggota rpl2 hammer angkatan 40 buat buka kotak & baca pesan anonim 🫢
+                Login dulu sebagai anggota rpl2 hammer angkatan 40 buat buka kotak & baca pesan
+                anonim 🫢
               </p>
               <Link to="/login" className={cn(buttonClasses('burgundy', 'md'), 'mt-8')}>
                 Masuk untuk membuka

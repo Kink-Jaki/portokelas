@@ -1,12 +1,4 @@
-import {
-  test,
-  expect,
-  loginViaUi,
-  MEMBER,
-  ADMIN,
-  MEMBER_STATE,
-  ADMIN_STATE,
-} from './fixtures';
+import { test, expect, loginViaUi, MEMBER, ADMIN, MEMBER_STATE, ADMIN_STATE } from './fixtures';
 
 test.describe('Autentikasi', () => {
   test('route terproteksi mengarahkan pengunjung anonim ke login', async ({ page }) => {
@@ -19,7 +11,9 @@ test.describe('Autentikasi', () => {
     await page.goto('/login');
     await page.getByRole('button', { name: 'Masuk' }).click();
 
-    await expect(page.getByRole('alert').filter({ hasText: 'NIS atau email wajib diisi' })).toBeVisible();
+    await expect(
+      page.getByRole('alert').filter({ hasText: 'NIS atau email wajib diisi' }),
+    ).toBeVisible();
     await expect(page.getByRole('alert').filter({ hasText: 'Password wajib diisi' })).toBeVisible();
   });
 

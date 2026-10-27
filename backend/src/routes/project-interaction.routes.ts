@@ -14,7 +14,11 @@ import {
   toggleProjectLike,
   updateProjectComment,
 } from '../services/project.service.js';
-import { commentQuerySchema, createCommentSchema, updateCommentSchema } from '../validators/comment.js';
+import {
+  commentQuerySchema,
+  createCommentSchema,
+  updateCommentSchema,
+} from '../validators/comment.js';
 
 /** Endpoint interaksi project (like, komentar) — memerlukan autentikasi. */
 export const projectInteractionRoutes = new Hono<AppEnv>()
@@ -69,7 +73,8 @@ export const projectInteractionRoutes = new Hono<AppEnv>()
   // ADMIN: hide/unhide comment
   .patch('/comments/:id/hide', zJson(z.object({ hidden: z.boolean() })), async (c) => {
     const user = getCurrentUser(c);
-    if (user.role !== 'admin') throw AppError.forbidden('Hanya admin yang bisa menyembunyikan/menampilkan komentar.');
+    if (user.role !== 'admin')
+      throw AppError.forbidden('Hanya admin yang bisa menyembunyikan/menampilkan komentar.');
 
     const commentId = requireParam(c.req.param('id'), 'id');
     const { hidden } = c.req.valid('json');

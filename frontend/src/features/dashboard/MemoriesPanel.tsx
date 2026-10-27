@@ -3,11 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
-import {
-  useDeleteMemory,
-  useMyMemories,
-  useUploadMemory,
-} from '@/hooks/useApi';
+import { useDeleteMemory, useMyMemories, useUploadMemory } from '@/hooks/useApi';
 import { assetUrl } from '@/lib/api';
 import { isSupportedImage } from '@/lib/image';
 import { formatDate } from '@/lib/utils';
@@ -69,8 +65,7 @@ export function MemoriesPanel() {
       setFile(null);
       setError(null);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : 'Gagal mengunggah kenangan.';
+      const message = err instanceof Error ? err.message : 'Gagal mengunggah kenangan.';
       setError(message);
     }
   };
@@ -128,15 +123,9 @@ export function MemoriesPanel() {
             </p>
           </div>
 
-          {error ? (
-            <p className="text-sm text-danger">{error}</p>
-          ) : null}
+          {error ? <p className="text-sm text-danger">{error}</p> : null}
 
-          <Button
-            type="submit"
-            isLoading={upload.isPending}
-            disabled={!file || upload.isPending}
-          >
+          <Button type="submit" isLoading={upload.isPending} disabled={!file || upload.isPending}>
             Unggah kenangan
           </Button>
         </form>

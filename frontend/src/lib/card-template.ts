@@ -9,7 +9,8 @@ import type { PublicUser } from '@/types/api';
  * Daftar token: {{name}} {{alias}} {{headline}} {{bio}} {{photo}}
  * {{github}} {{instagram}} {{website}} {{url}} {{slug}}
  */
-const TOKEN_PATTERN = /\{\{\s*(name|alias|headline|bio|photo|github|instagram|website|url|slug)\s*\}\}/g;
+const TOKEN_PATTERN =
+  /\{\{\s*(name|alias|headline|bio|photo|github|instagram|website|url|slug)\s*\}\}/g;
 
 function escapeHtml(value: string): string {
   return value

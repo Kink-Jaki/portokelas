@@ -27,7 +27,15 @@ function InstagramIcon() {
   );
 }
 
-function SocialChip({ href, label, children }: { href: string | null; label: string; children: ReactNode }) {
+function SocialChip({
+  href,
+  label,
+  children,
+}: {
+  href: string | null;
+  label: string;
+  children: ReactNode;
+}) {
   const base =
     'inline-flex items-center gap-1.5 border border-line px-2.5 py-1 font-mono text-[0.625rem] uppercase tracking-[0.12em] transition-colors duration-200';
 
@@ -132,7 +140,9 @@ export function MemberCardGrid({
   }[columns];
 
   return (
-    <Stagger className={cn('grid grid-cols-1 gap-px overflow-hidden border border-line bg-line', cols)}>
+    <Stagger
+      className={cn('grid grid-cols-1 gap-px overflow-hidden border border-line bg-line', cols)}
+    >
       {members.map((member, index) => (
         <MemberCard key={member.id} member={member} index={index + 1} />
       ))}

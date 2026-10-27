@@ -110,8 +110,7 @@ function SocialButton({
 export function ClassMemberCard({ member, index }: { member: PublicUser; index?: number }) {
   const name = member.alias || member.name;
   const photo = assetUrl(member.avatarUrl);
-  const roleLabel =
-    member.headline?.trim() || (member.role === 'admin' ? 'Developer' : 'Anggota');
+  const roleLabel = member.headline?.trim() || (member.role === 'admin' ? 'Developer' : 'Anggota');
   const description =
     member.bio?.trim() || member.headline?.trim() || 'Belum menambahkan deskripsi singkat.';
 

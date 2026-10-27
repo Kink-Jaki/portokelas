@@ -67,7 +67,12 @@ async function groupCollaborators(rows: Project[]): Promise<Map<string, Collabor
     .select({ projectId: projectCollaborators.projectId, user: collaboratorColumns })
     .from(projectCollaborators)
     .innerJoin(users, eq(projectCollaborators.userId, users.id))
-    .where(inArray(projectCollaborators.projectId, rows.map((row) => row.id)))
+    .where(
+      inArray(
+        projectCollaborators.projectId,
+        rows.map((row) => row.id),
+      ),
+    )
     .orderBy(asc(projectCollaborators.createdAt));
 
   const grouped = new Map<string, CollaboratorUser[]>();
@@ -80,7 +85,10 @@ async function groupCollaborators(rows: Project[]): Promise<Map<string, Collabor
 }
 
 /** Lampirkan gambar galeri + daftar kolaborator ke tiap project. */
-export async function hydrateProjects(rows: Project[], userId?: string): Promise<ProjectWithImages[]> {
+export async function hydrateProjects(
+  rows: Project[],
+  userId?: string,
+): Promise<ProjectWithImages[]> {
   if (rows.length === 0) return [];
 
   const projectIds = rows.map((row) => row.id);
@@ -117,18 +125,16 @@ async function sanitizeCollaboratorIds(ids: string[], ownerId: string): Promise<
   const unique = [...new Set(ids)].filter((id) => id && id !== ownerId);
   if (unique.length === 0) return [];
 
-  const found = await db
-    .select({ id: users.id })
-    .from(users)
-    .where(inArray(users.id, unique));
+  const found = await db.select({ id: users.id }).from(users).where(inArray(users.id, unique));
   const valid = new Set(found.map((row) => row.id));
   return unique.filter((id) => valid.has(id));
 }
 
-async function setProjectCollaborators(projectId: string, collaboratorIds: string[]): Promise<void> {
-  await db
-    .delete(projectCollaborators)
-    .where(eq(projectCollaborators.projectId, projectId));
+async function setProjectCollaborators(
+  projectId: string,
+  collaboratorIds: string[],
+): Promise<void> {
+  await db.delete(projectCollaborators).where(eq(projectCollaborators.projectId, projectId));
 
   if (collaboratorIds.length === 0) return;
 
@@ -181,9 +187,12 @@ export async function createProject(userId: string, input: CreateProjectInput) {
 
   const collaboratorIds = await sanitizeCollaboratorIds(input.collaboratorIds ?? [], userId);
   if (collaboratorIds.length > 0) {
-    await db
-      .insert(projectCollaborators)
-      .values(collaboratorIds.map((collaboratorId) => ({ projectId: project.id, userId: collaboratorId })));
+    await db.insert(projectCollaborators).values(
+      collaboratorIds.map((collaboratorId) => ({
+        projectId: project.id,
+        userId: collaboratorId,
+      })),
+    );
   }
 
   const [hydrated] = await hydrateProjects([project], userId);
@@ -218,11 +227,7 @@ export async function listProjectsByUser(userId: string): Promise<ProjectWithIma
 }
 
 export async function listProjectsByMemberSlug(slug: string): Promise<ProjectWithImages[]> {
-  const rows = await db
-    .select({ id: users.id })
-    .from(users)
-    .where(eq(users.slug, slug))
-    .limit(1);
+  const rows = await db.select({ id: users.id }).from(users).where(eq(users.slug, slug)).limit(1);
 
   const member = rows[0];
   if (!member) return [];
@@ -294,10 +299,7 @@ export async function getProjectForUser(
     .from(projectCollaborators)
     .innerJoin(projects, eq(projectCollaborators.projectId, projects.id))
     .where(
-      and(
-        eq(projectCollaborators.projectId, projectId),
-        eq(projectCollaborators.userId, userId),
-      ),
+      and(eq(projectCollaborators.projectId, projectId), eq(projectCollaborators.userId, userId)),
     )
     .limit(1);
 
@@ -399,12 +401,7 @@ export async function getPublicProject(idOrSlug: string): Promise<ProjectWithIma
     .select({ project: projects })
     .from(projects)
     .innerJoin(users, eq(projects.userId, users.id))
-    .where(
-      and(
-        condition,
-        eq(projects.isHidden, false),
-      ),
-    )
+    .where(and(condition, eq(projects.isHidden, false)))
     .limit(1);
 
   const project = rows[0]?.project;
@@ -487,7 +484,10 @@ export async function getProjectLikeCounts(projectIds: string[]): Promise<Map<st
   return map;
 }
 
-export async function getUserLikedProjects(userId: string, projectIds: string[]): Promise<Set<string>> {
+export async function getUserLikedProjects(
+  userId: string,
+  projectIds: string[],
+): Promise<Set<string>> {
   if (projectIds.length === 0) return new Set();
 
   const rows = await db
@@ -498,9 +498,16 @@ export async function getUserLikedProjects(userId: string, projectIds: string[])
   return new Set(rows.map((row) => row.projectId));
 }
 
-export async function toggleProjectLike(projectId: string, userId: string): Promise<{ liked: boolean; count: number }> {
+export async function toggleProjectLike(
+  projectId: string,
+  userId: string,
+): Promise<{ liked: boolean; count: number }> {
   // Check if project exists and is not hidden
-  const projectRows = await db.select({ id: projects.id }).from(projects).where(eq(projects.id, projectId)).limit(1);
+  const projectRows = await db
+    .select({ id: projects.id })
+    .from(projects)
+    .where(eq(projects.id, projectId))
+    .limit(1);
   if (projectRows.length === 0) throw AppError.notFound('Project tidak ditemukan');
 
   const existing = await db
@@ -597,12 +604,17 @@ export async function createProjectComment(
   content: string,
 ): Promise<ProjectCommentWithUser> {
   // Check if project exists and is not hidden
-  const projectRows = await db.select({ id: projects.id }).from(projects).where(eq(projects.id, projectId)).limit(1);
+  const projectRows = await db
+    .select({ id: projects.id })
+    .from(projects)
+    .where(eq(projects.id, projectId))
+    .limit(1);
   if (projectRows.length === 0) throw AppError.notFound('Project tidak ditemukan');
 
   const trimmed = content.trim();
   if (!trimmed) throw AppError.badRequest('Komentar tidak boleh kosong.');
-  if (trimmed.length > 2000) throw AppError.badRequest('Komentar terlalu panjang (maksimal 2000 karakter).');
+  if (trimmed.length > 2000)
+    throw AppError.badRequest('Komentar terlalu panjang (maksimal 2000 karakter).');
 
   const rows = await db
     .insert(projectComments)
@@ -612,7 +624,11 @@ export async function createProjectComment(
   const comment = rows[0];
   if (!comment) throw AppError.internal('Gagal membuat komentar');
 
-  const userRows = await db.select(commentUserColumns).from(users).where(eq(users.id, userId)).limit(1);
+  const userRows = await db
+    .select(commentUserColumns)
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
   return { ...comment, user: userRows[0]! };
 }
 
@@ -623,10 +639,15 @@ export async function updateProjectComment(
 ): Promise<ProjectCommentWithUser> {
   const trimmed = content.trim();
   if (!trimmed) throw AppError.badRequest('Komentar tidak boleh kosong.');
-  if (trimmed.length > 2000) throw AppError.badRequest('Komentar terlalu panjang (maksimal 2000 karakter).');
+  if (trimmed.length > 2000)
+    throw AppError.badRequest('Komentar terlalu panjang (maksimal 2000 karakter).');
 
   // Verify ownership
-  const existing = await db.select().from(projectComments).where(eq(projectComments.id, commentId)).limit(1);
+  const existing = await db
+    .select()
+    .from(projectComments)
+    .where(eq(projectComments.id, commentId))
+    .limit(1);
   const comment = existing[0];
   if (!comment) throw AppError.notFound('Komentar tidak ditemukan');
   if (comment.userId !== userId) throw AppError.forbidden('Tidak berhak mengedit komentar ini.');
@@ -640,20 +661,36 @@ export async function updateProjectComment(
   const updated = rows[0];
   if (!updated) throw AppError.internal('Gagal memperbarui komentar');
 
-  const userRows = await db.select(commentUserColumns).from(users).where(eq(users.id, userId)).limit(1);
+  const userRows = await db
+    .select(commentUserColumns)
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
   return { ...updated, user: userRows[0]! };
 }
 
-export async function deleteProjectComment(commentId: string, userId: string, isAdmin = false): Promise<void> {
-  const existing = await db.select().from(projectComments).where(eq(projectComments.id, commentId)).limit(1);
+export async function deleteProjectComment(
+  commentId: string,
+  userId: string,
+  isAdmin = false,
+): Promise<void> {
+  const existing = await db
+    .select()
+    .from(projectComments)
+    .where(eq(projectComments.id, commentId))
+    .limit(1);
   const comment = existing[0];
   if (!comment) throw AppError.notFound('Komentar tidak ditemukan');
-  if (!isAdmin && comment.userId !== userId) throw AppError.forbidden('Tidak berhak menghapus komentar ini.');
+  if (!isAdmin && comment.userId !== userId)
+    throw AppError.forbidden('Tidak berhak menghapus komentar ini.');
 
   await db.delete(projectComments).where(eq(projectComments.id, commentId));
 }
 
-export async function hideProjectComment(commentId: string, hidden: boolean): Promise<ProjectComment> {
+export async function hideProjectComment(
+  commentId: string,
+  hidden: boolean,
+): Promise<ProjectComment> {
   const rows = await db
     .update(projectComments)
     .set({ isHidden: hidden, updatedAt: new Date() })

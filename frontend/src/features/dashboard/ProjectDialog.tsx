@@ -191,12 +191,7 @@ export function ProjectDialog({ open, onClose, project = null }: ProjectDialogPr
               </span>
             )}
             {canManageCollaborators ? (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setPickerOpen(true)}
-              >
+              <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen(true)}>
                 {collaborators.length > 0 ? 'Ubah kolaborator' : 'Pilih kolaborator'}
               </Button>
             ) : null}

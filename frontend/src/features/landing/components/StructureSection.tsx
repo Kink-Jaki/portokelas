@@ -170,10 +170,7 @@ export function StructureSection() {
   );
 
   return (
-    <section
-      id="anggota"
-      className="section-members relative isolate overflow-visible"
-    >
+    <section id="anggota" className="section-members relative isolate overflow-visible">
       <StructureOrnaments />
 
       <div className="container-page section-pad relative z-10">

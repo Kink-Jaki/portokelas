@@ -31,7 +31,11 @@ export async function listMemoriesForUser(userId: string): Promise<Memory[]> {
     .orderBy(desc(memories.createdAt));
 }
 
-export async function createMemory(userId: string, imageUrl: string, caption: string | null): Promise<Memory> {
+export async function createMemory(
+  userId: string,
+  imageUrl: string,
+  caption: string | null,
+): Promise<Memory> {
   const rows = await db.insert(memories).values({ userId, imageUrl, caption }).returning();
   const memory = rows[0];
   if (!memory) throw AppError.internal('Gagal menyimpan kenangan');
@@ -80,7 +84,10 @@ export async function getMemoryVideo(): Promise<MemoryVideo | null> {
   return rows[0] ?? null;
 }
 
-export async function upsertMemoryVideo(videoUrl: string, caption: string | null = null): Promise<MemoryVideo> {
+export async function upsertMemoryVideo(
+  videoUrl: string,
+  caption: string | null = null,
+): Promise<MemoryVideo> {
   const existing = await getMemoryVideo();
   if (existing) {
     const rows = await db

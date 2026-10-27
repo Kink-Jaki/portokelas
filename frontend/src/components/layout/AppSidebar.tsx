@@ -130,7 +130,8 @@ export type SectionLink = {
   href: string;
 };
 
-const itemClass = (collapsed: boolean) =>
+const itemClass =
+  (collapsed: boolean) =>
   ({ isActive }: { isActive: boolean }) =>
     cn(
       'flex items-center border-l-2 text-sm transition-colors duration-200',
@@ -268,10 +269,7 @@ function SidebarNav({
                 Akun saya
               </p>
             )}
-            <nav
-              className={cn('space-y-0.5', collapsed ? 'mt-0' : 'mt-3')}
-              aria-label="Menu akun"
-            >
+            <nav className={cn('space-y-0.5', collapsed ? 'mt-0' : 'mt-3')} aria-label="Menu akun">
               {items.slice(3).map(renderLink)}
             </nav>
           </div>
@@ -372,12 +370,7 @@ export function AppSidebar({
             <CollapseIcon collapsed={collapsed} />
           </button>
         </div>
-        <div
-          className={cn(
-            'h-full overflow-y-auto py-7',
-            collapsed ? 'px-2' : 'px-5',
-          )}
-        >
+        <div className={cn('h-full overflow-y-auto py-7', collapsed ? 'px-2' : 'px-5')}>
           <SidebarNav collapsed={collapsed} />
         </div>
       </div>

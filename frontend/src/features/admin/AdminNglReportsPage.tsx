@@ -62,7 +62,10 @@ export default function AdminNglReportsPage() {
           </div>
         ) : reports.length === 0 ? (
           <div className="border border-line">
-            <EmptyState title="Belum ada laporan" description="Tidak ada laporan yang perlu ditinjau." />
+            <EmptyState
+              title="Belum ada laporan"
+              description="Tidak ada laporan yang perlu ditinjau."
+            />
           </div>
         ) : (
           reports.map((report) => {

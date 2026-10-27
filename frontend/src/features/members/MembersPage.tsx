@@ -63,7 +63,10 @@ function MemberSkeletonGrid() {
   return (
     <div className="grid grid-cols-2 gap-2 min-[360px]:gap-2.5 min-[390px]:gap-3 md:gap-5 lg:grid-cols-4 lg:gap-6">
       {Array.from({ length: 12 }).map((_, index) => (
-        <div key={index} className="flex h-full flex-col rounded-2xl border border-line bg-elevated p-2 min-[360px]:p-2.5 min-[390px]:p-3 sm:p-6">
+        <div
+          key={index}
+          className="flex h-full flex-col rounded-2xl border border-line bg-elevated p-2 min-[360px]:p-2.5 min-[390px]:p-3 sm:p-6"
+        >
           <Skeleton className="aspect-[4/3] w-full" />
           <Skeleton className="mt-6 h-5 w-2/3" />
           <Skeleton className="mt-3 h-4 w-1/3" />
@@ -111,10 +114,12 @@ export default function MembersPage() {
                 <span>Direktori Anggota</span>
               </p>
               <h1 className="mt-6 font-display text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.02em] sm:text-[3rem] lg:text-[3.5rem]">
-                <span className="text-maroon">Anggota</span> <span className="text-forest">Craftly</span>
+                <span className="text-maroon">Anggota</span>{' '}
+                <span className="text-forest">Craftly</span>
               </h1>
               <p className="mt-5 max-w-xl text-[0.9375rem] leading-[1.7] text-muted sm:text-base">
-                Hanya anggota yang sudah dikurasi yang ditampilkan di sini. Klik kartu untuk membuka portofolio pribadi beserta project-nya.
+                Hanya anggota yang sudah dikurasi yang ditampilkan di sini. Klik kartu untuk membuka
+                portofolio pribadi beserta project-nya.
               </p>
             </div>
 
@@ -196,18 +201,18 @@ export default function MembersPage() {
                     ? `Tidak ditemukan anggota dengan kata kunci “${search}”.`
                     : 'Direktori akan terisi setelah anggota pertama bergabung.'
                 }
-              action={
-                search ? (
-                  <button
-                    type="button"
-                    className={buttonClasses('outline')}
-                    onClick={() => setSearchInput('')}
-                  >
-                    Reset pencarian
-                  </button>
-                ) : undefined
-              }
-            />
+                action={
+                  search ? (
+                    <button
+                      type="button"
+                      className={buttonClasses('outline')}
+                      onClick={() => setSearchInput('')}
+                    >
+                      Reset pencarian
+                    </button>
+                  ) : undefined
+                }
+              />
             </div>
           ) : (
             <Stagger className="grid auto-rows-fr grid-cols-2 gap-2 min-[360px]:gap-2.5 min-[390px]:gap-3 md:gap-5 lg:grid-cols-4 lg:gap-6">

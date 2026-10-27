@@ -253,8 +253,7 @@ function AboutEditor() {
     [previewUrl],
   );
 
-  const currentImage =
-    previewUrl ?? (removeImage ? null : assetUrl(about?.imageUrl) ?? null);
+  const currentImage = previewUrl ?? (removeImage ? null : (assetUrl(about?.imageUrl) ?? null));
   const error = saveAbout.isError ? readError(saveAbout.error) : null;
 
   const handleSubmit = async (event: FormEvent) => {
@@ -455,8 +454,7 @@ function TeacherEditor() {
 
   const mutation = editingId ? updateTeacher : createTeacher;
   const error = mutation.isError ? readError(mutation.error) : null;
-  const currentPhoto =
-    previewUrl ?? (removePhoto ? null : assetUrl(editing?.photoUrl) ?? null);
+  const currentPhoto = previewUrl ?? (removePhoto ? null : (assetUrl(editing?.photoUrl) ?? null));
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();

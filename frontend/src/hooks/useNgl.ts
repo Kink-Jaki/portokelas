@@ -34,8 +34,7 @@ export function useToggleNglEnabled() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (enabled: boolean) =>
-      api.patch<NglSettings>('/admin/settings/ngl', { enabled }),
+    mutationFn: (enabled: boolean) => api.patch<NglSettings>('/admin/settings/ngl', { enabled }),
     onSuccess: (data) => {
       queryClient.setQueryData(queryKeys.nglSettings, data);
       toast.success(data.enabled ? 'Fitur NGL diaktifkan.' : 'Fitur NGL dinonaktifkan.');
@@ -65,8 +64,7 @@ export function useSubmitNglMessage() {
 export function useNglInbox(page: number, enabled = true) {
   return useQuery({
     queryKey: queryKeys.nglInbox(page),
-    queryFn: () =>
-      api.get<NglInbox>(`/ngl/messages${buildQuery({ page, limit: INBOX_LIMIT })}`),
+    queryFn: () => api.get<NglInbox>(`/ngl/messages${buildQuery({ page, limit: INBOX_LIMIT })}`),
     placeholderData: (previous) => previous,
     enabled,
   });
@@ -76,8 +74,7 @@ export function useMarkNglRead() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) =>
-      api.post<{ id: string; read: boolean }>(`/ngl/messages/${id}/read`),
+    mutationFn: (id: string) => api.post<{ id: string; read: boolean }>(`/ngl/messages/${id}/read`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ngl', 'messages'] });
       queryClient.invalidateQueries({ queryKey: queryKeys.nglUnread });
@@ -118,7 +115,10 @@ export function useNglUnreadCount(enabled = true) {
 export function useMembersForMention() {
   return useQuery({
     queryKey: ['members', 'mention'],
-    queryFn: () => api.get<{ members: Pick<PublicUser, 'id' | 'name' | 'alias' | 'slug' | 'avatarUrl'>[] }>('/members/mention'),
+    queryFn: () =>
+      api.get<{ members: Pick<PublicUser, 'id' | 'name' | 'alias' | 'slug' | 'avatarUrl'>[] }>(
+        '/members/mention',
+      ),
     staleTime: 5 * 60 * 1000,
   });
 }
@@ -127,15 +127,7 @@ export function useReportNglMessage() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      id,
-      reason,
-      note,
-    }: {
-      id: string;
-      reason: string;
-      note?: string | null;
-    }) =>
+    mutationFn: ({ id, reason, note }: { id: string; reason: string; note?: string | null }) =>
       api.post<{ id: string; reported: boolean; reportCount: number; hidden: boolean }>(
         `/ngl/messages/${id}/report`,
         { reason, note: note ?? undefined },

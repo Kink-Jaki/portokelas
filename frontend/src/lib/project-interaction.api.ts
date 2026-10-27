@@ -1,5 +1,11 @@
 import { api } from './api';
-import type { Paginated, ProjectComment, ProjectLike, ProjectCommentUser, ProjectLikeUser } from '@/types/api';
+import type {
+  Paginated,
+  ProjectComment,
+  ProjectLike,
+  ProjectCommentUser,
+  ProjectLikeUser,
+} from '@/types/api';
 
 export const projectInteractionApi = {
   // LIKES
@@ -16,13 +22,18 @@ export const projectInteractionApi = {
     ),
 
   createComment: (projectId: string, content: string) =>
-    api.post<{ comment: ProjectComment & { user: ProjectCommentUser } }>(`/projects/${projectId}/comments`, { content }),
+    api.post<{ comment: ProjectComment & { user: ProjectCommentUser } }>(
+      `/projects/${projectId}/comments`,
+      { content },
+    ),
 
   updateComment: (commentId: string, content: string) =>
-    api.patch<{ comment: ProjectComment & { user: ProjectCommentUser } }>(`/comments/${commentId}`, { content }),
+    api.patch<{ comment: ProjectComment & { user: ProjectCommentUser } }>(
+      `/comments/${commentId}`,
+      { content },
+    ),
 
-  deleteComment: (commentId: string) =>
-    api.delete<{ deleted: true }>(`/comments/${commentId}`),
+  deleteComment: (commentId: string) => api.delete<{ deleted: true }>(`/comments/${commentId}`),
 
   // ADMIN
   hideComment: (commentId: string, hidden: boolean) =>

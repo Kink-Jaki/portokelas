@@ -497,10 +497,7 @@ export function MemoriesSection() {
   const videoCaption = videoData?.video?.caption ?? null;
 
   return (
-    <section
-      id="memories"
-      className="section-memories relative isolate overflow-visible"
-    >
+    <section id="memories" className="section-memories relative isolate overflow-visible">
       <MemoriesOrnaments />
 
       {/* Desktop: teks di kiri, panel video di kanan sejajar eyebrow 05. */}

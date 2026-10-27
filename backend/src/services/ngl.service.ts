@@ -126,9 +126,7 @@ async function resolveNglSpotifyMeta(
 
 /** Isi metadata Spotify yang masih kosong (pesan lama) lalu simpan hasilnya. */
 async function backfillSpotifyMeta(messages: NglMessage[]): Promise<void> {
-  const targets = messages.filter(
-    (message) => message.spotifyId && !message.spotifyTitle,
-  );
+  const targets = messages.filter((message) => message.spotifyId && !message.spotifyTitle);
   if (targets.length === 0) return;
 
   await Promise.all(
@@ -185,10 +183,7 @@ export async function listNglMessagesForUser(
     )
     .leftJoin(
       messageReports,
-      and(
-        eq(messageReports.messageId, nglMessages.id),
-        eq(messageReports.reporterUserId, userId),
-      ),
+      and(eq(messageReports.messageId, nglMessages.id), eq(messageReports.reporterUserId, userId)),
     )
     .where(eq(nglMessages.isHidden, false))
     .orderBy(desc(nglMessages.createdAt))

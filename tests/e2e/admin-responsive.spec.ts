@@ -37,10 +37,9 @@ test.describe('Panel admin responsif', () => {
         );
         for (const box of boxes) {
           expect(box.left, `tab "${box.text}" keluar kiri (${width}px)`).toBeGreaterThanOrEqual(-1);
-          expect(
-            box.right,
-            `tab "${box.text}" keluar kanan (${width}px)`,
-          ).toBeLessThanOrEqual(width + 1);
+          expect(box.right, `tab "${box.text}" keluar kanan (${width}px)`).toBeLessThanOrEqual(
+            width + 1,
+          );
         }
       }
 
@@ -84,9 +83,9 @@ test.describe('Panel admin responsif', () => {
     // Di atas 540px kembali menjadi satu baris.
     await page.setViewportSize({ width: 640, height: 800 });
     await page.waitForTimeout(400);
-    const wide = await page.getByRole('tab').evaluateAll((els) =>
-      els.map((el) => Math.round(el.getBoundingClientRect().top)),
-    );
+    const wide = await page
+      .getByRole('tab')
+      .evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
     expect(new Set(wide).size).toBe(1);
   });
 
@@ -98,9 +97,7 @@ test.describe('Panel admin responsif', () => {
     const search = page.getByRole('searchbox', { name: 'Cari project' });
     await expect(search).toBeVisible();
     const searchBox = await search.boundingBox();
-    const filterBox = await page
-      .getByRole('button', { name: 'Semua', exact: true })
-      .boundingBox();
+    const filterBox = await page.getByRole('button', { name: 'Semua', exact: true }).boundingBox();
     expect(searchBox).not.toBeNull();
     expect(filterBox).not.toBeNull();
 
@@ -122,9 +119,7 @@ test.describe('Panel admin responsif', () => {
       /bg-invert/,
     );
     await page.getByRole('button', { name: 'Semua', exact: true }).click();
-    await expect(page.getByRole('button', { name: 'Semua', exact: true })).toHaveClass(
-      /bg-invert/,
-    );
+    await expect(page.getByRole('button', { name: 'Semua', exact: true })).toHaveClass(/bg-invert/);
   });
 
   test('sidebar desktop tidak mengambil ruang di mobile', async ({ page }) => {

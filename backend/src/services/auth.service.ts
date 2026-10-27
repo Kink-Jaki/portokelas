@@ -133,8 +133,5 @@ export async function changeUserPassword(
 
   const passwordHash = await hashPassword(input.newPassword);
 
-  await db
-    .update(users)
-    .set({ passwordHash, updatedAt: new Date() })
-    .where(eq(users.id, userId));
+  await db.update(users).set({ passwordHash, updatedAt: new Date() }).where(eq(users.id, userId));
 }

@@ -28,11 +28,7 @@ import type {
 
 function toastApiError(error: unknown, fallback: string) {
   const message =
-    error instanceof ApiError
-      ? error.message
-      : error instanceof Error
-        ? error.message
-        : fallback;
+    error instanceof ApiError ? error.message : error instanceof Error ? error.message : fallback;
   toast.error(message);
 }
 
@@ -264,7 +260,8 @@ export function useAdminMemories() {
 export function useAdminDeleteMemory() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => api.delete<{ id: string; deleted: boolean }>(`/admin/memories/${id}`),
+    mutationFn: (id: string) =>
+      api.delete<{ id: string; deleted: boolean }>(`/admin/memories/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.adminMemories });
       queryClient.invalidateQueries({ queryKey: queryKeys.publicMemories });

@@ -40,15 +40,12 @@ const ENTITY_TYPES: readonly SpotifyEntityType[] = [
  * Ambil jenis entity + ID dari URL/URI Spotify, tanpa mengecek ke jaringan.
  * Mendukung lagu, playlist, album, artis, episode podcast, dan show.
  */
-export function parseSpotifyEntity(
-  url: string,
-): { type: SpotifyEntityType; id: string } | null {
+export function parseSpotifyEntity(url: string): { type: SpotifyEntityType; id: string } | null {
   const trimmed = url.trim();
 
-  const uriMatch = new RegExp(
-    `^spotify:(${ENTITY_TYPES.join('|')}):([A-Za-z0-9]+)$`,
-    'i',
-  ).exec(trimmed);
+  const uriMatch = new RegExp(`^spotify:(${ENTITY_TYPES.join('|')}):([A-Za-z0-9]+)$`, 'i').exec(
+    trimmed,
+  );
   if (uriMatch?.[1] && uriMatch[2]) {
     return { type: uriMatch[1].toLowerCase() as SpotifyEntityType, id: uriMatch[2] };
   }
@@ -76,9 +73,7 @@ export type NglSpotifyType = (typeof NGL_SPOTIFY_TYPES)[number];
  * dan salah satu jenis track/album/playlist/episode. Mengembalikan tipe + ID
  * yang sudah tervalidasi (bukan URL mentah).
  */
-export function parseNglSpotifyUrl(
-  value: string,
-): { type: NglSpotifyType; id: string } | null {
+export function parseNglSpotifyUrl(value: string): { type: NglSpotifyType; id: string } | null {
   const trimmed = value.trim();
   if (!trimmed) return null;
 
@@ -128,8 +123,7 @@ async function fetchWithTimeout(url: string): Promise<Response | null> {
 
 function looksLikeEntity(record: Record<string, unknown>): boolean {
   const hasName = typeof record.name === 'string' || typeof record.title === 'string';
-  const hasMedia =
-    'visualIdentity' in record || 'images' in record || 'coverArt' in record;
+  const hasMedia = 'visualIdentity' in record || 'images' in record || 'coverArt' in record;
   const hasAuthor = 'artists' in record || 'owner' in record;
   return hasName && (hasMedia || hasAuthor);
 }
@@ -174,7 +168,10 @@ function findEntity(value: unknown, depth: number): SpotifyEntity | null {
 
 function entityAuthor(entity: SpotifyEntity | null): string | null {
   if (!entity) return null;
-  const artists = entity.artists?.map((artist) => artist.name).filter(Boolean).join(', ');
+  const artists = entity.artists
+    ?.map((artist) => artist.name)
+    .filter(Boolean)
+    .join(', ');
   if (artists) return artists;
   return entity.owner?.displayName ?? entity.owner?.name ?? entity.subtitle ?? null;
 }

@@ -1,10 +1,6 @@
 import { z } from 'zod';
 
-import {
-  NGL_REPORT_NOTE_MAX,
-  NGL_REPORT_REASONS,
-  NGL_TEXT_MAX,
-} from '../config/ngl.js';
+import { NGL_REPORT_NOTE_MAX, NGL_REPORT_REASONS, NGL_TEXT_MAX } from '../config/ngl.js';
 
 /** Kunci pesan NGL (hanya key `ngl_enabled` yang dikenal). */
 export const nglSettingSchema = z.object({

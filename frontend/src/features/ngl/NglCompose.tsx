@@ -44,9 +44,10 @@ export function NglCompose() {
   const lastAtPosition = useRef<number>(-1);
 
   const filteredMembers = members
-    .filter((m) =>
-      m.name.toLowerCase().includes(mentionQuery.toLowerCase()) ||
-      (m.alias && m.alias.toLowerCase().includes(mentionQuery.toLowerCase()))
+    .filter(
+      (m) =>
+        m.name.toLowerCase().includes(mentionQuery.toLowerCase()) ||
+        (m.alias && m.alias.toLowerCase().includes(mentionQuery.toLowerCase())),
     )
     .slice(0, 8);
 
@@ -206,7 +207,10 @@ export function NglCompose() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="relative flex flex-col gap-5 border border-line bg-ivory-warm p-6 shadow-[0_30px_60px_-52px_rgba(25,61,50,0.6)] sm:p-8">
+    <form
+      onSubmit={handleSubmit}
+      className="relative flex flex-col gap-5 border border-line bg-ivory-warm p-6 shadow-[0_30px_60px_-52px_rgba(25,61,50,0.6)] sm:p-8"
+    >
       <div className="space-y-1">
         <p className="eyebrow">Pesan anonim</p>
         <h2 className="font-display text-2xl text-forest">Tulis sesuatu</h2>
@@ -277,7 +281,7 @@ export function NglCompose() {
                           'w-full flex items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors',
                           index === mentionIndex
                             ? 'bg-burgundy/10 text-forest'
-                            : 'text-muted hover:bg-subtle hover:text-fg'
+                            : 'text-muted hover:bg-subtle hover:text-fg',
                         )}
                       >
                         <Avatar

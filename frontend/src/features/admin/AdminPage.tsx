@@ -142,7 +142,8 @@ export default function AdminPage() {
           Moderasi Craftly.
         </h1>
         <p className="mt-4 max-w-full text-sm leading-relaxed text-muted">
-          Kelola anggota dan perannya, moderasi project yang tayang, serta kelola konten landing page.
+          Kelola anggota dan perannya, moderasi project yang tayang, serta kelola konten landing
+          page.
         </p>
       </motion.header>
 

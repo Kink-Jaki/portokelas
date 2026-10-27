@@ -109,7 +109,7 @@ async function main() {
       userId,
       title: projectTitle,
       slug: projectSlug,
-        shortDescription: 'Contoh project dummy untuk testing card anggota.',
+      shortDescription: 'Contoh project dummy untuk testing card anggota.',
       description:
         '# Project Dummy\n\nIni adalah project contoh untuk melihat tampilan portofolio.',
       techStack: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],

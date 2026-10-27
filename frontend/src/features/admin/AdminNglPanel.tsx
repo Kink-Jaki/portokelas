@@ -119,9 +119,7 @@ export function AdminNglPanel() {
 
               <div className="min-w-0 flex-1 space-y-2">
                 <p className="break-words text-sm leading-relaxed text-fg">
-                  {message.content ?? (
-                    <span className="text-muted">(pesan berisi lampiran)</span>
-                  )}
+                  {message.content ?? <span className="text-muted">(pesan berisi lampiran)</span>}
                 </p>
                 <div className="flex flex-wrap items-center gap-2">
                   {message.isHidden ? (

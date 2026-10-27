@@ -293,7 +293,10 @@ export function NglBoxCard({
                 className="inline-flex items-center gap-1 rounded-full px-1 py-px text-[0.4375rem] font-bold uppercase tracking-wide min-[360px]:px-1.5 min-[360px]:py-0.5 min-[360px]:text-[0.5rem] sm:px-2 sm:py-1 sm:text-[0.5625rem] lg:text-[0.625rem]"
                 style={chipStyle}
               >
-                <span className="h-1 w-1 animate-pulse rounded-full bg-current sm:h-1.5 sm:w-1.5" aria-hidden />
+                <span
+                  className="h-1 w-1 animate-pulse rounded-full bg-current sm:h-1.5 sm:w-1.5"
+                  aria-hidden
+                />
                 Baru
               </span>
             ) : message.isReported ? (
@@ -592,7 +595,10 @@ export function NglBoxCard({
               className="absolute right-1.5 top-1.5 inline-flex items-center gap-0.5 rounded-full px-1 py-px text-[0.4375rem] font-bold uppercase tracking-wide min-[360px]:right-2 min-[360px]:top-2 min-[360px]:px-1.5 min-[360px]:py-0.5 min-[360px]:text-[0.5rem] sm:right-5 sm:top-5 sm:px-2 sm:py-1 sm:text-[0.5625rem] lg:text-[0.625rem]"
               style={chipStyle}
             >
-              <span className="h-1 w-1 animate-pulse rounded-full bg-current sm:h-1.5 sm:w-1.5" aria-hidden />
+              <span
+                className="h-1 w-1 animate-pulse rounded-full bg-current sm:h-1.5 sm:w-1.5"
+                aria-hidden
+              />
               Baru
             </span>
           ) : message.isRead ? (

@@ -25,7 +25,11 @@ import {
 } from '../services/index.js';
 import { createProjectSchema, updateProjectSchema } from '../validators/project.js';
 import { memoryCaption } from '../validators/memory.js';
-import { updateEmailSchema, updatePasswordSchema, updateProfileSchema } from '../validators/user.js';
+import {
+  updateEmailSchema,
+  updatePasswordSchema,
+  updateProfileSchema,
+} from '../validators/user.js';
 
 type FormValues = Record<string, string | File | (string | File)[]>;
 

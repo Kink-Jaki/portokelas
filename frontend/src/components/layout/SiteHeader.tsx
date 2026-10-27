@@ -137,10 +137,7 @@ export function Logo({
       <img
         src="/craftly-mark.png"
         alt=""
-        className={cn(
-          'shrink-0 object-contain',
-          editorial ? 'h-8 w-8 lg:h-9 lg:w-9' : 'h-9 w-9',
-        )}
+        className={cn('shrink-0 object-contain', editorial ? 'h-8 w-8 lg:h-9 lg:w-9' : 'h-9 w-9')}
       />
       <span className="flex flex-col leading-none">
         <span
@@ -149,7 +146,8 @@ export function Logo({
             editorial ? 'text-xl font-semibold text-forest lg:text-2xl' : 'text-lg',
           )}
         >
-          Craftly</span>
+          Craftly
+        </span>
         {!compact ? (
           <span
             className={cn(
@@ -249,8 +247,8 @@ export function SiteFooter() {
           <div className="col-span-2 lg:col-span-5">
             <Logo />
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted">
-              Kumpulan portofolio anggota dalam satu etalase publik. Dibangun oleh dan untuk
-              anggota — setiap karya punya halamannya sendiri.
+              Kumpulan portofolio anggota dalam satu etalase publik. Dibangun oleh dan untuk anggota
+              — setiap karya punya halamannya sendiri.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/members" className={buttonClasses('primary', 'sm')}>

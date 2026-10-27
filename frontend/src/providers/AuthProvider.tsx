@@ -57,8 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       toast.success('Anda sudah keluar.');
     },
     onError: (error) => {
-      const message =
-        error instanceof ApiError ? error.message : 'Gagal keluar. Coba lagi.';
+      const message = error instanceof ApiError ? error.message : 'Gagal keluar. Coba lagi.';
       toast.error(message);
     },
   });

@@ -66,9 +66,7 @@ export function UserRow({ user }: { user: MemberProfile }) {
       <ConfirmDialog
         open={pendingDelete}
         onClose={() => setPendingDelete(false)}
-        onConfirm={() =>
-          deleteUser.mutate(user.id, { onSuccess: () => setPendingDelete(false) })
-        }
+        onConfirm={() => deleteUser.mutate(user.id, { onSuccess: () => setPendingDelete(false) })}
         isLoading={deleteUser.isPending}
         title="Hapus anggota?"
         description={`Akun ${user.name} beserta seluruh project dan kenangannya akan dihapus permanen.`}

@@ -24,10 +24,7 @@ test.describe('Halaman publik', () => {
 
   test('footer mengarahkan ke direktori anggota', async ({ page }) => {
     await page.goto('/');
-    await page
-      .getByRole('contentinfo')
-      .getByRole('link', { name: 'Jelajahi direktori' })
-      .click();
+    await page.getByRole('contentinfo').getByRole('link', { name: 'Jelajahi direktori' }).click();
     await expect(page).toHaveURL(/\/members$/);
     await expect(page.getByRole('heading', { name: /Anggota\s*Craftly/i })).toBeVisible();
   });

@@ -22,9 +22,7 @@ async function deleteLeftoverProjects(request: import('@playwright/test').APIReq
 test.use({ storageState: MEMBER_STATE });
 
 test.describe('Siklus hidup project anggota', () => {
-  test('membuat, menampilkan di portofolio publik, lalu menghapus project', async ({
-    page,
-  }) => {
+  test('membuat, menampilkan di portofolio publik, lalu menghapus project', async ({ page }) => {
     await deleteLeftoverProjects(page.request);
 
     const me = await page.request.get('/api/auth/me');

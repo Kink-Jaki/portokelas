@@ -243,7 +243,14 @@ export default function ProjectDetailPage() {
             type="button"
             className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-muted hover:text-fg hover:bg-muted/30 transition-colors"
           >
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              aria-hidden
+            >
               <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.514 15.418 3 14.628 3 13.695a9 9 0 0118 0z" />
             </svg>
             <span className="tabular-nums">{project.commentCount ?? 0}</span>

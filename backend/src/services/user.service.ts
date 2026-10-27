@@ -37,11 +37,7 @@ export async function findUserById(id: string): Promise<MemberProfile | null> {
 
 export async function findUserByEmail(email: string) {
   const normalized = email.trim().toLowerCase();
-  const rows = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, normalized))
-    .limit(1);
+  const rows = await db.select().from(users).where(eq(users.email, normalized)).limit(1);
   return rows[0] ?? null;
 }
 
@@ -59,8 +55,6 @@ export async function emailTaken(email: string): Promise<boolean> {
     .limit(1);
   return rows.length > 0;
 }
-
-
 
 /** Slug portofolio unik berdasarkan nama; suffix numerik bila bentrok. */
 export async function generateUniqueSlug(name: string): Promise<string> {
@@ -108,11 +102,7 @@ export async function listMembers(query: MemberQuery): Promise<Paginated<PublicU
 }
 
 export async function getMemberBySlug(slug: string): Promise<PublicUser | null> {
-  const rows = await db
-    .select(publicUserColumns)
-    .from(users)
-    .where(eq(users.slug, slug))
-    .limit(1);
+  const rows = await db.select(publicUserColumns).from(users).where(eq(users.slug, slug)).limit(1);
   return rows[0] ?? null;
 }
 
@@ -191,10 +181,7 @@ export async function deleteUserAsAdmin(userId: string): Promise<DeletedUser> {
       .from(projectImages)
       .innerJoin(projects, eq(projectImages.projectId, projects.id))
       .where(eq(projects.userId, userId)),
-    db
-      .select({ imageUrl: memories.imageUrl })
-      .from(memories)
-      .where(eq(memories.userId, userId)),
+    db.select({ imageUrl: memories.imageUrl }).from(memories).where(eq(memories.userId, userId)),
   ]);
 
   await db.delete(users).where(eq(users.id, userId));

@@ -226,8 +226,8 @@ export function PersonalizePanel() {
             <span>
               <span className="block font-display text-xl">Kartu direktori</span>
               <span className="mt-1 block text-sm text-muted">
-                Tempel HTML + CSS untuk kartumu di landing page & halaman members. Kosongkan
-                untuk memakai kartu standar.
+                Tempel HTML + CSS untuk kartumu di landing page & halaman members. Kosongkan untuk
+                memakai kartu standar.
               </span>
             </span>
             <span className="font-mono text-xs uppercase tracking-[0.16em] text-muted">

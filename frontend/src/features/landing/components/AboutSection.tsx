@@ -302,14 +302,10 @@ export function AboutSection() {
   const title = about?.title?.trim() || FALLBACK_TITLE;
   const description = about?.description?.trim() || FALLBACK_DESCRIPTION;
   const image = about?.imageUrl ? assetUrl(about.imageUrl) : FALLBACK_IMAGE;
-  const memberLabel =
-    stats?.members != null ? stats.members.toLocaleString('id-ID') : '31';
+  const memberLabel = stats?.members != null ? stats.members.toLocaleString('id-ID') : '31';
 
   return (
-    <section
-      id="tentang"
-      className="relative isolate overflow-hidden text-pine"
-    >
+    <section id="tentang" className="relative isolate overflow-hidden text-pine">
       <AboutOrnaments />
 
       <div className="container-page section-pad relative z-10">

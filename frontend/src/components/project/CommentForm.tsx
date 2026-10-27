@@ -53,9 +53,7 @@ export function CommentForm({ projectId, onSuccess }: CommentFormProps) {
         aria-label="Komentar"
       />
       <div className="flex items-center justify-between">
-        <span className="text-xs text-muted/70">
-          {content.length}/2000
-        </span>
+        <span className="text-xs text-muted/70">{content.length}/2000</span>
         <button
           type="submit"
           disabled={!content.trim() || submitting}

@@ -107,10 +107,7 @@ function ImageCollage({ images }: { images: Collage }) {
       </figure>
 
       {/* Aksen bintang kecil */}
-      <svg
-        viewBox="0 0 24 24"
-        className="absolute -left-2 top-[46%] h-4 w-4 text-forest/40"
-      >
+      <svg viewBox="0 0 24 24" className="absolute -left-2 top-[46%] h-4 w-4 text-forest/40">
         <path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z" fill="currentColor" />
       </svg>
       <span className="absolute right-[4%] top-[18%] h-2 w-2 rounded-full bg-burgundy" />
@@ -195,8 +192,8 @@ export function Hero() {
               variants={staggerItem}
               className="mt-7 max-w-[34rem] text-[1.0625rem] leading-[1.65] text-forest-soft sm:text-[1.125rem]"
             >
-              Setiap anggota punya satu halaman portofolio pribadi. Daftar sekali, unggah
-              project, lalu karya kamu tampil di halaman publik yang bisa dibagikan ke siapa saja.
+              Setiap anggota punya satu halaman portofolio pribadi. Daftar sekali, unggah project,
+              lalu karya kamu tampil di halaman publik yang bisa dibagikan ke siapa saja.
             </motion.p>
 
             <motion.div variants={staggerItem} className="mt-9 flex flex-wrap items-center gap-4">

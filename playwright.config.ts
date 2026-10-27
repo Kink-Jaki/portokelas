@@ -22,10 +22,7 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   globalSetup: './tests/e2e/global-setup.ts',
   outputDir: './tests/.artifacts',
-  reporter: [
-    ['list'],
-    ['html', { open: 'never', outputFolder: './tests/.report' }],
-  ],
+  reporter: [['list'], ['html', { open: 'never', outputFolder: './tests/.report' }]],
   use: {
     baseURL: FRONTEND_URL,
     reducedMotion: 'reduce',

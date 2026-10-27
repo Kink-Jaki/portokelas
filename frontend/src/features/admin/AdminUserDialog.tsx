@@ -94,8 +94,7 @@ export function AdminUserDialog({
         const fieldErrors = error.fieldErrors;
         if (fieldErrors.name) setError('name', { message: fieldErrors.name });
         if (fieldErrors.alias) setError('alias', { message: fieldErrors.alias });
-        if (fieldErrors.spotifyUrl)
-          setError('spotifyUrl', { message: fieldErrors.spotifyUrl });
+        if (fieldErrors.spotifyUrl) setError('spotifyUrl', { message: fieldErrors.spotifyUrl });
         if (fieldErrors.bio) setError('bio', { message: fieldErrors.bio });
         if (fieldErrors.headline) setError('headline', { message: fieldErrors.headline });
       }
@@ -120,18 +119,9 @@ export function AdminUserDialog({
         </>
       }
     >
-      <form
-        id="admin-user-form"
-        onSubmit={onSubmit}
-        className="space-y-5"
-        noValidate
-      >
+      <form id="admin-user-form" onSubmit={onSubmit} className="space-y-5" noValidate>
         <div className="grid gap-5 sm:grid-cols-2">
-          <Input
-            label="Nama lengkap"
-            error={errors.name?.message}
-            {...register('name')}
-          />
+          <Input label="Nama lengkap" error={errors.name?.message} {...register('name')} />
           <Input
             label="Alias (nama tampilan)"
             placeholder="Nama panggilan / nama tampilan"

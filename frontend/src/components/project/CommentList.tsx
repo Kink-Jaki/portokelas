@@ -14,7 +14,13 @@ interface CommentListProps {
   limit?: number;
 }
 
-export function CommentList({ projectId, currentUserId, isAdmin = false, initialPage = 1, limit = 20 }: CommentListProps) {
+export function CommentList({
+  projectId,
+  currentUserId,
+  isAdmin = false,
+  initialPage = 1,
+  limit = 20,
+}: CommentListProps) {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(initialPage);
 
@@ -61,7 +67,11 @@ export function CommentList({ projectId, currentUserId, isAdmin = false, initial
       <div className="text-center py-8 text-muted">
         Gagal memuat komentar.{' '}
         <button
-          onClick={() => queryClient.invalidateQueries({ queryKey: queryKeys.projectComments(projectId, page, limit) })}
+          onClick={() =>
+            queryClient.invalidateQueries({
+              queryKey: queryKeys.projectComments(projectId, page, limit),
+            })
+          }
           className="text-primary hover:underline"
         >
           Coba lagi
@@ -92,7 +102,10 @@ export function CommentList({ projectId, currentUserId, isAdmin = false, initial
       </div>
 
       {totalPages > 1 && (
-        <nav className="flex items-center justify-center gap-2" aria-label="Navigasi halaman komentar">
+        <nav
+          className="flex items-center justify-center gap-2"
+          aria-label="Navigasi halaman komentar"
+        >
           <button
             onClick={() => goToPage(page - 1)}
             disabled={page <= 1}
@@ -115,11 +128,7 @@ export function CommentList({ projectId, currentUserId, isAdmin = false, initial
         </nav>
       )}
 
-      {total > 0 && (
-        <p className="text-center text-xs text-muted">
-          Total {total} komentar
-        </p>
-      )}
+      {total > 0 && <p className="text-center text-xs text-muted">Total {total} komentar</p>}
     </div>
   );
 }

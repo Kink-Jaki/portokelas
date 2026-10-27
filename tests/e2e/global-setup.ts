@@ -36,6 +36,11 @@ export default async function globalSetup(config: FullConfig) {
   const adminIdentity = process.env.E2E_ADMIN_IDENTITY ?? 'admin@portofolio.test';
   const adminPassword = process.env.E2E_ADMIN_PASSWORD ?? 'Admin12345';
 
-  await saveStorageState(baseURL, memberIdentity, memberPassword, path.join(AUTH_DIR, 'member.json'));
+  await saveStorageState(
+    baseURL,
+    memberIdentity,
+    memberPassword,
+    path.join(AUTH_DIR, 'member.json'),
+  );
   await saveStorageState(baseURL, adminIdentity, adminPassword, path.join(AUTH_DIR, 'admin.json'));
 }

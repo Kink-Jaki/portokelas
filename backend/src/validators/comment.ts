@@ -1,11 +1,17 @@
 import { z } from 'zod';
 
 export const createCommentSchema = z.object({
-  content: z.string().min(1, 'Komentar tidak boleh kosong.').max(2000, 'Komentar terlalu panjang (maksimal 2000 karakter).'),
+  content: z
+    .string()
+    .min(1, 'Komentar tidak boleh kosong.')
+    .max(2000, 'Komentar terlalu panjang (maksimal 2000 karakter).'),
 });
 
 export const updateCommentSchema = z.object({
-  content: z.string().min(1, 'Komentar tidak boleh kosong.').max(2000, 'Komentar terlalu panjang (maksimal 2000 karakter).'),
+  content: z
+    .string()
+    .min(1, 'Komentar tidak boleh kosong.')
+    .max(2000, 'Komentar terlalu panjang (maksimal 2000 karakter).'),
 });
 
 export const commentQuerySchema = z.object({

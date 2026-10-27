@@ -129,9 +129,7 @@ export function ProjectModerationList() {
                 setPage(1);
               }}
               className={`min-w-0 whitespace-normal px-2 py-2 text-center text-xs transition-colors duration-200 [overflow-wrap:anywhere] md:px-3.5 ${
-                hiddenFilter === filter.id
-                  ? 'bg-invert text-invert-fg'
-                  : 'text-muted hover:text-fg'
+                hiddenFilter === filter.id ? 'bg-invert text-invert-fg' : 'text-muted hover:text-fg'
               }`}
             >
               {filter.label}

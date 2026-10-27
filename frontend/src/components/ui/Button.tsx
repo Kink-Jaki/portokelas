@@ -1,14 +1,7 @@
 import { cn } from '@/lib/utils';
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 
-type Variant =
-  | 'primary'
-  | 'outline'
-  | 'ghost'
-  | 'danger'
-  | 'subtle'
-  | 'burgundy'
-  | 'forest';
+type Variant = 'primary' | 'outline' | 'ghost' | 'danger' | 'subtle' | 'burgundy' | 'forest';
 type Size = 'sm' | 'md' | 'lg' | 'icon';
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {

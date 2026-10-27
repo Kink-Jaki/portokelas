@@ -82,12 +82,7 @@ function ProjectRow({ project, onEdit }: { project: Project; onEdit: () => void 
             <div className="flex flex-wrap items-center gap-3">
               {project.collaborators.map((member) => (
                 <span key={member.id} className="inline-flex items-center gap-2">
-                  <Avatar
-                    name={member.name}
-                    src={member.avatarUrl}
-                    size="sm"
-                    className="h-6 w-6"
-                  />
+                  <Avatar name={member.name} src={member.avatarUrl} size="sm" className="h-6 w-6" />
                   {member.alias || member.name}
                 </span>
               ))}

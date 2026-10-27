@@ -70,7 +70,12 @@ function TeacherOrnaments() {
         className="absolute -left-14 -top-16 h-40 w-40 text-maroon opacity-[0.08] sm:-left-24 sm:-top-28 sm:h-72 sm:w-72 sm:opacity-[0.12]"
       >
         <path d="M8 250C-6 130 60 24 200 8" stroke="currentColor" strokeWidth="2.5" />
-        <path d="M40 250C34 150 92 60 214 44" stroke="currentColor" strokeWidth="1.4" opacity="0.7" />
+        <path
+          d="M40 250C34 150 92 60 214 44"
+          stroke="currentColor"
+          strokeWidth="1.4"
+          opacity="0.7"
+        />
       </svg>
 
       {/* Kiri atas — garis tipis soft gold */}
@@ -95,7 +100,12 @@ function TeacherOrnaments() {
         className="absolute -bottom-16 -right-14 h-40 w-40 text-pine opacity-[0.08] sm:-bottom-28 sm:-right-24 sm:h-72 sm:w-72 sm:opacity-[0.13]"
       >
         <path d="M252 8C266 130 200 236 60 252" stroke="currentColor" strokeWidth="2.5" />
-        <path d="M220 8C226 108 168 198 46 214" stroke="currentColor" strokeWidth="1.4" opacity="0.7" />
+        <path
+          d="M220 8C226 108 168 198 46 214"
+          stroke="currentColor"
+          strokeWidth="1.4"
+          opacity="0.7"
+        />
       </svg>
 
       {/* Kanan bawah — aksen maroon kecil */}
@@ -159,10 +169,7 @@ export function TeacherSection() {
       if (measuredStep <= 0) return;
 
       const gap = measuredStep - first.offsetWidth;
-      const measuredVisible = Math.max(
-        1,
-        Math.round((track.clientWidth + gap) / measuredStep),
-      );
+      const measuredVisible = Math.max(1, Math.round((track.clientWidth + gap) / measuredStep));
 
       setStep(measuredStep);
       setVisible(measuredVisible);
@@ -263,8 +270,16 @@ export function TeacherSection() {
             className="absolute -right-2 -top-2 h-16 w-16 rotate-90 text-pine opacity-45"
           >
             <path d="M14 106C46 92 76 66 104 30" stroke="currentColor" strokeWidth="1.6" />
-            <path d="M30 88c-6 7-4 18 0 24 4-6 6-17 0-24Z" stroke="currentColor" strokeWidth="1.2" />
-            <path d="M56 66c-5 6-3 16 0 21 3-5 5-15 0-21Z" stroke="currentColor" strokeWidth="1.2" />
+            <path
+              d="M30 88c-6 7-4 18 0 24 4-6 6-17 0-24Z"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+            <path
+              d="M56 66c-5 6-3 16 0 21 3-5 5-15 0-21Z"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
           </svg>
         </div>
 
@@ -315,10 +330,7 @@ export function TeacherSection() {
     );
 
   return (
-    <section
-      id="wali-kelas"
-      className="section-teacher relative isolate overflow-visible"
-    >
+    <section id="wali-kelas" className="section-teacher relative isolate overflow-visible">
       <TeacherOrnaments />
 
       <div className="container-page section-pad relative z-10 flex min-w-0 flex-col gap-8 px-4 min-[360px]:px-5 md:px-10 xl:px-14 lg:grid lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:grid-rows-[auto_auto] lg:items-center lg:gap-x-16 lg:gap-y-0">
@@ -332,7 +344,11 @@ export function TeacherSection() {
           <Reveal className="min-w-0 lg:col-start-2 lg:row-start-2 lg:mt-8 lg:self-start">
             <div className="flex flex-wrap items-center justify-center gap-4 sm:justify-start">
               {positions > 1 ? (
-                <div className="flex items-center gap-2.5 sm:gap-2" role="tablist" aria-label="Pilih wali kelas">
+                <div
+                  className="flex items-center gap-2.5 sm:gap-2"
+                  role="tablist"
+                  aria-label="Pilih wali kelas"
+                >
                   {Array.from({ length: positions }).map((_, index) => (
                     <button
                       key={index}
@@ -343,18 +359,13 @@ export function TeacherSection() {
                       onClick={() => goTo(index)}
                       className={cn(
                         'h-1.5 transition-all duration-300',
-                        index === active
-                          ? 'w-8 bg-maroon'
-                          : 'w-4 bg-line-strong hover:bg-gold',
+                        index === active ? 'w-8 bg-maroon' : 'w-4 bg-line-strong hover:bg-gold',
                       )}
                     />
                   ))}
                 </div>
               ) : null}
-              <span
-                aria-hidden
-                className="hidden h-px w-8 bg-gold sm:block"
-              />
+              <span aria-hidden className="hidden h-px w-8 bg-gold sm:block" />
               <p className="hidden font-mono text-[0.625rem] uppercase leading-relaxed tracking-[0.24em] text-pine sm:block sm:text-[0.6875rem] sm:tracking-[0.2em]">
                 {positions > 1 && !reduceMotion
                   ? 'Slide otomatis · geser foto untuk memilih'

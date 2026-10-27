@@ -184,8 +184,9 @@ test.describe('API backend', () => {
 
       const inbox = await ctx.get('/api/ngl/messages?page=1');
       expect(inbox.status()).toBe(200);
-      const target = ((await inbox.json()).data.items as Array<{ id: string; isRead?: boolean }>)
-        .find((item) => item.id === messageId);
+      const target = (
+        (await inbox.json()).data.items as Array<{ id: string; isRead?: boolean }>
+      ).find((item) => item.id === messageId);
       expect(target?.isRead).toBe(false);
     } finally {
       await ctx.dispose();

@@ -324,7 +324,10 @@ export const messageReports = pgTable(
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    uniqueIndex('message_reports_message_reporter_unique').on(table.messageId, table.reporterUserId),
+    uniqueIndex('message_reports_message_reporter_unique').on(
+      table.messageId,
+      table.reporterUserId,
+    ),
     index('message_reports_message_id_idx').on(table.messageId),
     index('message_reports_reporter_user_id_idx').on(table.reporterUserId),
     index('message_reports_status_idx').on(table.status),

@@ -42,14 +42,18 @@ export function CommentItem({ comment, isOwner, isAdmin }: CommentItemProps) {
     mutationFn: () => projectInteractionApi.updateComment(comment.id, editContent),
     onSuccess: () => {
       setEditing(false);
-      queryClient.invalidateQueries({ queryKey: queryKeys.projectComments(comment.projectId, 1, 20) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projectComments(comment.projectId, 1, 20),
+      });
     },
   });
 
   const { mutate: deleteComment } = useMutation({
     mutationFn: () => projectInteractionApi.deleteComment(comment.id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.projectComments(comment.projectId, 1, 20) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projectComments(comment.projectId, 1, 20),
+      });
     },
   });
 
@@ -93,9 +97,7 @@ export function CommentItem({ comment, isOwner, isAdmin }: CommentItemProps) {
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline gap-2">
           <span className="font-medium text-fg">{comment.user.name}</span>
-          {comment.user.alias && (
-            <span className="text-sm text-muted">@{comment.user.alias}</span>
-          )}
+          {comment.user.alias && <span className="text-sm text-muted">@{comment.user.alias}</span>}
           <time className="text-xs text-muted" dateTime={comment.createdAt}>
             {formatDate(comment.createdAt)}
           </time>
